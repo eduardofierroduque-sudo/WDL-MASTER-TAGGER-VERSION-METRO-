@@ -11,6 +11,8 @@ Jugabilidad y Experiencia
 El núcleo del juego se centra en la libertad de movimiento y la expresión técnica. A través de una perspectiva en primera persona, los jugadores pueden:
 
 Infiltración y Exploración: Recorrer andenes, hangares y túneles oscuros con una movilidad fluida (Caminar, correr y saltar).
+
+
 <img width="144" height="68" alt="juego grafiti metrolalo1" src="https://github.com/user-attachments/assets/9ae73a9b-e3a8-447a-b50f-269e039a506a" />
 <img width="144" height="68" alt="juego grafiti metrolalo2" src="https://github.com/user-attachments/assets/62368dac-d8d3-49ea-9a60-97818bd30655" />
 <img width="144" height="68" alt="juego grafiti metrolalo3" src="https://github.com/user-attachments/assets/65f23e73-9763-432e-983f-bdd13f1a3b4b" />
@@ -21,6 +23,7 @@ Simulador de Spray Realista: El sistema utiliza algoritmos de Raycasting para de
 Personalización de Trazo: Ajuste dinámico de la válvula (grosor del trazo) y una paleta cromática completa para experimentar con estilos (Throw-ups, piezas o tags).
 
 Snapshot Mode: Al presionar la tecla [P], el motor renderiza la vista actual y permite descargar una captura de pantalla en alta resolución para documentar y compartir las piezas en redes sociales.
+
 
 <img width="144" height="68" alt="juego grafiti metrolalo4" src="https://github.com/user-attachments/assets/5f0d1497-100b-4477-9db0-f27bf182eeca" />
 <img width="144" height="68" alt="juego grafiti metrolalo5" src="https://github.com/user-attachments/assets/493d1c9b-94b0-4f5c-8f58-f91cd6acfef9" />
