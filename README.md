@@ -1,9 +1,12 @@
 WDL MASTER TAGGER es una experiencia de simulación en primera persona (FPS) desarrollada íntegramente en HTML5/WebGL, diseñada específicamente para escritores de graffiti, diseñadores y artistas visuales. El juego ofrece un lienzo tridimensional inmersivo inspirado en las zonas industriales.
+TRAILER AQUÍ: 
+https://youtu.be/KE8L0RL6YC8?si=o1F2wMEpQ1XRs_yG
 
 Jugabilidad y Experiencia
 El núcleo del juego se centra en la libertad de movimiento y la expresión técnica. A través de una perspectiva en primera persona, los jugadores pueden:
 
 Infiltración y Exploración: Recorrer andenes, hangares y túneles oscuros con una movilidad fluida (Caminar, correr y saltar).
+
 
 Simulador de Spray Realista: El sistema utiliza algoritmos de Raycasting para detectar superficies en tiempo real, permitiendo pintar sobre convoyes NS-74, muros de concreto y vigas metálicas con precisión.
 
