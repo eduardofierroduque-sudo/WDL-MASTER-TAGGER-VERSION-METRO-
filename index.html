@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WDL MASTER TAGGER: MAESTRANZA METRO/TREN </title>
+    <style>
+        body { margin: 0; background-color: #050505; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; touch-action: none; }
+        #game-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; outline: none; }
+        #gameCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 1; }
+        
+        #loading-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 1000;
+        }
+        .loading-text { font-size: 20px; letter-spacing: 8px; animation: pulse 1.5s infinite; color: #00a9e0; }
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+
+        #instructions {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95); padding: 40px; border: 2px solid #00a9e0;
+            text-align: center; z-index: 200; color: #fff; cursor: pointer; display: none;
+            box-shadow: 0 0 50px rgba(0,169,224,0.4);
+        }
+
+        #ui-overlay { 
+            position: absolute; top: 20px; left: 20px; z-index: 10; pointer-events: none; 
+            background: rgba(0, 0, 0, 0.8); padding: 15px; border-left: 5px solid #00a9e0;
+            color: #fff; min-width: 180px;
+        }
+
+        #controls-panel { 
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            background: rgba(15, 15, 15, 0.98); padding: 20px; border: 1px solid #00a9e0;
+            display: flex; gap: 35px; z-index: 160; border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        #crosshair { 
+            position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; 
+            border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; transform: translate(-50%, -50%); 
+            pointer-events: none; z-index: 10;
+        }
+
+        #radio-box {
+            position: absolute; top: 20px; right: 20px; z-index: 150;
+            padding: 15px; background: rgba(0, 0, 0, 0.85); border: 1px solid #333;
+            width: 250px; text-align: center; border-radius: 2px;
+        }
+        .display { border: 1px solid #222; margin: 10px 0; padding: 8px; background: #020202; font-size: 10px; color: #00ff00; height: 35px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; font-family: 'Courier New', monospace; overflow: hidden; }
+        
+        .radio-btns { display: flex; justify-content: space-around; gap: 5px; }
+        .radio-btns button { background: #1a1a1a; color: #aaa; border: 1px solid #333; padding: 8px; cursor: pointer; font-size: 9px; flex: 1; transition: 0.2s; }
+        .radio-btns button:hover { background: #00a9e0; color: #fff; border-color: #00a9e0; }
+
+        input[type="color"] { background: none; border: 1px solid #444; width: 45px; height: 45px; cursor: pointer; }
+        input[type="range"] { cursor: pointer; accent-color: #00a9e0; width: 130px; }
+
+        #yt-hidden { position: absolute; top: -1000px; visibility: hidden; }
+    </style>
+</head>
+<body>
+
+<div id="loading-screen">
+    <div class="loading-text">WWW.FIERRODUQUE.COM</div>
+</div>
+
+<div id="game-container" tabindex="0">
+    <div id="instructions">
+        <h1 style="margin:0; color: #00a9e0; letter-spacing: 5px;">METRO TAGGER</h1>
+        <p style="color: #666; font-size: 12px;">SANTIAGO DE CHILE - TALLERES L2</p>
+        <div style="text-align: left; display: inline-block; margin: 20px 0; color: #ccc; font-size: 13px; line-height: 1.8; border-top: 1px solid #333; padding-top: 15px;">
+            • <b>WASD</b>: MOVIMIENTO<br>
+            • <b>SHIFT</b>: CORRER (INFILTRACIÓN RÁPIDA)<br>
+            • <b>ESPACIO</b>: SALTAR OBSTÁCULOS<br>
+            • <b>MOUSE CLICK</b>: PINTAR<br>
+            • <b>P</b>: MODO FOTOGRAFÍA (SNAPSHOT)
+        </div>
+        <p style="font-size: 16px; border: 1px solid #00a9e0; padding: 12px; background: #00a9e0; color: #fff; font-weight: bold; letter-spacing: 2px;">COMENZAR MISIÓN</p>
+    </div>
+
+    <div id="crosshair"></div>
+
+    <div id="ui-overlay">
+        <div style="font-size: 18px; font-weight: bold; letter-spacing: 1px;">TURNO: <span id="time-val">1200</span>s</div>
+        <div style="font-size: 10px; color: #00a9e0; margin-top: 5px;">SENSOR: PERÍMETRO ASEGURADO</div>
+    </div>
+
+    <div id="controls-panel">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <span style="font-size:9px; color:#555; margin-bottom:8px; font-weight:bold;">PIGMENTO</span>
+            <input type="color" id="paintColor" value="#ff3300"> 
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <span style="font-size:9px; color:#555; margin-bottom:8px; font-weight:bold;">VÁLVULA</span>
+            <input type="range" id="brushSize" min="0.1" max="1.4" step="0.05" value="0.4">
+        </div>
+    </div>
+
+    <div id="radio-box">
+        <div style="font-size: 9px; letter-spacing: 2px; color: #555; font-weight: bold;">SISTEMA DE AUDIO</div>
+        <div class="display" id="track-name">ESPERANDO SEÑAL...</div>
+        <div class="radio-btns">
+            <button onclick="window.prev()">PREV</button>
+            <button id="play-btn" onclick="window.togglePlay()">PLAY</button>
+            <button onclick="window.next()">NEXT</button>
+        </div>
+    </div>
+
+    <div id="yt-hidden"><div id="player"></div></div>
+    <canvas id="gameCanvas"></canvas>
+</div>
+
+<script>
+    let player;
+    const playlistId = 'PLU4NeCIAEqOSN_MJPeCZ4-QODexTucbpy';
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '1',
+            width: '1',
+            playerVars: { 
+                'listType': 'playlist', 
+                'list': playlistId, 
+                'autoplay': 0, 
+                'index': 0 
+            },
+            events: { 
+                'onReady': () => { 
+                    console.log("Radio L2 Online"); 
+                }, 
+                'onStateChange': (e) => {
+                    if (e.data == 1) {
+                        document.getElementById('track-name').innerText = player.getVideoData().title;
+                        document.getElementById('play-btn').innerText = 'PAUSE';
+                    } else { 
+                        document.getElementById('play-btn').innerText = 'PLAY'; 
+                    }
+                } 
+            }
+        });
+    }
+
+    window.togglePlay = () => { 
+        player.getPlayerState() == 1 ? player.pauseVideo() : player.playVideo(); 
+    }
+    window.next = () => player.nextVideo();
+    window.prev = () => player.previousVideo();
+</script>
+
+<script type="module">
+    import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+
+    // --- VARIABLES GLOBALES ---
+    let scene, camera, renderer, raycaster, floorRaycaster;
+    let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false, isSprinting = false;
+    let isPainting = false, gameActive = false;
+    let walls = [], collidables = [];
+    let verticalVel = 0, canJump = true, timeLeft = 1200;
+    let frameCounter = 0;
+
+    const PLAYER_HEIGHT = 2.4;
+    const GRAVITY = 0.012; 
+    const JUMP_FORCE = 0.32; 
+    const startPos = new THREE.Vector3(-10, PLAYER_HEIGHT + 2, -600);
+
+    // --- PALETA DE MATERIALES ---
+    const mats = {
+        concrete: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.85 }),
+        wall: new THREE.MeshStandardMaterial({ color: 0x121212 }),
+        steel: new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.2 }),
+        hazard: new THREE.MeshStandardMaterial({ color: 0xffaa00 }),
+        trainBlue: new THREE.MeshStandardMaterial({ color: 0x00a9e0, metalness: 0.4, roughness: 0.4 }),
+        glass: new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.1, transparent: true, opacity: 0.9 }),
+        crate: new THREE.MeshStandardMaterial({ color: 0x3d2b1f, roughness: 0.9 }) 
+    };
+
+    function init() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x020202);
+        scene.fog = new THREE.FogExp2(0x020202, 0.008);
+
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+        camera.rotation.order = 'YXZ';
+        
+        renderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('gameCanvas'), 
+            antialias: true, 
+            preserveDrawingBuffer: true 
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.outputEncoding = THREE.sRGBEncoding;
+
+        raycaster = new THREE.Raycaster();
+        floorRaycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
+
+        // ILUMINACIÓN AMBIENTAL E INDUSTRIAL
+        scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+        const skyLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        skyLight.position.set(20, 100, 20);
+        scene.add(skyLight);
+
+        buildComplexEnvironment();
+        setupInputHandlers();
+        
+        camera.position.copy(startPos);
+
+        setTimeout(() => {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('instructions').style.display = 'block';
+        }, 2500);
+
+        animateLoop();
+    }
+
+    // --- MOTOR DE CONSTRUCCIÓN ---
+    function spawnBox(w, h, d, x, y, z, mat, collides = true, paintable = true) {
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+        mesh.position.set(x, y, z);
+        scene.add(mesh);
+        mesh.updateMatrixWorld();
+        mesh.bbox = new THREE.Box3().setFromObject(mesh);
+        if(collides) collidables.push(mesh);
+        if(paintable) walls.push(mesh);
+        return mesh;
+    }
+
+    function createRails(x, y, z, length) {
+        spawnBox(0.4, 0.3, length, x - 2.4, y + 0.15, z, mats.steel, false, false);
+        spawnBox(0.4, 0.3, length, x + 2.4, y + 0.15, z, mats.steel, false, false);
+        for(let i = 0; i < length; i += 4) {
+            spawnBox(7, 0.2, 1, x, y + 0.1, (z - length/2) + i, mats.concrete, false, false);
+        }
+    }
+
+    function buildComplexEnvironment() {
+        // SUELO GENERAL
+        spawnBox(1000, 1, 1500, 0, -0.5, 0, mats.concrete, true, false);
+
+        // TÚNELES DE ACCESO
+        const tunnelPaths = [-80, 0, 80];
+        tunnelPaths.forEach(tx => {
+            spawnBox(2, 25, 500, tx - 20, 12, -450, mats.wall, true, true);
+            spawnBox(2, 25, 500, tx + 20, 12, -450, mats.wall, true, true);
+            spawnBox(40, 1, 500, tx, 25, -450, mats.wall, true, false);
+            spawnBox(40, 25, 2, tx, 12, -700, mats.wall, true, true);
+            createRails(tx, 0, -150, 1100);
+            
+            for(let l=0; l<4; l++) {
+                const lp = new THREE.PointLight(0xff3300, 0.8, 60);
+                lp.position.set(tx, 20, -650 + (l * 150));
+                scene.add(lp);
+            }
+        });
+
+        // ESTRUCTURA DEL HANGAR PRINCIPAL
+        const hangarW = 400; const hangarL = 600; const hangarH = 50;
+        spawnBox(2, hangarH, hangarL, -hangarW/2, hangarH/2, 100, mats.wall, true, true);
+        spawnBox(2, hangarH, hangarL, hangarW/2, hangarH/2, 100, mats.wall, true, true);
+        spawnBox(hangarW, hangarH, 2, 0, hangarH/2, 400, mats.wall, true, true); 
+        spawnBox(hangarW, 1, hangarL, 0, hangarH, 100, mats.wall, true, false); 
+
+        // CIERRE FRONTAL (MURO DE ENTRADA)
+        spawnBox(100, hangarH, 2, -150, hangarH/2, -200, mats.wall, true, true);
+        spawnBox(40, hangarH, 2, -40, hangarH/2, -200, mats.wall, true, true);
+        spawnBox(40, hangarH, 2, 40, hangarH/2, -200, mats.wall, true, true);
+        spawnBox(100, hangarH, 2, 150, hangarH/2, -200, mats.wall, true, true);
+
+        // DISEÑO DE ANDENES
+        const andenesInfo = [
+            { x: -145, w: 70 }, // Exterior Izquierdo
+            { x: -40, w: 36 },  // Central Izquierdo
+            { x: 40, w: 36 },   // Central Derecho
+            { x: 145, w: 70 }   // Exterior Derecho
+        ];
+
+        andenesInfo.forEach(anden => {
+            spawnBox(anden.w, 2, 590, anden.x, 1, 100, mats.concrete, true, true);
+        });
+
+        // GENERACIÓN DE CAJAS Y OBSTÁCULOS
+        for (let i = 0; i < 40; i++) {
+            let andenRandom = andenesInfo[Math.floor(Math.random() * andenesInfo.length)];
+            let variacionX = (Math.random() * (andenRandom.w - 4)) - ((andenRandom.w - 4) / 2);
+            let cx = andenRandom.x + variacionX;
+            let cz = (Math.random() * 500) - 150;
+            let size = 1.2 + Math.random() * 2;
+            spawnBox(size, size, size, cx, 2 + (size/2), cz, mats.crate, true, true);
+        }
+
+        // VIGAS DE SOPORTE DEL TECHO
+        for(let i=0; i<10; i++) {
+            const cz = -100 + (i * 55);
+            spawnBox(6, hangarH, 6, -180, hangarH/2, cz, mats.concrete);
+            spawnBox(6, hangarH, 6, 180, hangarH/2, cz, mats.concrete);
+            spawnBox(6.2, 4, 6.2, -180, 2, cz, mats.hazard, false, false);
+            spawnBox(6.2, 4, 6.2, 180, 2, cz, mats.hazard, false, false);
+            spawnBox(hangarW, 2, 2, 0, hangarH - 2, cz, mats.steel, false, false);
+        }
+
+        // --- SISTEMA EXTENDIDO DE TRENES (TÚNELES + MAESTRANZA) ---
+        const trains = [
+            // TRENES EN TÚNELES (Z < -200)
+            {x: -80, z: -550}, {x: -80, z: -450}, {x: -80, z: -350},
+            {x: 0, z: -600},   {x: 0, z: -500},   {x: 0, z: -400},
+            {x: 80, z: -580},  {x: 80, z: -480},  {x: 80, z: -380},
+            
+            // TRENES EN MAESTRANZA (VÍA IZQUIERDA)
+            {x: -80, z: -100}, {x: -80, z: 20}, {x: -80, z: 140}, {x: -80, z: 260}, 
+            
+            // TRENES EN MAESTRANZA (VÍA CENTRAL)
+            {x: 0, z: -80},    {x: 0, z: 60},   {x: 0, z: 200},  {x: 0, z: 320},
+            
+            // TRENES EN MAESTRANZA (VÍA DERECHA)
+            {x: 80, z: -120},  {x: 80, z: 0},    {x: 80, z: 120}, {x: 80, z: 240}, {x: 80, z: 360}
+        ];
+
+        trains.forEach(t => { createDetailedNS74(t.x, 0, t.z); });
+    }
+
+    function createDetailedNS74(x, y, z) {
+        const L = 75; const W = 6.6; const H = 6.2;
+        
+        // BOGIES (RUEDAS)
+        for(let b=0; b<4; b++) {
+            const bz = (b * 22) - 33;
+            spawnBox(W - 0.5, 1.2, 6, x, y + 0.6, z + bz, mats.steel);
+        }
+        
+        // CUERPO PRINCIPAL
+        spawnBox(W, H, L, x, y + 4.3, z, mats.trainBlue, true, true);
+        
+        // TECHO
+        spawnBox(W + 0.2, 0.7, L, x, y + 7.4, z, mats.steel, false, true);
+        
+        // VENTANAS LATERALES
+        for(let i=0; i<11; i++) {
+            const oz = (i * 6.5) - 32;
+            spawnBox(0.2, 2.8, 3.8, x - W/2 - 0.1, y + 5.2, z + oz, mats.glass, false, true);
+            spawnBox(0.2, 2.8, 3.8, x + W/2 + 0.1, y + 5.2, z + oz, mats.glass, false, true);
+        }
+
+        // PARABRISAS FRONTAL
+        spawnBox(W - 0.8, H - 1.2, 0.4, x, y + 4.5, z + L/2 + 0.1, mats.glass, true, true);
+        
+        // ACOPLE
+        spawnBox(1.5, 1.5, 2, x, y + 2, z + L/2 + 1, mats.steel); 
+        
+        // LUCES FRONTALES
+        const fGeo = new THREE.BoxGeometry(1.4, 0.5, 0.2);
+        const fMat = new THREE.MeshBasicMaterial({color: 0xffffff});
+        const fl = new THREE.Mesh(fGeo, fMat);
+        fl.position.set(x - 2.2, y + 2.5, z + L/2 + 0.2);
+        scene.add(fl);
+        const fr = fl.clone(); 
+        fr.position.x = x + 2.2; 
+        scene.add(fr);
+    }
+
+    function checkCollision(pos) {
+        const pBox = new THREE.Box3().setFromCenterAndSize(
+            new THREE.Vector3(pos.x, pos.y, pos.z), 
+            new THREE.Vector3(1.6, 4, 1.6)
+        );
+        for (let obj of collidables) {
+            if (pBox.intersectsBox(obj.bbox)) return true;
+        }
+        return false;
+    }
+
+    function animateLoop() {
+        requestAnimationFrame(animateLoop);
+        if (gameActive) {
+            frameCounter += 0.05;
+            const speed = isSprinting ? 0.75 : 0.45;
+            
+            const dir = new THREE.Vector3();
+            camera.getWorldDirection(dir);
+            dir.y = 0; dir.normalize();
+            
+            const side = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0,1,0)).normalize();
+            
+            let move = new THREE.Vector3(0, 0, 0);
+            if (moveForward) move.add(dir);
+            if (moveBackward) move.sub(dir);
+            if (moveLeft) move.sub(side);
+            if (moveRight) move.add(side);
+
+            if (move.length() > 0) {
+                move.normalize().multiplyScalar(speed);
+                if (!checkCollision(new THREE.Vector3(camera.position.x + move.x, camera.position.y, camera.position.z))) {
+                    camera.position.x += move.x;
+                }
+                if (!checkCollision(new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z + move.z))) {
+                    camera.position.z += move.z;
+                }
+                // HEAD BOBBING (EFECTO CAMINAR)
+                if(canJump) {
+                    camera.position.y = PLAYER_HEIGHT + Math.sin(frameCounter * 10) * (isSprinting ? 0.15 : 0.08);
+                }
+            }
+
+            // GRAVEDAD Y SALTO
+            verticalVel -= GRAVITY;
+            camera.position.y += verticalVel;
+
+            floorRaycaster.ray.origin.copy(camera.position);
+            const ground = floorRaycaster.intersectObjects(collidables);
+            
+            if (ground.length > 0 && ground[0].distance <= PLAYER_HEIGHT && verticalVel <= 0) {
+                camera.position.y += (PLAYER_HEIGHT - ground[0].distance);
+                verticalVel = 0;
+                canJump = true;
+            }
+
+            if (isPainting) performSpray();
+            
+            // RESET SI CAE AL VACÍO
+            if (camera.position.y < -40) { 
+                camera.position.copy(startPos); 
+                verticalVel = 0; 
+            }
+        }
+        renderer.render(scene, camera);
+    }
+
+    function performSpray() {
+        raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+        const targets = raycaster.intersectObjects(walls);
+        if (targets.length > 0 && targets[0].distance < 15) {
+            const hit = targets[0];
+            const size = parseFloat(document.getElementById('brushSize').value);
+            const color = document.getElementById('paintColor').value;
+            
+            // MARCA DE PINTURA (DECAL)
+            const mark = new THREE.Mesh(
+                new THREE.CircleGeometry(size, 12),
+                new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.8, side: THREE.DoubleSide, depthWrite: false })
+            );
+            
+            mark.position.copy(hit.point).add(hit.face.normal.clone().multiplyScalar(0.03));
+            mark.lookAt(hit.point.clone().add(hit.face.normal));
+            scene.add(mark);
+
+            // PARTÍCULAS MOMENTÁNEAS
+            const p = new THREE.Mesh(new THREE.SphereGeometry(0.1, 4, 4), new THREE.MeshBasicMaterial({color: color}));
+            p.position.copy(hit.point);
+            scene.add(p);
+            setTimeout(() => scene.remove(p), 100);
+        }
+    }
+
+    function setupInputHandlers() {
+        const container = document.getElementById('game-container');
+        const inst = document.getElementById('instructions');
+        
+        inst.addEventListener('click', () => container.requestPointerLock());
+
+        document.addEventListener('pointerlockchange', () => {
+            gameActive = (document.pointerLockElement === container);
+            inst.style.display = gameActive ? 'none' : 'block';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (gameActive) {
+                camera.rotation.y -= e.movementX * 0.0022;
+                camera.rotation.x -= e.movementY * 0.0022;
+                camera.rotation.x = Math.max(-1.45, Math.min(1.45, camera.rotation.x));
+            }
+        });
+
+        window.onkeydown = (e) => {
+            if (e.code === 'KeyW') moveForward = true;
+            if (e.code === 'KeyS') moveBackward = true;
+            if (e.code === 'KeyA') moveLeft = true;
+            if (e.code === 'KeyD') moveRight = true;
+            if (e.code === 'ShiftLeft') isSprinting = true;
+            
+            if (e.code === 'Space') { 
+                e.preventDefault(); 
+                if (canJump) {
+                    verticalVel = JUMP_FORCE; 
+                    canJump = false; 
+                }
+            }
+
+            if (e.code === 'KeyR') { 
+                camera.position.copy(startPos); 
+                verticalVel = 0; 
+            }
+            
+            if (e.code === 'KeyP') {
+                const link = document.createElement('a');
+                link.href = renderer.domElement.toDataURL("image/png");
+                link.download = "metrotagger_santiago.png"; 
+                link.click();
+            }
+        };
+
+        window.onkeyup = (e) => {
+            if (e.code === 'KeyW') moveForward = false;
+            if (e.code === 'KeyS') moveBackward = false;
+            if (e.code === 'KeyA') moveLeft = false;
+            if (e.code === 'KeyD') moveRight = false;
+            if (e.code === 'ShiftLeft') isSprinting = false;
+        };
+
+        container.onmousedown = () => { if(gameActive) isPainting = true; };
+        window.onmouseup = () => isPainting = false;
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        setInterval(() => { 
+            if(gameActive) { 
+                timeLeft--; 
+                document.getElementById('time-val').innerText = timeLeft; 
+                if(timeLeft <= 0) { location.reload(); }
+            } 
+        }, 1000);
+    }
+
+    init();
+</script>
+</body>
+</html>
