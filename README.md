@@ -2,6 +2,7 @@ WDL MASTER TAGGER es una experiencia de simulación en primera persona (FPS) des
 
 TRAILER AQUÍ: 
 https://youtu.be/KE8L0RL6YC8?si=o1F2wMEpQ1XRs_yG
+JUEGA Y PRUEBALO AQUÍ: https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/
 
 <img width="1920" height="1080" alt="WDLMASTERTAGGER 1920x1080" src="https://github.com/user-attachments/assets/e36704b2-a72d-4af0-9d15-818dddf80608" />
 
@@ -41,6 +42,9 @@ Hoja de Ruta: Actualmente en fase de distribución web. Se proyecta una futura c
 
 <img width="240" height="114" alt="juego grafiti metrolalo6" src="https://github.com/user-attachments/assets/644471f7-5c2c-430d-ba0c-62e74b6abe30" />
 <img width="144" height="68" alt="juego grafiti metrolalo7" src="https://github.com/user-attachments/assets/f0801ac2-df38-4a0c-aab4-2af854945726" />
+
+GAMEPLAY DE ESTE ESCENARIO:
+https://www.youtube.com/watch?v=dHxB3NoJs1k
 
 
 
