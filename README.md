@@ -77,6 +77,12 @@ El `Raycaster` se lanza desde la posicion de la camara en direccion al centro de
 
 En el resto de los mapas se usa `CircleGeometry` con `MeshBasicMaterial`, aplicando `renderOrder` incremental y `polygonOffset` con factor variable por capa. Es mas ligero pero no tiene la misma fidelidad de textura de aerosol.
 
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3OTg3LnBuZw==/original/f8PbmW.png" width="32%" alt="Decal spray">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3OTkwLnBuZw==/original/I4hjrd.png" width="32%" alt="Decal example">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3OTk1LnBuZw==/original/Kesm02.png" width="32%" alt="Decal result">
+</p>
+
 ### Sistema de goteo procedural
 
 Cuando el jugador mantiene el spray sobre un mismo punto, un contador interno `dripCounter` se incrementa. Al superar el umbral `DRIP_THRESHOLD` (15 en la mayoria de mapas), el motor genera gotas en la posicion de impacto. Cada gota es un `BoxGeometry` muy fino y alargado, con material semitransparente del mismo color que el trazo activo.
@@ -87,6 +93,13 @@ Hay un limite de gotas activas (300 a 400 segun el mapa). Cuando se alcanza, las
 
 En Bodega Fluor especificamente, si la distancia recorrida por el mouse entre frames es menor a 0.05 unidades, `dripCounter` incrementa en 2 por frame (acumulacion rapida). Si el mouse se mueve mas, solo incrementa en 0.5.
 
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzA0LmdpZg==/original/HdS8d7.gif" width="24%" alt="Drip system">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Njc5LmdpZg==/original/TYMWnA.gif" width="24%" alt="Drip detail">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Nzk5LmdpZg==/original/5%2BWVx7.gif" width="24%" alt="Drip paint">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2ODA0LmdpZg==/original/J3NJWn.gif" width="24%" alt="Drip result">
+</p>
+
 ### Trenes en movimiento y colision AABB
 
 Exclusivo del mapa BA Subte. Hay dos formaciones que circulan por vias laterales fijas (X = -100 y X = +100). Cada formacion tiene 4 coches ensamblados con `BoxGeometry`, totalizando aproximadamente 300 unidades de largo. Llevan un `PointLight` frontal que actua como faro (`color: #ffeecc, intensity: 3, distance: 400`), visible a traves de la niebla.
@@ -96,6 +109,12 @@ La logica de movimiento es lineal y determinista: el tren 1 avanza en direccion 
 La deteccion de colision es por AABB (Axis-Aligned Bounding Box). No se usa `Box3` de Three.js para esto, sino una comparacion directa de rangos: si el rango Z del tren (posicion Z mas/menos mitad del largo) se solapa con el rango Z del jugador, y ambos comparten el mismo eje X de via, hay colision. La pantalla se pone en negro, aparece un overlay rojo con el texto ATROPELLADO POR EL TREN en tipografia sans-serif, y un enlace de recarga. Sin respawn, sin continuar.
 
 En los ultimos 20 segundos del timer, el fondo de la escena (`scene.background`) comienza a oscilar entre negro y rojo oscuro, la niebla `FogExp2` muta su color a `#330000`, y un overlay HTML con el texto ALERTA DE SEGURIDAD -- ABANDONE EL AREA INMEDIATAMENTE titila sobre el canvas. Esto esta implementado con `setInterval` a 500ms que alterna clases CSS y modifica las propiedades de color de la escena en tiempo real.
+
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzODA1LnBuZw==/original/0ejzuP.png" width="32%" alt="Tren moving">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzODEzLnBuZw==/original/69ayyr.png" width="32%" alt="Game Over">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzODc1LnBuZw==/original/XOo7nC.png" width="32%" alt="Alerta roja">
+</p>
 
 ### Sistema de audio y radio
 
@@ -136,6 +155,13 @@ Cada mapa tiene una configuracion de luces pensada para su ambientacion:
 - **Bodega Fluor:** Solo `AmbientLight(#704045, 1.2)`. Una unica luz rojiza. Es el mapa mas oscuro.
 - **Edificio:** `AmbientLight(0xffffff, 0.6)`, `DirectionalLight(0xffffff, 0.9)` sol diurno.
 - **Laberinto:** `AmbientLight(0xffffff, 0.7)`, `DirectionalLight(0xffffff, 0.8)` sol diurno.
+
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Njc5LmdpZg==/original/TYMWnA.gif" width="23%" alt="Luz Metro">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2ODA2LmdpZg==/original/VWu641.gif" width="23%" alt="Luz NYC">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzODk4LnBuZw==/original/uPh9Ab.png" width="23%" alt="Luz BA Subte">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Njk4LmdpZg==/original/ClpUdF.gif" width="23%" alt="Luz Container">
+</p>
 
 ### Movimiento del jugador y fisica
 
@@ -317,9 +343,13 @@ Unico mapa con sombras activadas por hardware. Luna `DirectionalLight #556677` p
 
 El mas chico. 365 lineas. Laberinto de 15 por 20 celdas (120x160m) con pasillos de un bloque de ancho. Oscuridad casi total -- solo `AmbientLight #704045` a intensidad 1.2. UI verde neon sobre negro.
 
-Laberinto hardcodeado como matriz 2D, no procedural. Paredes `BoxGeometry` de 8 unidades, altura 6. Colision por `Math.abs`, sin `Box3`.
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzY4LmdpZg==/original/DevNdf.gif" width="30%" alt="Fluor oscuro">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Nzc5LmdpZg==/original/p73fq%2B.gif" width="30%" alt="Fluor maze">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzcxLmdpZg==/original/QzmamK.gif" width="30%" alt="Fluor gameplay">
+</p>
 
-Goteo agresivo: si no moves el mouse, el contador sube al doble de velocidad. Disenado para perderse en el laberinto, pintar en la oscuridad y que las paredes se llenen de chorreados.
+Laberinto hardcodeado como matriz 2D, no procedural. Paredes `BoxGeometry` de 8 unidades, altura 6. Colision por `Math.abs`, sin `Box3`. Goteo agresivo: si no moves el mouse, el contador sube al doble de velocidad. Disenado para perderse en el laberinto, pintar en la oscuridad y que las paredes se llenen de chorreados.
 
 - Movimiento: 0.20 (el mas lento)
 - Gravedad: 0.008, salto: 0.18, altura: 2.0
@@ -407,6 +437,14 @@ Containers dinamicos en el perimetro: cajas de colores `#ff9900, #ffcc00, #39ff1
 | Audio dual | No | No | Si | No | No | No | No |
 | Velocidad mov | 0.45 | 0.45 | 0.45 | 0.28 | 0.20 | 0.25 | 0.18 |
 
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3MTk1LnBuZw==/original/9pwbF5.png" width="18%" alt="Comp 1">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4NTE5LnBuZw==/original/smTjIS.png" width="18%" alt="Comp 2">
+  <img src="https://img.itch.zone/aW1nLzI3NTI0MTcxLnBuZw==/original/TzYang.png" width="18%" alt="Comp 3">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzEzLmdpZg==/original/ikkq4n.gif" width="18%" alt="Comp 4">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Nzg0LmdpZg==/original/aVHe9T.gif" width="18%" alt="Comp 5">
+</p>
+
 ---
 
 ## Controles
@@ -454,6 +492,12 @@ Cada archivo HTML sigue la misma estructura:
 WDL Master Tagger no es un juego para ganar. Es un juego para estar -- para meterse en la atmosfera de un subte abandonado, sentir la presion del reloj, escuchar el zumbido de los rieles y saber que en cualquier momento un tren te puede borrar.
 
 Este proyecto nace como una herramienta de practica y visualizacion para escritores de graffiti, disenadores y artistas visuales. No tiene scoring, no tiene niveles, no tiene logros. Es un espacio de simulacion estetica donde probar combinaciones de colores, composiciones y estilos antes de llevarlos al mundo real, o simplemente disfrutar del flujo creativo en un ambiente industrial atmosferico.
+
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4NTM5LnBuZw==/original/SJWreF.png" width="32%" alt="Arte 1">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzOTA2LnBuZw==/original/Ocdn3F.png" width="32%" alt="Arte 2">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3MjAxLnBuZw==/original/ixdXIK.png" width="32%" alt="Arte 3">
+</p>
 
 ---
 
