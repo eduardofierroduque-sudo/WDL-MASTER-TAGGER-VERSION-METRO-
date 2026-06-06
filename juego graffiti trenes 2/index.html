@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WDL MASTER TAGGER: NYC SUBWAY EDITION</title>
+    <style>
+        body { margin: 0; background-color: #050505; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; touch-action: none; }
+        #game-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; outline: none; }
+        #gameCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 1; }
+        
+        #loading-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 1000;
+        }
+        .loading-text { font-size: 20px; letter-spacing: 8px; animation: pulse 1.5s infinite; color: #ff9900; }
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+
+        #instructions {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95); padding: 40px; border: 2px solid #ff9900;
+            text-align: center; z-index: 200; color: #fff; cursor: pointer; display: none;
+            box-shadow: 0 0 50px rgba(255,153,0,0.4);
+        }
+
+        #ui-overlay { 
+            position: absolute; top: 20px; left: 20px; z-index: 10; pointer-events: none; 
+            background: rgba(0, 0, 0, 0.8); padding: 15px; border-left: 5px solid #ff9900;
+            color: #fff; min-width: 180px;
+        }
+
+        #controls-panel { 
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            background: rgba(15, 15, 15, 0.98); padding: 20px; border: 1px solid #ff9900;
+            display: flex; gap: 35px; z-index: 160; border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        #crosshair { 
+            position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; 
+            border: 1px solid rgba(183, 255, 0, 0.5); border-radius: 50%; transform: translate(-50%, -50%); 
+            pointer-events: none; z-index: 10;
+        }
+
+        #radio-box {
+            position: absolute; top: 20px; right: 20px; z-index: 150;
+            padding: 15px; background: rgba(0, 0, 0, 0.85); border: 1px solid #333;
+            width: 250px; text-align: center; border-radius: 2px;
+        }
+        .display { border: 1px solid #222; margin: 10px 0; padding: 8px; background: #020202; font-size: 10px; color: #ff9900; height: 35px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; font-family: 'Courier New', monospace; overflow: hidden; }
+        
+        .radio-btns { display: flex; justify-content: space-around; gap: 5px; }
+        .radio-btns button { background: #1a1a1a; color: #aaa; border: 1px solid #333; padding: 8px; cursor: pointer; font-size: 9px; flex: 1; transition: 0.2s; }
+        .radio-btns button:hover { background: #ff9900; color: #000; border-color: #ff9900; }
+
+        input[type="color"] { background: none; border: 1px solid #444; width: 45px; height: 45px; cursor: pointer; }
+        input[type="range"] { cursor: pointer; accent-color: #ff9900; width: 130px; }
+
+        #yt-hidden { position: absolute; top: -1000px; visibility: hidden; }
+    </style>
+</head>
+<body>
+
+<div id="loading-screen">
+    <div class="loading-text">WWW.FIERRODUQUE.COM</div>
+</div>
+
+<div id="game-container" tabindex="0">
+<div id="instructions">
+        <h1 style="margin:0; color: #ff9900; letter-spacing: 5px;">WDL MASTER TAGGER</h1>
+        <p style="color: #666; font-size: 12px;">NEW YORK CITY - SUBWAY DEPOT</p>
+        <div style="text-align: left; display: inline-block; margin: 20px 0; color: #ccc; font-size: 13px; line-height: 1.8; border-top: 1px solid #333; padding-top: 15px;">
+            • <b>WASD</b>: MOVIMIENTO<br>
+            • <b>SHIFT</b>: CORRER (INFILTRACIÓN RÁPIDA)<br>
+            • <b>ESPACIO</b>: SALTAR OBSTÁCULOS<br>
+            • <b>MOUSE CLICK</b>: PINTAR<br>
+            • <b>P</b>: MODO FOTOGRAFÍA (SNAPSHOT)<br>
+            • <b style="color: #ff9900;">ESC</b>: LIBERAR MOUSE Y CAMBIAR HERRAMIENTAS
+        </div>
+        <p style="font-size: 16px; border: 1px solid #ff9900; padding: 12px; background: #ff9900; color: #000; font-weight: bold; letter-spacing: 2px;">COMENZAR MISIÓN</p>
+    </div>
+    <div id="crosshair"></div>
+
+    <div id="ui-overlay">
+        <div style="font-size: 18px; font-weight: bold; letter-spacing: 1px;">TURNO: <span id="time-val">1200</span>s</div>
+        <div style="font-size: 10px; color: #ff9900; margin-top: 5px;">SENSOR: METRO ASEGURADO</div>
+    </div>
+
+    <div id="controls-panel">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <span style="font-size:9px; color:#555; margin-bottom:8px; font-weight:bold;">PIGMENTO</span>
+            <input type="color" id="paintColor" value="#ff3300"> 
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <span style="font-size:9px; color:#555; margin-bottom:8px; font-weight:bold;">VÁLVULA</span>
+            <input type="range" id="brushSize" min="0.1" max="5.0" step="0.1" value="1.0">
+        </div>
+    </div>
+
+    <div id="radio-box">
+        <div style="font-size: 9px; letter-spacing: 2px; color: #555; font-weight: bold;">SISTEMA DE AUDIO</div>
+        <div class="display" id="track-name">ESPERANDO SEÑAL...</div>
+        <div class="radio-btns">
+            <button onclick="window.prev()">PREV</button>
+            <button id="play-btn" onclick="window.togglePlay()">PLAY</button>
+            <button onclick="window.next()">NEXT</button>
+        </div>
+    </div>
+
+    <div id="yt-hidden"><div id="player"></div></div>
+    <canvas id="gameCanvas"></canvas>
+</div>
+
+<script>
+    let player;
+    const playlistId = 'PLU4NeCIAEqOSN_MJPeCZ4-QODexTucbpy';
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '1',
+            width: '1',
+            playerVars: { 
+                'listType': 'playlist', 
+                'list': playlistId, 
+                'autoplay': 0, 
+                'index': 0 
+            },
+            events: { 
+                'onReady': () => { 
+                    console.log("Radio NY Online"); 
+                }, 
+                'onStateChange': (e) => {
+                    if (e.data == 1) {
+                        document.getElementById('track-name').innerText = player.getVideoData().title;
+                        document.getElementById('play-btn').innerText = 'PAUSE';
+                    } else { 
+                        document.getElementById('play-btn').innerText = 'PLAY'; 
+                    }
+                } 
+            }
+        });
+    }
+
+    window.togglePlay = () => { 
+        player.getPlayerState() == 1 ? player.pauseVideo() : player.playVideo(); 
+    }
+    window.next = () => player.nextVideo();
+    window.prev = () => player.previousVideo();
+</script>
+
+<script type="module">
+    import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+    import { DecalGeometry } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/geometries/DecalGeometry.js';
+
+    // --- VARIABLES GLOBALES ---
+    let activeDrips = []; 
+    let dripCounter = 0;  
+    const DRIP_THRESHOLD = 15; 
+    let scene, camera, renderer, raycaster, floorRaycaster;
+    let sprayTexture; 
+    let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false, isSprinting = false;
+    let isPainting = false, gameActive = false;
+    let walls = [], collidables = [];
+    let verticalVel = 0, canJump = true, timeLeft = 1200;
+    let frameCounter = 0;
+    let paintCount = 0;
+
+    const PLAYER_HEIGHT = 2.4;
+    const GRAVITY = 0.012; 
+    const JUMP_FORCE = 0.32; 
+    // Inicio en el andén central de la estación principal
+    const startPos = new THREE.Vector3(0, PLAYER_HEIGHT + 2, 0); 
+
+    // --- PALETA DE MATERIALES NUEVA YORK ---
+    const mats = {
+        concrete: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.95 }),
+        tunnelWall: new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 }),
+        stationTiles: new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.4 }),
+        steel: new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.3 }),
+        nycGreenSteel: new THREE.MeshStandardMaterial({ color: 0x123524, metalness: 0.4, roughness: 0.6 }),
+        trainMetal: new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.8, roughness: 0.3 }),
+        trainBlack: new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 }),
+        glass: new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.1, metalness: 0.9 }),
+        crate: new THREE.MeshStandardMaterial({ color: 0x3d2b1f, roughness: 0.9 }),
+        hazard: new THREE.MeshStandardMaterial({ color: 0xffaa00 })
+    };
+
+    function createSprayTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const context = canvas.getContext('2d');
+        const gradient = context.createRadialGradient(64, 64, 0, 64, 64, 64);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 1)'); 
+        gradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.9)'); 
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); 
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 128, 128);
+        return new THREE.CanvasTexture(canvas);
+    }
+
+    function init() {
+        sprayTexture = createSprayTexture(); 
+
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x020202);
+        // Niebla atmosférica para los túneles
+        scene.fog = new THREE.FogExp2(0x020202, 0.012);
+
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+        camera.rotation.order = 'YXZ';
+        
+        renderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('gameCanvas'), 
+            antialias: true, 
+            preserveDrawingBuffer: true 
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.outputEncoding = THREE.sRGBEncoding;
+
+        raycaster = new THREE.Raycaster();
+        floorRaycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.08));
+
+        buildNYCLabyrinth();
+        setupInputHandlers();
+        
+        camera.position.copy(startPos);
+
+        setTimeout(() => {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('instructions').style.display = 'block';
+        }, 2500);
+
+        animateLoop();
+    }
+
+    // --- MOTOR DE CONSTRUCCIÓN ---
+    function spawnBox(w, h, d, x, y, z, mat, collides = true, paintable = true) {
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+        mesh.position.set(x, y, z);
+        scene.add(mesh);
+        mesh.updateMatrixWorld();
+        mesh.bbox = new THREE.Box3().setFromObject(mesh);
+        if(collides) collidables.push(mesh);
+        if(paintable) walls.push(mesh);
+        return mesh;
+    }
+
+    function createRails(x, y, z, length) {
+        spawnBox(0.4, 0.3, length, x - 2.4, y + 0.15, z, mats.steel, false, false);
+        spawnBox(0.4, 0.3, length, x + 2.4, y + 0.15, z, mats.steel, false, false);
+        for(let i = 0; i < length; i += 3) {
+            spawnBox(7, 0.2, 0.8, x, y + 0.1, (z - length/2) + i, mats.concrete, false, false);
+        }
+    }
+
+    // --- GENERADOR DEL LABERINTO ---
+    function buildNYCLabyrinth() {
+        // SUELO GENERAL
+        spawnBox(1000, 1, 2000, 0, -0.5, 0, mats.concrete, true, false);
+        const tunnelHeight = 18;
+
+        // --- 1. ESTACIÓN CENTRAL (Espacio Amplio) ---
+        // La estación mide 400 de largo (Z de -200 a 200) y 100 de ancho (X de -50 a 50)
+        
+        // Andenes
+        spawnBox(12, 2, 400, -44, 1, 0, mats.concrete, true, true); // Andén Lateral Izq
+        spawnBox(16, 2, 400, 0, 1, 0, mats.concrete, true, true);   // Andén Central
+        spawnBox(12, 2, 400, 44, 1, 0, mats.concrete, true, true);  // Andén Lateral Der
+
+        // Techo de la estación
+        spawnBox(100, 2, 400, 0, tunnelHeight, 0, mats.tunnelWall, true, true);
+
+        // Paredes Exteriores (Azulejos)
+        spawnBox(2, tunnelHeight, 400, -50, tunnelHeight/2, 0, mats.stationTiles, true, true);
+        spawnBox(2, tunnelHeight, 400, 50, tunnelHeight/2, 0, mats.stationTiles, true, true);
+
+        // Vías de la estación (4 vías en total)
+        const tracksX = [-30, -10, 10, 30];
+        tracksX.forEach(tx => {
+            createRails(tx, 0, 0, 400);
+        });
+
+        // Pilares verdes estilo NYC
+        for (let i = -180; i <= 180; i += 30) {
+            spawnBox(1.5, tunnelHeight, 1.5, -8, tunnelHeight/2, i, mats.nycGreenSteel, true, true);
+            spawnBox(1.5, tunnelHeight, 1.5, 8, tunnelHeight/2, i, mats.nycGreenSteel, true, true);
+            spawnBox(1.5, tunnelHeight, 1.5, -40, tunnelHeight/2, i, mats.nycGreenSteel, true, true);
+            spawnBox(1.5, tunnelHeight, 1.5, 40, tunnelHeight/2, i, mats.nycGreenSteel, true, true);
+        }
+
+        // Luces de la estación
+        for (let i = -180; i <= 180; i += 60) {
+            const stationLight = new THREE.PointLight(0xdcf0f7, 0.8, 150);
+            stationLight.position.set(0, tunnelHeight - 2, i);
+            scene.add(stationLight);
+        }
+
+        // --- 2. TÚNELES CON APERTURAS (El Laberinto) ---
+        // Los túneles se extienden al Norte (Z: -200 a -800) y Sur (Z: 200 a 800)
+        
+        // Muros de los extremos de la estación (con huecos calculados para dejar pasar las vías)
+        const wallXPositions = [-40, -20, 0, 20, 40];
+        [-200, 200].forEach(zPos => {
+            wallXPositions.forEach(wx => {
+                // Ancho de muro de 8 unidades entre las vías para sellar la estación
+                spawnBox(8, tunnelHeight, 2, wx, tunnelHeight/2, zPos, mats.tunnelWall, true, true);
+            });
+        });
+
+        const tunnelSegments = [
+            { start: 240, dir: 1 },  // Hacia el Sur
+            { start: -240, dir: -1 } // Hacia el Norte
+        ];
+
+        tunnelSegments.forEach(seg => {
+            // Vías largas de los túneles
+            tracksX.forEach(tx => {
+                createRails(tx, 0, seg.dir * 500, 600); // 600 de largo desde el centro
+            });
+
+            // Techo continuo de los túneles
+            spawnBox(100, 2, 600, 0, tunnelHeight, seg.dir * 500, mats.tunnelWall, true, false);
+
+            // Bucle para crear los muros con "Pasillos Transversales" cada 120 metros
+            for (let z = 240; z <= 760; z += 120) {
+                let actualZ = z * seg.dir;
+                let wallLength = 90; // Deja un hueco de 30 unidades exactas para cruzar entre túneles
+                
+                // Muros laterales que encierran cada una de las 4 vías formando tubos
+                const tubeWallsX = [-36, -24, -16, -4, 4, 16, 24, 36];
+                tubeWallsX.forEach(wx => {
+                    spawnBox(2, tunnelHeight, wallLength, wx, tunnelHeight/2, actualZ, mats.tunnelWall, true, true);
+                });
+
+                // Iluminación tenue por cada tubo
+                tracksX.forEach(tx => {
+                    const tunnelLight = new THREE.PointLight(0xffb84d, 0.7, 60);
+                    tunnelLight.position.set(tx, tunnelHeight - 4, actualZ);
+                    scene.add(tunnelLight);
+                });
+            }
+        });
+
+        // --- 3. CAJAS Y OBSTÁCULOS REMOVIDOS ---
+        // (Las cajas flotantes fueron eliminadas según la solicitud)
+
+        // --- 4. LOS 14 TRENES ESTRATÉGICOS ---
+        const trains = [
+            // Trenes Estacionados en la Estación Principal
+            {x: -30, z: 0}, {x: 10, z: -50}, {x: 30, z: 80},
+            
+            // Trenes Ocultos en Túneles Norte (Z negativo)
+            {x: -10, z: -300}, {x: -30, z: -450}, {x: 10, z: -250}, {x: 10, z: -600}, {x: 30, z: -500},
+            
+            // Trenes Ocultos en Túneles Sur (Z positivo)
+            {x: -30, z: 350}, {x: -10, z: 250}, {x: -10, z: 550}, {x: 10, z: 400}, {x: 30, z: 300}, {x: 30, z: 650}
+        ];
+
+        trains.forEach(t => { createNYCTrain(t.x, 0, t.z); });
+
+        // --- 5. MUROS PARA CERRAR EL MAPA ---
+        // Aquí agregamos los pasadizos de cierre. Son paredes sólidas y pintables
+        // colocadas exactamente donde terminan los túneles para evitar caer al vacío.
+        spawnBox(100, tunnelHeight, 2, 0, tunnelHeight/2, 800, mats.tunnelWall, true, true);
+        spawnBox(100, tunnelHeight, 2, 0, tunnelHeight/2, -800, mats.tunnelWall, true, true);
+    }
+
+    function createNYCTrain(x, y, z) {
+        const L = 75; const W = 6.8; const H = 6.5;
+        
+        for(let b=0; b<4; b++) {
+            const bz = (b * 22) - 33;
+            spawnBox(W - 0.5, 1.2, 6, x, y + 0.6, z + bz, mats.steel);
+        }
+        
+        spawnBox(W, H, L, x, y + 4.5, z, mats.trainMetal, true, true);
+        spawnBox(W + 0.05, 2.5, L, x, y + 5.5, z, mats.trainBlack, false, true);
+        spawnBox(W - 0.5, 0.8, L, x, y + 8, z, mats.steel, false, true);
+        
+        for(let i=0; i<10; i++) {
+            const oz = (i * 7) - 31.5;
+            spawnBox(0.2, 2.3, 3, x - W/2 - 0.1, y + 5.5, z + oz, mats.glass, false, true);
+            spawnBox(0.2, 2.3, 3, x + W/2 + 0.1, y + 5.5, z + oz, mats.glass, false, true);
+        }
+
+        spawnBox(W - 1, H - 2, 0.4, x, y + 5.5, z + L/2 + 0.1, mats.glass, true, true);
+        spawnBox(W - 4, 0.6, 0.5, x, y + 7.2, z + L/2 + 0.1, mats.trainBlack, false, false);
+        
+        const ledGeo = new THREE.BoxGeometry(W - 4.2, 0.4, 0.55);
+        const ledMat = new THREE.MeshBasicMaterial({color: 0xff3300}); 
+        const led = new THREE.Mesh(ledGeo, ledMat);
+        led.position.set(x, y + 7.2, z + L/2 + 0.1);
+        scene.add(led);
+
+        spawnBox(1.5, 1.5, 2, x, y + 2, z + L/2 + 1, mats.steel); 
+        
+        const fGeo = new THREE.BoxGeometry(0.8, 0.8, 0.2);
+        const fMat = new THREE.MeshBasicMaterial({color: 0xffffff});
+        const fl = new THREE.Mesh(fGeo, fMat);
+        fl.position.set(x - 2.5, y + 3, z + L/2 + 0.2);
+        scene.add(fl);
+        const fr = fl.clone(); 
+        fr.position.x = x + 2.5; 
+        scene.add(fr);
+        
+        const backMat = new THREE.MeshBasicMaterial({color: 0xff0000});
+        const bl = new THREE.Mesh(fGeo, backMat);
+        bl.position.set(x - 2.5, y + 3, z - L/2 - 0.2);
+        scene.add(bl);
+        const br = bl.clone(); 
+        br.position.x = x + 2.5; 
+        scene.add(br);
+    }
+
+    function checkCollision(pos) {
+        const pBox = new THREE.Box3().setFromCenterAndSize(
+            new THREE.Vector3(pos.x, pos.y, pos.z), 
+            new THREE.Vector3(1.6, 4, 1.6)
+        );
+        for (let obj of collidables) {
+            if (pBox.intersectsBox(obj.bbox)) return true;
+        }
+        return false;
+    }
+
+   function animateLoop() {
+    requestAnimationFrame(animateLoop);
+    
+    if (gameActive) {
+        frameCounter += 0.05;
+        const speed = isSprinting ? 0.75 : 0.45;
+        
+        const dir = new THREE.Vector3();
+        camera.getWorldDirection(dir);
+        dir.y = 0; dir.normalize();
+        
+        const side = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0,1,0)).normalize();
+        
+        let move = new THREE.Vector3(0, 0, 0);
+        if (moveForward) move.add(dir);
+        if (moveBackward) move.sub(dir);
+        if (moveLeft) move.sub(side);
+        if (moveRight) move.add(side);
+
+        if (move.length() > 0) {
+            move.normalize().multiplyScalar(speed);
+            if (!checkCollision(new THREE.Vector3(camera.position.x + move.x, camera.position.y, camera.position.z))) {
+                camera.position.x += move.x;
+            }
+            if (!checkCollision(new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z + move.z))) {
+                camera.position.z += move.z;
+            }
+            if(canJump) {
+                camera.position.y = PLAYER_HEIGHT + Math.sin(frameCounter * 10) * (isSprinting ? 0.15 : 0.08);
+            }
+        }
+
+        verticalVel -= GRAVITY;
+        camera.position.y += verticalVel;
+
+        floorRaycaster.ray.origin.copy(camera.position);
+        const ground = floorRaycaster.intersectObjects(collidables);
+        
+        if (ground.length > 0 && ground[0].distance <= PLAYER_HEIGHT && verticalVel <= 0) {
+            camera.position.y += (PLAYER_HEIGHT - ground[0].distance);
+            verticalVel = 0;
+            canJump = true;
+        }
+
+        if (isPainting) performSpray();
+
+        activeDrips.forEach((drip) => {
+            const data = drip.userData;
+            if (data.currentLength < data.maxLength) {
+                data.currentLength += data.speed;
+                drip.scale.set(1, data.currentLength * 15, 1);
+                drip.position.y -= data.speed * 0.7; 
+            }
+        });
+
+        if (activeDrips.length > 400) {
+            const oldDrip = activeDrips.shift();
+            scene.remove(oldDrip);
+        }
+        
+        if (camera.position.y < -40) { 
+            camera.position.copy(startPos); 
+            verticalVel = 0; 
+        }
+    }
+    
+    renderer.render(scene, camera);
+}
+
+function performSpray() {
+    raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+    const targets = raycaster.intersectObjects(walls);
+
+    if (targets.length > 0 && targets[0].distance < 15) {
+        const hit = targets[0];
+        const brushSize = parseFloat(document.getElementById('brushSize').value);
+        const color = document.getElementById('paintColor').value;
+
+        paintCount++; 
+
+        const position = hit.point;
+        const decalDepth = 0.5; 
+        const dimensions = new THREE.Vector3(brushSize, brushSize, decalDepth);
+
+        const orientation = new THREE.Euler().setFromQuaternion(
+            new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), hit.face.normal)
+        );
+
+        const impactZone = new THREE.Box3().setFromCenterAndSize(
+            position, 
+            new THREE.Vector3(brushSize * 1.5, brushSize * 1.5, decalDepth * 1.5)
+        );
+
+        walls.forEach((wallMesh) => {
+            if (wallMesh.bbox && impactZone.intersectsBox(wallMesh.bbox)) {
+                
+                const markGeometry = new DecalGeometry(
+                    wallMesh, 
+                    position,
+                    orientation,
+                    dimensions
+                );
+
+                if (markGeometry.attributes.position.count > 0) {
+                    const markMaterial = new THREE.MeshBasicMaterial({
+                        color: color,
+                        map: sprayTexture,       
+                        alphaTest: 0.1,        
+                        transparent: true,
+                        opacity: 0.8,
+                        depthTest: true,  
+                        depthWrite: false, 
+                        polygonOffset: true,
+                        polygonOffsetFactor: -4 
+                    });
+
+                    const mark = new THREE.Mesh(markGeometry, markMaterial);
+                    mark.renderOrder = paintCount;
+                    scene.add(mark);
+                }
+            }
+        });
+
+        dripCounter++;
+        if (dripCounter > DRIP_THRESHOLD) {
+            createDrip(hit.point, hit.face.normal, color, brushSize);
+            dripCounter = 0; 
+        }
+    }
+}
+
+function createDrip(point, normal, color, brushSize) {
+    const dripWidth = 0.02 + (Math.random() * 0.03);
+    const geometry = new THREE.PlaneGeometry(dripWidth, 0.1);
+    const material = new THREE.MeshBasicMaterial({ 
+        color: color, 
+        transparent: true, 
+        opacity: 0.8,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -5 
+    });
+
+    const drip = new THREE.Mesh(geometry, material);
+    drip.position.copy(point).add(normal.clone().multiplyScalar(0.015));
+    drip.lookAt(point.clone().add(normal));
+    
+    drip.userData = {
+        speed: 0.005 + (Math.random() * 0.01),
+        maxLength: 0.5 + (Math.random() * 1.5),
+        currentLength: 0.1
+    };
+
+    scene.add(drip);
+    activeDrips.push(drip);
+}
+
+    function setupInputHandlers() {
+        const container = document.getElementById('game-container');
+        const inst = document.getElementById('instructions');
+        
+        inst.addEventListener('click', () => container.requestPointerLock());
+
+        document.addEventListener('pointerlockchange', () => {
+            gameActive = (document.pointerLockElement === container);
+            inst.style.display = gameActive ? 'none' : 'block';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (gameActive) {
+                camera.rotation.y -= e.movementX * 0.0022;
+                camera.rotation.x -= e.movementY * 0.0022;
+                camera.rotation.x = Math.max(-1.45, Math.min(1.45, camera.rotation.x));
+            }
+        });
+
+        window.onkeydown = (e) => {
+            if (e.code === 'KeyW') moveForward = true;
+            if (e.code === 'KeyS') moveBackward = true;
+            if (e.code === 'KeyA') moveLeft = true;
+            if (e.code === 'KeyD') moveRight = true;
+            if (e.code === 'ShiftLeft') isSprinting = true;
+            
+            if (e.code === 'Space') { 
+                e.preventDefault(); 
+                if (canJump) {
+                    verticalVel = JUMP_FORCE; 
+                    canJump = false; 
+                }
+            }
+
+            if (e.code === 'KeyR') { 
+                camera.position.copy(startPos); 
+                verticalVel = 0; 
+            }
+            
+            if (e.code === 'KeyP') {
+                const link = document.createElement('a');
+                link.href = renderer.domElement.toDataURL("image/png");
+                link.download = "metrotagger_nyc.png"; 
+                link.click();
+            }
+        };
+
+        window.onkeyup = (e) => {
+            if (e.code === 'KeyW') moveForward = false;
+            if (e.code === 'KeyS') moveBackward = false;
+            if (e.code === 'KeyA') moveLeft = false;
+            if (e.code === 'KeyD') moveRight = false;
+            if (e.code === 'ShiftLeft') isSprinting = false;
+        };
+
+        container.onmousedown = () => { if(gameActive) isPainting = true; };
+        window.onmouseup = () => isPainting = false;
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        setInterval(() => { 
+            if(gameActive) { 
+                timeLeft--; 
+                document.getElementById('time-val').innerText = timeLeft; 
+                if(timeLeft <= 0) { location.reload(); }
+            } 
+        }, 1000);
+    }
+
+    init();
+</script>
+</body>
+</html>

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WDL MASTER TAGGER: BODEGAS DE NOCHE 1</title>
+    <style>
+        body { margin: 0; background-color: #050505; color: #fff; font-family: 'Courier New', monospace; overflow: hidden; touch-action: none; }
+        #game-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; outline: none; }
+        #gameCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 1; }
+        
+        /* Pantallas de interfaz */
+        #loading-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 1000;
+        }
+        .loading-text { font-size: 20px; letter-spacing: 8px; animation: pulse 1.5s infinite; color: #39ff14; }
+        @keyframes pulse { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
+
+        #instructions {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(10, 10, 10, 0.95); padding: 40px; border: 2px solid #39ff14;
+            text-align: center; z-index: 200; color: #39ff14; cursor: pointer; display: none;
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.3);
+        }
+
+        #ui-overlay { 
+            position: absolute; top: 20px; left: 20px; z-index: 10; pointer-events: none; 
+            background: rgba(0, 0, 0, 0.8); padding: 20px; border-left: 5px solid #39ff14;
+            color: #fff; min-width: 200px;
+        }
+
+        #controls-panel { 
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            background: rgba(0, 0, 0, 0.9); padding: 20px; border: 1px solid #444;
+            display: flex; gap: 30px; z-index: 160; border-radius: 8px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+        }
+
+        .control-group { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #888; }
+
+        #crosshair { 
+            position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; 
+            border: 2px solid #39ff14; border-radius: 50%; transform: translate(-50%, -50%); 
+            pointer-events: none; z-index: 10;
+        }
+
+        #radio-box {
+            position: absolute; top: 20px; right: 20px; z-index: 150;
+            padding: 20px; background: rgba(0, 0, 0, 0.9); border: 1px solid #39ff14;
+            width: 260px; text-align: center;
+        }
+        .display { border: 1px solid #333; margin: 15px 0; padding: 10px; background: #111; font-size: 12px; color: #39ff14; height: 40px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
+        .radio-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; }
+        .radio-btns button { background: #222; color: #fff; border: 1px solid #444; padding: 10px; cursor: pointer; font-family: inherit; font-size: 10px; }
+        .radio-btns button:hover { background: #333; border-color: #39ff14; }
+
+        input[type="color"] { background: none; border: 1px solid #444; width: 45px; height: 45px; cursor: pointer; }
+        input[type="range"] { cursor: pointer; accent-color: #39ff14; width: 150px; }
+
+        #yt-hidden { position: absolute; top: -1000px; visibility: hidden; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="loading-screen">
+        <div class="loading-text">WWW.FIERRODUQUE.COM</div>
+    </div>
+
+    <div id="instructions">
+            <h1 style="margin:0; color: #00a9e0; letter-spacing: 5px;">WDL MASTER TAGGER: BODEGAS DE NOCHE 1 </h1>
+            <p style="color: #666; font-size: 12px;">EXPLORA EL LUGAR Y RAYALO HASTA QUE EL JUEGO SE ROMPA</p>
+            <div style="text-align: left; display: inline-block; margin: 20px 0; color: #ccc; font-size: 13px; line-height: 1.8; border-top: 1px solid #333; padding-top: 15px;">
+                • <b>WASD</b>: MOVIMIENTO<br>
+                • <b>SHIFT</b>: CORRER<br>
+                • <b>ESPACIO</b>: SALTAR<br>
+                • <b>MOUSE CLICK</b>: PINTAR<br>
+                • <b>P</b>: MODO FOTOGRAFÍA<br>
+                • <b style="color: #00a9e0;">ESC</b>: LIBERAR MOUSE / AJUSTES
+            </div>
+            <p style="font-size: 16px; border: 1px solid #00a9e0; padding: 12px; background: #00a9e0; color: #fff; font-weight: bold; letter-spacing: 2px;">COMENZAR MISIÓN</p>
+    </div>
+
+    <div id="crosshair"></div>
+
+    <div id="ui-overlay">
+        <div style="font-size: 18px; margin-bottom: 5px;">TIEMPO: <span id="time-val">1200</span>s</div>
+        <div style="font-size: 10px; color: #888;">MODO: LIBRE / VANDALISMO</div>
+    </div>
+
+    <div id="controls-panel">
+        <div class="control-group">
+            <span class="label">Pigmento</span>
+            <input type="color" id="paintColor" value="#39ff14"> 
+        </div>
+        <div class="control-group">
+            <span class="label">Presión / Tamaño</span>
+            <input type="range" id="brushSize" min="0.05" max="0.8" step="0.05" value="0.25">
+        </div>
+    </div>
+
+    <div id="radio-box">
+        <div style="font-size: 10px; letter-spacing: 3px; margin-bottom: 5px;">WDL UNDERGROUND RADIO</div>
+        <div class="display" id="track-name">SIN SEÑAL</div>
+        <div class="radio-btns">
+            <button onclick="window.prev()">PREV</button>
+            <button id="play-btn" onclick="window.togglePlay()">PLAY</button>
+            <button onclick="window.next()">NEXT</button>
+        </div>
+    </div>
+
+    <div id="yt-hidden"><div id="player"></div></div>
+    <canvas id="gameCanvas"></canvas>
+</div>
+
+<script>
+    /* SISTEMA DE AUDIO YOUTUBE */
+    let player;
+    const playlistId = 'PLU4NeCIAEqOSN_MJPeCZ4-QODexTucbpy';
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '1', width: '1',
+            playerVars: { 'listType': 'playlist', 'list': playlistId, 'autoplay': 0 },
+            events: { 
+                'onReady': () => { console.log("Radio lista."); }, 
+                'onStateChange': (e) => {
+                    if (e.data == 1) {
+                        document.getElementById('track-name').innerText = player.getVideoData().title;
+                        document.getElementById('play-btn').innerText = 'STOP';
+                    } else { document.getElementById('play-btn').innerText = 'PLAY'; }
+                } 
+            }
+        });
+    }
+    window.togglePlay = () => { player.getPlayerState() == 1 ? player.pauseVideo() : player.playVideo(); }
+    window.next = () => player.nextVideo();
+    window.prev = () => player.previousVideo();
+</script>
+
+<script type="module">
+    import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+
+    /* VARIABLES GLOBALES */
+    let scene, camera, renderer, raycaster, floorRaycaster;
+    let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+    let isPainting = false, gameActive = false;
+    let walls = [], collidableObjects = [];
+    let verticalVelocity = 0, canJump = true, timeLeft = 1200;
+
+    // --- NUEVAS VARIABLES DE PINTURA ---
+    let paintCount = 0;      
+    let activeDrips = [];    
+    let dripCounter = 0;     
+    const DRIP_THRESHOLD = 15; 
+    // ----------------------------------
+
+    const PLAYER_HEIGHT = 2.5;
+    const GRAVITY = 0.009;
+    const JUMP_FORCE = 0.24;
+    const startPos = new THREE.Vector3(0, PLAYER_HEIGHT, -120);
+
+    /* INICIALIZACIÓN */
+    function init() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a0b);
+        scene.fog = new THREE.FogExp2(0x0a0a0b, 0.004);
+
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+        camera.rotation.order = 'YXZ';
+        
+        renderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('gameCanvas'), 
+            antialias: true,
+            preserveDrawingBuffer: true 
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
+
+        raycaster = new THREE.Raycaster();
+        floorRaycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 15);
+
+        scene.add(new THREE.AmbientLight(0x404040, 1.5));
+        const moonLight = new THREE.DirectionalLight(0x556677, 1.5);
+        moonLight.position.set(40, 150, 40);
+        scene.add(moonLight);
+
+        createPointLight(0, 15, 0, 0x39ff14, 1, 105);
+        createPointLight(-100, 15, -100, 0xff00ff, 1, 105);
+        createPointLight(100, 15, 100, 0x00ffff, 1, 105);
+
+        buildIndustrialZone();
+        setupInputHandlers();
+        
+        camera.position.copy(startPos);
+
+        setTimeout(() => {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('instructions').style.display = 'block';
+        }, 2000);
+
+        animate();
+    }
+
+    function createPointLight(x, y, z, color, int, dist) {
+        const p = new THREE.PointLight(color, int, dist);
+        p.position.set(x, y, z);
+        scene.add(p);
+    }
+
+    /* CONSTRUCCIÓN DEL MUNDO */
+    function buildIndustrialZone() {
+        const floorGeo = new THREE.PlaneGeometry(2000, 2000);
+        const floorMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        scene.add(floor);
+        collidableObjects.push(floor);
+
+        const coords = [
+            {x: -120, z: -120}, {x: 0, z: -120}, {x: 120, z: -120},
+            {x: -120, z: 120}, {x: 0, z: 120}, {x: 120, z: 120}
+        ];
+
+        coords.forEach((c, index) => {
+            createDetailedWarehouse(c.x, c.z, index);
+        });
+
+        createInfrastructure();
+        createParkourZone();
+    }
+
+    function createDetailedWarehouse(x, z, id) {
+        const h = 12; const w = 50; const d = 60;
+        const wallMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a });
+        const roofMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
+
+        addStaticBox(w, h, 1, x, h/2, z - d/2, wallMat); 
+        addStaticBox(1, h, d, x - w/2, h/2, z, wallMat); 
+        addStaticBox(1, h, d, x + w/2, h/2, z, wallMat); 
+        
+        addStaticBox(w/2 - 5, h, 1, x - (w/4 + 2.5), h/2, z + d/2, wallMat);
+        addStaticBox(w/2 - 5, h, 1, x + (w/4 + 2.5), h/2, z + d/2, wallMat);
+        addStaticBox(10, h - 7, 1, x, 7 + (h-7)/2, z + d/2, wallMat); 
+
+        addStaticBox(w, 1, d, x, h, z, roofMat);
+
+        const colMat = new THREE.MeshStandardMaterial({color: 0x333333});
+        addStaticBox(2, h, 2, x - 15, h/2, z - 15, colMat);
+        addStaticBox(2, h, 2, x + 15, h/2, z - 15, colMat);
+        addStaticBox(2, h, 2, x - 15, h/2, z + 15, colMat);
+        addStaticBox(2, h, 2, x + 15, h/2, z + 15, colMat);
+
+        if (id % 2 === 0) {
+            const floorMat = new THREE.MeshStandardMaterial({color: 0x222222});
+            addStaticBox(w - 2, 0.5, 25, x, 5.5, z - 15, floorMat);
+            for(let i=0; i<10; i++) {
+                addStaticBox(4, 0.5, 2, x - 20, 0.5 + (i*0.55), (z + 10) - (i*2), colMat);
+            }
+        }
+    }
+
+    function createInfrastructure() {
+        const roadMat = new THREE.MeshStandardMaterial({color: 0x151515});
+        addStaticBox(400, 0.1, 20, 0, 0.05, 0, roadMat);
+        addStaticBox(20, 0.1, 400, 0, 0.05, 0, roadMat);
+        const pipeMat = new THREE.MeshStandardMaterial({color: 0x444444, metalness: 0.8});
+        for(let i=0; i<5; i++) {
+            addStaticBox(1, 1, 300, -160 + (i*80), 1, 0, pipeMat);
+        }
+    }
+
+    function createParkourZone() {
+        const colors = [0x880000, 0x003366, 0x444444, 0xffaa00];
+        for(let i=0; i<12; i++) {
+            const h_cnt = 3; const x_pos = -50 + (i * 10); const z_pos = 180;
+            const stack = Math.floor(Math.random() * 4) + 1;
+            for(let j=0; j<stack; j++) {
+                addStaticBox(8, h_cnt, 15, x_pos, (h_cnt/2) + (j*h_cnt), z_pos, new THREE.MeshStandardMaterial({color: colors[j % colors.length]}));
+            }
+        }
+    }
+
+    function addStaticBox(w, h, d, x, y, z, mat) {
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+        mesh.position.set(x, y, z);
+        scene.add(mesh);
+        mesh.updateMatrixWorld();
+        mesh.bbox = new THREE.Box3().setFromObject(mesh);
+        walls.push(mesh);
+        collidableObjects.push(mesh);
+        return mesh;
+    }
+
+    function checkCollision(pos) {
+        const playerRadius = 0.8;
+        for (let obj of collidableObjects) {
+            if (!obj.bbox) continue;
+            const b = obj.bbox;
+            const inX = pos.x + playerRadius > b.min.x && pos.x - playerRadius < b.max.x;
+            const inZ = pos.z + playerRadius > b.min.z && pos.z - playerRadius < b.max.z;
+            const inY = camera.position.y - 1.8 < b.max.y && camera.position.y + 0.5 > b.min.y;
+            if (inX && inZ && inY) return true;
+        }
+        return false;
+    }
+
+    /* CICLO DE ANIMACIÓN */
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        if (gameActive) {
+            const speed = 0.28;
+            const direction = new THREE.Vector3();
+            camera.getWorldDirection(direction);
+            direction.y = 0; direction.normalize();
+            
+            const side = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0,1,0)).normalize();
+            let moveVector = new THREE.Vector3(0, 0, 0);
+
+            if (moveForward) moveVector.add(direction);
+            if (moveBackward) moveVector.sub(direction);
+            if (moveLeft) moveVector.sub(side);
+            if (moveRight) moveVector.add(side);
+
+            if (moveVector.length() > 0) {
+                moveVector.normalize().multiplyScalar(speed);
+                if (!checkCollision(new THREE.Vector3(camera.position.x + moveVector.x, camera.position.y, camera.position.z))) camera.position.x += moveVector.x;
+                if (!checkCollision(new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z + moveVector.z))) camera.position.z += moveVector.z;
+            }
+
+            verticalVelocity -= GRAVITY;
+            camera.position.y += verticalVelocity;
+
+            floorRaycaster.ray.origin.copy(camera.position);
+            const hits = floorRaycaster.intersectObjects(collidableObjects);
+            if (hits.length > 0 && hits[0].distance < PLAYER_HEIGHT) {
+                camera.position.y += (PLAYER_HEIGHT - hits[0].distance);
+                verticalVelocity = 0; canJump = true;
+            }
+
+            if (isPainting) performPaint();
+            
+            // --- ACTUALIZACIÓN DE GOTAS ---
+            activeDrips.forEach((drip) => {
+                const data = drip.userData;
+                if (data.currentLength < data.maxLength) {
+                    data.currentLength += data.speed;
+                    drip.scale.set(1, data.currentLength * 15, 1);
+                    drip.position.y -= data.speed * 1;
+                }
+            });
+
+            if (camera.position.y < -50) camera.position.copy(startPos);
+        }
+
+        renderer.render(scene, camera);
+    }
+
+    /* SISTEMA DE GRAFFITI Y GOTEO */
+    function performPaint() {
+        raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+        const intersects = raycaster.intersectObjects(walls);
+        
+        if (intersects.length > 0 && intersects[0].distance < 12) {
+            const hit = intersects[0];
+            const size = parseFloat(document.getElementById('brushSize').value);
+            const color = document.getElementById('paintColor').value;
+            
+            // Incrementar contador de capas para evitar Z-fighting
+            paintCount++;
+
+            const dot = new THREE.Mesh(
+                new THREE.CircleGeometry(size, 12),
+                new THREE.MeshBasicMaterial({ 
+                    color: color, 
+                    transparent: true, 
+                    opacity: 0.85, 
+                    side: THREE.DoubleSide,
+                    depthWrite: false,
+                    polygonOffset: true,
+                    polygonOffsetFactor: -4
+                })
+            );
+            
+            // Asignar orden de renderizado dinámico
+            dot.renderOrder = paintCount;
+            
+            dot.position.copy(hit.point);
+            dot.position.add(hit.face.normal.clone().multiplyScalar(0.015));
+            dot.lookAt(hit.point.clone().add(hit.face.normal));
+            scene.add(dot);
+
+            // Lógica de goteo
+            dripCounter++;
+            if (dripCounter > DRIP_THRESHOLD) {
+                createDrip(hit.point, hit.face.normal, color, paintCount);
+                dripCounter = 0;
+            }
+        }
+    }
+
+    function createDrip(point, normal, color, currentOrder) {
+        const dripWidth = 0.01 + (Math.random() * 0.02);
+        const geometry = new THREE.PlaneGeometry(dripWidth, 0.05);
+        const material = new THREE.MeshBasicMaterial({ 
+            color: color, transparent: true, opacity: 0.8,
+            depthWrite: false, polygonOffset: true, polygonOffsetFactor: -5 
+        });
+        const drip = new THREE.Mesh(geometry, material);
+        
+        drip.renderOrder = currentOrder;
+        drip.position.copy(point).add(normal.clone().multiplyScalar(0.035));
+        drip.lookAt(point.clone().add(normal));
+        
+        drip.userData = {
+            speed: 0.003 + (Math.random() * 0.007),
+            maxLength: 0.3 + (Math.random() * 0.8),
+            currentLength: 0.05
+        };
+        
+        scene.add(drip);
+        activeDrips.push(drip);
+        if (activeDrips.length > 400) {
+            const old = activeDrips.shift();
+            scene.remove(old);
+        }
+    }
+
+    /* CONTROLADORES */
+    function setupInputHandlers() {
+        const container = document.getElementById('game-container');
+        const inst = document.getElementById('instructions');
+
+        inst.addEventListener('click', () => container.requestPointerLock());
+
+        document.addEventListener('pointerlockchange', () => {
+            gameActive = (document.pointerLockElement === container);
+            inst.style.display = gameActive ? 'none' : 'block';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (gameActive) {
+                camera.rotation.y -= e.movementX * 0.0022;
+                camera.rotation.x -= e.movementY * 0.0022;
+                camera.rotation.x = Math.max(-1.4, Math.min(1.4, camera.rotation.x));
+                // Si el mouse se mueve, resetear el contador de goteo para evitar chorreo constante
+                dripCounter = 0;
+            }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyW') moveForward = true;
+            if (e.code === 'KeyS') moveBackward = true;
+            if (e.code === 'KeyA') moveLeft = true;
+            if (e.code === 'KeyD') moveRight = true;
+            if (e.code === 'Space' && canJump) { verticalVelocity = JUMP_FORCE; canJump = false; }
+            if (e.code === 'KeyP') captureScreenshot();
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'KeyW') moveForward = false;
+            if (e.code === 'KeyS') moveBackward = false;
+            if (e.code === 'KeyA') moveLeft = false;
+            if (e.code === 'KeyD') moveRight = false;
+        });
+
+        container.addEventListener('mousedown', () => { if(gameActive) isPainting = true; });
+        window.addEventListener('mouseup', () => { 
+            isPainting = false; 
+            dripCounter = 0; 
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        function captureScreenshot() {
+            const data = renderer.domElement.toDataURL("image/png");
+            const a = document.createElement('a');
+            a.href = data; a.download = "master_tagger_art.png"; a.click();
+        }
+
+        setInterval(() => { 
+            if(gameActive) { 
+                timeLeft--; 
+                document.getElementById('time-val').innerText = timeLeft; 
+            } 
+        }, 1000);
+    }
+
+    init();
+</script>
+</body>
+</html>

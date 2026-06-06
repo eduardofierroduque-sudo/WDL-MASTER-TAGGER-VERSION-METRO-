@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WWW.FIERRODUQUE.COM</title>
+    <style>
+        body { margin: 0; background-color: #050505; color: #0f0; font-family: 'Courier New', monospace; overflow: hidden; touch-action: none; }
+        #game-container { position: relative; width: 100vw; height: 100vh; }
+        canvas { width: 100%; height: 100%; display: block; }
+        
+        #ui-overlay { position: absolute; top: 10px; left: 10px; z-index: 10; pointer-events: none; }
+        #timer-display { font-size: 24px; text-shadow: 0 0 10px #0f0; }
+
+        #controls-panel {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(10, 10, 10, 0.9); padding: 15px; border: 1px solid #0f0;
+            display: flex; gap: 20px; align-items: center; pointer-events: auto;
+            border-radius: 5px; box-shadow: 0 0 15px rgba(0,255,0,0.2);
+            z-index: 10;
+        }
+
+        .tool-group { display: flex; flex-direction: column; align-items: center; }
+        .tool-label { font-size: 10px; text-transform: uppercase; margin-bottom: 5px; }
+        input[type="color"] { border: 1px solid #0f0; width: 40px; height: 40px; cursor: pointer; background: none; }
+        input[type="range"] { cursor: pointer; accent-color: #0f0; }
+        
+        #instructions {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95); padding: 30px; border: 2px solid #0f0;
+            text-align: center; z-index: 200; box-shadow: 0 0 30px #0f0; cursor: pointer;
+        }
+
+        #crosshair {
+            position: absolute; top: 50%; left: 50%; width: 6px; height: 6px;
+            background: #0f0; border-radius: 50%;
+            transform: translate(-50%, -50%); pointer-events: none; opacity: 0.5;
+            z-index: 10;
+        }
+
+        #radio-box {
+            position: absolute; top: 10px; right: 10px; z-index: 150;
+            pointer-events: auto; border: 2px solid #0f0; padding: 15px;
+            background: rgba(0, 20, 0, 0.85); box-shadow: 0 0 20px #0f0;
+            text-align: center; width: 250px;
+        }
+        .display {
+            border: 1px solid #0f0; margin-bottom: 15px; padding: 5px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; background: #000; overflow: hidden; text-align: center;
+        }
+        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .controls button {
+            background: #0f0; color: #000; border: none; padding: 8px;
+            font-size: 12px; font-weight: bold; cursor: pointer; font-family: inherit;
+        }
+        #yt-hidden { position: absolute; top: -1000px; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="instructions">
+        <h1 style="margin:0; color: #00a9e0; letter-spacing: 5px;">WDL MASTER TAGGER: LABERINTO 2 </h1>
+        <p style="color: #666; font-size: 12px;">MANTÉN EL CLIC PARA PINTAR</p>
+        <div style="text-align: left; display: inline-block; margin: 20px 0; color: #ccc; font-size: 13px; line-height: 1.8; border-top: 1px solid #333; padding-top: 15px;">
+            • <b>WASD</b>: MOVIMIENTO<br>
+            • <b>SHIFT</b>: CORRER<br>
+            • <b>ESPACIO</b>: SALTAR<br>
+            • <b>MOUSE CLICK</b>: PINTAR<br>
+            • <b>P</b>: MODO FOTOGRAFÍA<br>
+            • <b style="color: #00a9e0;">ESC</b>: LIBERAR MOUSE / AJUSTES
+        </div>
+        <p style="font-size: 16px; border: 1px solid #00a9e0; padding: 12px; background: #00a9e0; color: #fff; font-weight: bold; letter-spacing: 2px;">COMENZAR MISIÓN</p>
+    </div>
+
+    <div id="crosshair"></div>
+
+    <div id="ui-overlay">
+        <div id="timer-display">SISTEMA ACTIVO: <span id="time-val">1200</span>s</div>
+        <div style="color: #0a0;">OBJETIVO: DETONA EL LUGAR HASTA QUE EL JUEGO SE ROMPA</div>
+    </div>
+
+    <div id="controls-panel">
+        <div class="tool-group">
+            <div class="tool-label">Pigmento</div>
+            <input type="color" id="paintColor" value="#00ff00">
+        </div>
+        <div class="tool-group">
+            <div class="tool-label">Presión</div>
+            <input type="range" id="brushSize" min="0.05" max="0.5" step="0.05" value="0.2">
+        </div>
+    </div>
+
+    <div id="radio-box">
+        <h3>RADIO WDL1</h3>
+        <div class="display" id="track-name">ESPERANDO SEÑAL...</div>
+        <div class="controls">
+            <button onclick="window.prev()">PREV</button>
+            <button id="play-btn" onclick="window.togglePlay()">PLAY</button>
+            <button onclick="window.next()">NEXT</button>
+        </div>
+    </div>
+
+    <div id="yt-hidden"><div id="player"></div></div>
+    <canvas id="gameCanvas"></canvas>
+</div>
+
+<script>
+    /* API YOUTUBE */
+    let player;
+    const playlistId = 'PLU4NeCIAEqOSN_MJPeCZ4-QODexTucbpy';
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '1', width: '1',
+            playerVars: { 'listType': 'playlist', 'list': playlistId, 'autoplay': 0 },
+            events: {
+                'onStateChange': (e) => {
+                    const btn = document.getElementById('play-btn');
+                    if (e.data == 1) {
+                        document.getElementById('track-name').innerText = player.getVideoData().title;
+                        btn.innerText = 'PAUSE';
+                    } else { btn.innerText = 'PLAY'; }
+                }
+            }
+        });
+    }
+    window.togglePlay = () => player.getPlayerState() == 1 ? player.pauseVideo() : player.playVideo();
+    window.next = () => player.nextVideo();
+    window.prev = () => player.previousVideo();
+</script>
+
+<script type="module">
+    import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+
+    let scene, camera, renderer, raycaster;
+    let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+    let isPainting = false, gameActive = false;
+    let walls = [], activeDrips = [];
+    let paintCount = 0, dripCounter = 0;
+    let lastHitPoint = new THREE.Vector3();
+    
+    let velocityY = 0, canJump = true;
+    const GRAVITY = 0.008, JUMP_FORCE = 0.18;
+    const UNIT_SIZE = 8, PLAYER_HEIGHT = 2;
+    const DRIP_THRESHOLD = 20;
+
+    const map = [
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1],
+        [1,0,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,0,1],
+        [1,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1],
+        [1,0,1,0,1,1,1,0,1,0,1,0,1,1,1,0,1,0,1,1],
+        [1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1],
+        [1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0,1],
+        [1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1],
+        [1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0,1],
+        [1,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1,0,1],
+        [1,0,1,0,1,1,1,0,1,0,1,1,1,1,1,1,0,1,0,1],
+        [1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ];
+
+    function init() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x020202);
+        scene.fog = new THREE.FogExp2(0x020202, 0.03);
+
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        camera.rotation.order = 'YXZ';
+        
+        renderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('gameCanvas'), 
+            antialias: true,
+            preserveDrawingBuffer: true 
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        raycaster = new THREE.Raycaster();
+
+        const ambient = new THREE.AmbientLight(0x704045, 1.2); 
+        scene.add(ambient);
+
+        setupLevel();
+        setupControls();
+        animate();
+    }
+
+    function setupLevel() {
+        const wallGeo = new THREE.BoxGeometry(UNIT_SIZE, 10, UNIT_SIZE);
+        const wallMat = new THREE.MeshStandardMaterial({ color: 0x1d1d1d });
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(800, 800), new THREE.MeshStandardMaterial({ color: 0x050505 }));
+        floor.rotation.x = -Math.PI/2;
+        scene.add(floor);
+
+        for(let i=0; i<map.length; i++) {
+            for(let j=0; j<map[i].length; j++) {
+                if(map[i][j] === 1) {
+                    const wall = new THREE.Mesh(wallGeo, wallMat);
+                    wall.position.set(i * UNIT_SIZE, 5, j * UNIT_SIZE);
+                    scene.add(wall);
+                    walls.push(wall);
+                }
+            }
+        }
+        camera.position.set(UNIT_SIZE, PLAYER_HEIGHT, UNIT_SIZE);
+    }
+
+    /* LÓGICA DE PINTURA Y CHORREO REFINADA */
+    function paint() {
+        if (!gameActive || !isPainting) return;
+        raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+        const intersects = raycaster.intersectObjects(walls);
+
+        if (intersects.length > 0 && intersects[0].distance < 6) {
+            const hit = intersects[0];
+            const color = document.getElementById('paintColor').value;
+            const size = parseFloat(document.getElementById('brushSize').value);
+
+            // Acumulación por falta de movimiento
+            const dist = lastHitPoint.distanceTo(hit.point);
+            lastHitPoint.copy(hit.point);
+            dripCounter += dist < 0.05 ? 2 : 0.5;
+
+            paintCount++;
+            
+            // Spot de pintura principal
+            const mark = new THREE.Mesh(
+                new THREE.CircleGeometry(size, 12),
+                new THREE.MeshBasicMaterial({ 
+                    color: color, 
+                    transparent: true, 
+                    opacity: 0.7, 
+                    depthWrite: false,
+                    polygonOffset: true,
+                    polygonOffsetFactor: -4 
+                })
+            );
+            mark.renderOrder = paintCount;
+            mark.position.copy(hit.point).add(hit.face.normal.clone().multiplyScalar(0.01 + (paintCount * 0.0001)));
+            mark.lookAt(hit.point.clone().add(hit.face.normal));
+            scene.add(mark);
+
+            // Generar gota de chorreo
+            if (dripCounter > DRIP_THRESHOLD) {
+                createDrip(hit.point, hit.face.normal, color, paintCount);
+                dripCounter = 0;
+            }
+        }
+    }
+
+    function createDrip(point, normal, color, order) {
+        const drip = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.02, 0.05),
+            new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.6, depthWrite: false })
+        );
+        drip.renderOrder = order;
+        drip.position.copy(point).add(normal.clone().multiplyScalar(0.02));
+        drip.lookAt(point.clone().add(normal));
+        drip.userData = { speed: 0.003 + Math.random() * 0.005, max: 0.3 + Math.random() * 0.5, cur: 0.05 };
+        scene.add(drip);
+        activeDrips.push(drip);
+        if (activeDrips.length > 300) scene.remove(activeDrips.shift());
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (!gameActive) return;
+
+        // Movimiento y Colisiones
+        const speed = moveForward || moveBackward || moveLeft || moveRight ? 0.2 : 0;
+        const dir = new THREE.Vector3();
+        camera.getWorldDirection(dir);
+        dir.y = 0; dir.normalize();
+        const side = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0,1,0)).normalize();
+
+        let moveVec = new THREE.Vector3();
+        if (moveForward) moveVec.add(dir);
+        if (moveBackward) moveVec.sub(dir);
+        if (moveLeft) moveVec.sub(side);
+        if (moveRight) moveVec.add(side);
+
+        if (moveVec.length() > 0) {
+            const nextPos = camera.position.clone().add(moveVec.normalize().multiplyScalar(speed));
+            // Colisión simple contra paredes
+            let collision = false;
+            for(let w of walls) {
+                if (Math.abs(nextPos.x - w.position.x) < 4.5 && Math.abs(nextPos.z - w.position.z) < 4.5) { collision = true; break; }
+            }
+            if (!collision) { camera.position.x = nextPos.x; camera.position.z = nextPos.z; }
+        }
+
+        // Salto y Gravedad
+        velocityY -= GRAVITY;
+        camera.position.y += velocityY;
+        if (camera.position.y <= PLAYER_HEIGHT) { velocityY = 0; camera.position.y = PLAYER_HEIGHT; canJump = true; }
+
+        // Actualizar chorreo
+        activeDrips.forEach(d => {
+            if (d.userData.cur < d.userData.max) {
+                d.userData.cur += d.userData.speed;
+                d.scale.set(1, d.userData.cur * 10, 1);
+                d.position.y -= d.userData.speed * 0.5;
+            }
+        });
+
+        paint();
+        renderer.render(scene, camera);
+    }
+
+    function setupControls() {
+        const container = document.getElementById('game-container');
+        const inst = document.getElementById('instructions');
+        
+        container.addEventListener('mousedown', () => { if (gameActive) isPainting = true; else container.requestPointerLock(); });
+        document.addEventListener('mouseup', () => isPainting = false);
+        document.addEventListener('pointerlockchange', () => {
+            gameActive = document.pointerLockElement === container;
+            inst.style.display = gameActive ? 'none' : 'block';
+        });
+
+        document.addEventListener('mousemove', e => {
+            if (gameActive) {
+                camera.rotation.y -= e.movementX * 0.002;
+                camera.rotation.x -= e.movementY * 0.002;
+                camera.rotation.x = Math.max(-1.4, Math.min(1.4, camera.rotation.x));
+            }
+        });
+
+        window.addEventListener('keydown', e => {
+            if(e.code === 'KeyW') moveForward = true;
+            if(e.code === 'KeyS') moveBackward = true;
+            if(e.code === 'KeyA') moveLeft = true;
+            if(e.code === 'KeyD') moveRight = true;
+            if(e.code === 'Space' && canJump && gameActive) { velocityY = JUMP_FORCE; canJump = false; }
+            if(e.code === 'KeyP' && gameActive) {
+                const link = document.createElement("a");
+                link.download = "WDL-MAZE-ART.png";
+                link.href = renderer.domElement.toDataURL("image/png");
+                link.click();
+            }
+        });
+
+        window.addEventListener('keyup', e => {
+            if(e.code === 'KeyW') moveForward = false;
+            if(e.code === 'KeyS') moveBackward = false;
+            if(e.code === 'KeyA') moveLeft = false;
+            if(e.code === 'KeyD') moveRight = false;
+        });
+
+        setInterval(() => { if (gameActive) { 
+            let t = parseInt(document.getElementById('time-val').innerText);
+            if (t > 0) document.getElementById('time-val').innerText = t - 1;
+        }}, 1000);
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>

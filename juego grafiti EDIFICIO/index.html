@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WDL MASTER TAGGER: EDIFICIO ABANDONADO 1</title>
+    <style>
+        body { margin: 0; background-color: #000; color: #000; font-family: 'Courier New', monospace; overflow: hidden; touch-action: none; }
+        #game-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+        #gameCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 1; }
+        
+        #loading-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; color: #fff; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 1000;
+        }
+        .loading-text { font-size: 24px; letter-spacing: 5px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+        
+        #ui-overlay { 
+            position: absolute; top: 10px; left: 10px; z-index: 10; pointer-events: none; 
+            background: rgba(255, 255, 255, 0.9); padding: 15px; border: 2px solid #333;
+            border-radius: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-width: 240px;
+        }
+        #timer-display { font-size: 20px; font-weight: bold; color: #333; margin-bottom: 8px; }
+        
+        /* Ajuste de Z-index para asegurar que los paneles estén sobre las instrucciones si es necesario */
+        #controls-panel { 
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); 
+            background: rgba(255, 255, 255, 0.9); padding: 15px; border: 2px solid #333;
+            display: flex; gap: 20px; align-items: center; pointer-events: auto;
+            border-radius: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 210;
+        }
+        
+        .tool-group { display: flex; flex-direction: column; align-items: center; }
+        .tool-label { font-size: 10px; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; color: #333; }
+        input[type="color"] { border: 1px solid #333; width: 40px; height: 40px; cursor: pointer; background: none; }
+        input[type="range"] { cursor: pointer; accent-color: #007bff; }
+        
+        #instructions {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95); padding: 30px; border: 2px solid #000;
+            text-align: center; z-index: 200; box-shadow: 0 0 30px rgba(0,0,0,0.3); color: #000;
+            cursor: pointer; display: none;
+        }
+        
+        #crosshair { 
+            position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; 
+            background: #f00; border-radius: 50%; transform: translate(-50%, -50%); 
+            pointer-events: none; opacity: 0.7; z-index: 10;
+        }
+        
+        #radio-box {
+            position: absolute; top: 10px; right: 10px; z-index: 210;
+            pointer-events: auto; border: 2px solid #333; padding: 15px;
+            background: rgba(255, 255, 255, 0.9); box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            text-align: center; width: 250px; color: #333;
+        }
+        .display { border: 1px solid #333; margin-bottom: 15px; padding: 5px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 12px; background: #eee; overflow: hidden; text-align: center; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .controls button { background: #333; color: #fff; border: none; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; font-family: inherit; }
+        #yt-hidden { position: absolute; top: -1000px; }
+    </style>
+</head>
+<body>
+
+<div id="loading-screen">
+    <div class="loading-text">WWW.FIERRODUQUE.COM</div>
+</div>
+
+<div id="game-container">
+    <div id="instructions">
+        <h2>WDL MASTER TAGGER: EDIFICIO ABANDONADO 1</h2>
+        <b>WASD</b>: MOVIMIENTO<br>
+            • <b>SHIFT</b>: CORRER (INFILTRACIÓN RÁPIDA)<br>
+            • <b>ESPACIO</b>: SALTAR OBSTÁCULOS<br>
+            • <b>MOUSE CLICK</b>: PINTAR<br>
+            • <b>P</b>: MODO FOTOGRAFÍA (SNAPSHOT)<br>
+            <!-- NUEVA INSTRUCCIÓN AÑADIDA AQUÍ -->
+            • <b style="color: #000000;">ESC</b>: LIBERAR MOUSE Y CAMBIAR HERRAMIENTAS DE PINTURA Y MÚSICA
+        </div>
+        <p style="font-size: 16px; border: 1px solid #00a9e0; padding: 12px; background: #00a9e0; color: #fff; font-weight: bold; letter-spacing: 2px;">COMENZAR MISIÓN</p>
+    </div>
+    <div id="crosshair"></div>
+
+
+    <div id="ui-overlay">
+        <div id="timer-display">DETONACIÓN EN: <span id="time-val">1200</span>s</div>
+        <div style="font-size: 12px; color: #007bff; font-weight: bold;">CIUDAD TOTALMENTE TRANSITABLE</div>
+    </div>
+
+    <div id="controls-panel">
+        <div class="tool-group">
+            <div class="tool-label">Pigmento</div>
+            <input type="color" id="paintColor" value="#ff0000">
+        </div>
+        <div class="tool-group">
+            <div class="tool-label">Presión</div>
+            <input type="range" id="brushSize" min="0.05" max="0.6" step="0.05" value="0.25">
+        </div>
+    </div>
+
+    <div id="radio-box">
+        <h3>RADIO WDL1</h3>
+        <div class="display" id="track-name">ESPERANDO SEÑAL...</div>
+        <div class="controls">
+            <button onclick="window.prev()">PREV</button>
+            <button id="play-btn" onclick="window.togglePlay()">PLAY</button>
+            <button onclick="window.next()">NEXT</button>
+        </div>
+        <p style="font-size: 10px; margin-top: 10px; color: #333;">ESTADO: <span id="status">OFFLINE</span></p>
+    </div>
+
+    <div id="yt-hidden"><div id="player"></div></div>
+    <canvas id="gameCanvas"></canvas>
+</div>
+
+<script>
+    /* LÓGICA DE RADIO Y YOUTUBE */
+    let player;
+    const playlistId = 'PLU4NeCIAEqOSN_MJPeCZ4-QODexTucbpy';
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '200', width: '200',
+            playerVars: { 'listType': 'playlist', 'list': playlistId, 'autoplay': 0, 'controls': 0 },
+            events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange }
+        });
+    }
+    function onPlayerReady(event) { document.getElementById('status').innerText = 'READY'; }
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+            const videoData = player.getVideoData();
+            document.getElementById('track-name').innerText = videoData.title;
+            document.getElementById('play-btn').innerText = 'PAUSE';
+            document.getElementById('status').innerText = 'PLAYING';
+        } else { document.getElementById('play-btn').innerText = 'PLAY'; }
+    }
+    window.togglePlay = function() {
+        const state = player.getPlayerState();
+        if (state == YT.PlayerState.PLAYING) player.pauseVideo();
+        else player.playVideo();
+    }
+    window.next = function() { player.nextVideo(); }
+    window.prev = function() { player.previousVideo(); }
+</script>
+
+<script type="module">
+    import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+
+    let scene, camera, renderer, raycaster, floorRaycaster;
+    let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+    let isPainting = false;
+    let walls = [];
+    let collidableObjects = []; 
+    let timeLeft = 1200, gameActive = false;
+    let paintCount = 0; // Para el orden de las capas de pintura
+    
+    let verticalVelocity = 0;
+    let canJump = true;
+    const GRAVITY = 0.008; 
+    const JUMP_FORCE = 0.22;
+    const PLAYER_HEIGHT = 2;
+    const UNIT_SIZE = 8;
+    const FLOOR_HEIGHT = 7;
+    const TOTAL_FLOORS = 5;
+
+    const startPos = { x: UNIT_SIZE, y: PLAYER_HEIGHT, z: UNIT_SIZE };
+
+    const map = [
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,0,0,0,0,0,0,1],
+        [1,0,1,1,1,0,1,1,0,1],
+        [1,0,1,0,0,0,0,1,0,1],
+        [1,0,0,0,0,0,0,0,0,1],
+        [1,0,1,1,1,0,1,1,0,1],
+        [1,0,0,0,0,0,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1]
+    ];
+
+    function init() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB);
+        scene.fog = new THREE.FogExp2(0x87CEEB, 0.01);
+
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 2000);
+        camera.rotation.order = 'YXZ';
+        
+        renderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('gameCanvas'), 
+            antialias: true,
+            preserveDrawingBuffer: true 
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        raycaster = new THREE.Raycaster();
+        floorRaycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
+
+        const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambient);
+
+        const sunLight = new THREE.DirectionalLight(0xffffff, 0.9);
+        sunLight.position.set(100, 200, 100);
+        scene.add(sunLight);
+
+        setupBuilding();
+        setupOuterWorld(); 
+        setupControls();
+
+        setTimeout(() => {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('instructions').style.display = 'block';
+        }, 1500);
+
+        animate();
+    }
+
+    function setupBuilding() {
+        const wallMat = new THREE.MeshStandardMaterial({ color: 0x999999 });
+        const floorMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+        const windowMat = new THREE.MeshStandardMaterial({ 
+            color: 0xadd8e6, transparent: true, opacity: 0.3, emissive: 0x222222 
+        });
+
+        const cityFloorGeo = new THREE.PlaneGeometry(1000, 1000);
+        const cityFloorMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+        const cityFloor = new THREE.Mesh(cityFloorGeo, cityFloorMat);
+        cityFloor.rotation.x = -Math.PI / 2;
+        cityFloor.position.set(0, 0, 0);
+        scene.add(cityFloor);
+        collidableObjects.push(cityFloor);
+
+        for (let floor = 0; floor < TOTAL_FLOORS; floor++) {
+            const yOffset = floor * FLOOR_HEIGHT;
+            const isLastFloor = (floor === TOTAL_FLOORS - 1);
+
+            if (floor > 0) {
+                const floorGeo = new THREE.PlaneGeometry(map.length * UNIT_SIZE, map[0].length * UNIT_SIZE);
+                const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+                floorMesh.rotation.x = -Math.PI / 2;
+                floorMesh.position.set((map.length * UNIT_SIZE)/2 - UNIT_SIZE/2, yOffset, (map[0].length * UNIT_SIZE)/2 - UNIT_SIZE/2);
+                scene.add(floorMesh);
+                collidableObjects.push(floorMesh);
+            }
+
+            for(let i=0; i<map.length; i++) {
+                for(let j=0; j<map[i].length; j++) {
+                    if(map[i][j] === 1) {
+                        const isEdge = (i === 0 || i === map.length - 1 || j === 0 || j === map[i].length - 1);
+                        const isWindow = isEdge && (i + j) % 3 === 0;
+                        if (isLastFloor && isEdge) continue; 
+
+                        if (isWindow) {
+                            createWindow(i * UNIT_SIZE, yOffset + (FLOOR_HEIGHT/2), j * UNIT_SIZE, windowMat, i);
+                        } else {
+                            const wallGeo = new THREE.BoxGeometry(UNIT_SIZE, FLOOR_HEIGHT, UNIT_SIZE);
+                            const wall = new THREE.Mesh(wallGeo, wallMat);
+                            wall.position.set(i * UNIT_SIZE, yOffset + (FLOOR_HEIGHT/2), j * UNIT_SIZE);
+                            scene.add(wall);
+                            walls.push(wall);
+                            collidableObjects.push(wall);
+                        }
+                    }
+                }
+            }
+
+            if (floor < TOTAL_FLOORS - 1) {
+                const rx = (floor % 2 === 0) ? UNIT_SIZE : (map.length - 2) * UNIT_SIZE;
+                const rz = (map[0].length / 2) * UNIT_SIZE;
+                createRamp(rx, yOffset, rz, wallMat);
+            }
+        }
+        camera.position.set(startPos.x, startPos.y, startPos.z);
+    }
+
+    function createWindow(x, y, z, material, iIndex) {
+        const isSide = (iIndex === 0 || iIndex === map.length - 1);
+        const glassGeo = new THREE.BoxGeometry(isSide ? 0.2 : UNIT_SIZE, FLOOR_HEIGHT * 0.8, isSide ? UNIT_SIZE : 0.2);
+        const glass = new THREE.Mesh(glassGeo, material);
+        glass.position.set(x, y, z);
+        scene.add(glass);
+        walls.push(glass);
+        collidableObjects.push(glass);
+    }
+
+    function createRamp(x, y, z, material) {
+        const rampGeo = new THREE.BoxGeometry(UNIT_SIZE * 1.5, 0.5, UNIT_SIZE * 4.5);
+        const ramp = new THREE.Mesh(rampGeo, material);
+        ramp.position.set(x, y + FLOOR_HEIGHT/2.8, z);
+        ramp.rotation.x = Math.PI / 8; 
+        ramp.isRamp = true; 
+        scene.add(ramp);
+        collidableObjects.push(ramp);
+        walls.push(ramp);
+    }
+
+    function setupOuterWorld() {
+        const colors = [0x111111, 0x222222, 0x1a1a1a, 0x050505];
+        for(let i = 0; i < 50; i++) {
+            const h = 40 + Math.random() * 200;
+            const x = (Math.random() - 0.5) * 600;
+            const z = (Math.random() - 0.5) * 600;
+            if (Math.abs(x) < 80 && Math.abs(z) < 80) continue; 
+            const mesh = new THREE.Mesh(new THREE.BoxGeometry(20, h, 20), new THREE.MeshStandardMaterial({ color: colors[i%4] }));
+            mesh.position.set(x, h/2, z);
+            scene.add(mesh);
+            collidableObjects.push(mesh);
+            walls.push(mesh);
+        }
+    }
+
+    function checkWallCollision(newPos) {
+        const playerBuffer = 0.5; 
+        const feetY = camera.position.y - (PLAYER_HEIGHT * 0.8);
+        const headY = camera.position.y + 0.4;
+        for (let obj of collidableObjects) {
+            if (obj.geometry.type === "PlaneGeometry" || obj.isRamp) continue; 
+            if (!obj.bbox) obj.bbox = new THREE.Box3().setFromObject(obj);
+            const bbox = obj.bbox;
+            if (newPos.x + playerBuffer > bbox.min.x && newPos.x - playerBuffer < bbox.max.x &&
+                newPos.z + playerBuffer > bbox.min.z && newPos.z - playerBuffer < bbox.max.z &&
+                feetY < bbox.max.y && headY > bbox.min.y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function paint() {
+        if (!gameActive || !isPainting) return;
+        raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+        const intersects = raycaster.intersectObjects(walls);
+        if (intersects.length > 0 && intersects[0].distance < 6) {
+            const hit = intersects[0];
+            const color = document.getElementById('paintColor').value;
+            const size = parseFloat(document.getElementById('brushSize').value);
+            
+            paintCount++; // Incrementamos para cada "mancha"
+
+            const mark = new THREE.Mesh(
+                new THREE.CircleGeometry(size, 8),
+                new THREE.MeshBasicMaterial({ 
+                    color: color, 
+                    transparent: true, 
+                    opacity: 0.9,
+                    depthWrite: false, // Evita conflictos de profundidad
+                    polygonOffset: true,
+                    polygonOffsetFactor: -1,
+                    polygonOffsetUnits: -1 * paintCount // Cada pintura está "encima" de la anterior
+                })
+            );
+            
+            mark.position.copy(hit.point);
+            mark.position.add(hit.face.normal.clone().multiplyScalar(0.01)); 
+            mark.lookAt(hit.point.clone().add(hit.face.normal));
+            
+            // Adjuntar al objeto para que si el objeto se moviera (no es el caso aquí), la pintura lo siga
+            scene.add(mark);
+        }
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (!gameActive) return;
+
+        const speed = 0.25;
+        const dir = new THREE.Vector3();
+        camera.getWorldDirection(dir);
+        dir.y = 0; dir.normalize();
+        const side = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0,1,0)).normalize();
+
+        let moveVec = new THREE.Vector3();
+        if (moveForward) moveVec.add(dir);
+        if (moveBackward) moveVec.sub(dir);
+        if (moveLeft) moveVec.sub(side);
+        if (moveRight) moveVec.add(side);
+
+        if (moveVec.length() > 0) {
+            moveVec.normalize().multiplyScalar(speed);
+            const nextX = camera.position.x + moveVec.x;
+            const nextZ = camera.position.z + moveVec.z;
+            if (!checkWallCollision(new THREE.Vector3(nextX, camera.position.y, camera.position.z))) camera.position.x = nextX;
+            if (!checkWallCollision(new THREE.Vector3(camera.position.x, camera.position.y, nextZ))) camera.position.z = nextZ;
+        }
+
+        verticalVelocity -= GRAVITY;
+        camera.position.y += verticalVelocity;
+
+        floorRaycaster.ray.origin.copy(camera.position);
+        floorRaycaster.ray.origin.y += 0.5; 
+        const floorHits = floorRaycaster.intersectObjects(collidableObjects);
+        
+        if (floorHits.length > 0) {
+            const hitDist = floorHits[0].distance - 0.5;
+            if (hitDist < PLAYER_HEIGHT) {
+                camera.position.y += (PLAYER_HEIGHT - hitDist) * 0.2;
+                verticalVelocity = 0;
+                canJump = true;
+            }
+        }
+        
+        if(camera.position.y < -50) restorePosition(); 
+        
+        paint();
+        renderer.render(scene, camera);
+    }
+
+    function restorePosition() {
+        camera.position.set(startPos.x, startPos.y, startPos.z);
+        verticalVelocity = 0;
+    }
+
+    function setupControls() {
+        const container = document.getElementById('game-container');
+        const inst = document.getElementById('instructions');
+        const panels = [document.getElementById('controls-panel'), document.getElementById('radio-box')];
+
+        // Bloqueo de clics en UI
+        panels.forEach(p => {
+            p.addEventListener('mousedown', (e) => e.stopPropagation());
+            p.addEventListener('click', (e) => e.stopPropagation());
+        });
+
+        inst.addEventListener('click', () => { container.requestPointerLock(); });
+        
+        container.addEventListener('mousedown', (e) => { 
+            if (document.pointerLockElement === container) isPainting = true; 
+        });
+        
+        document.addEventListener('mouseup', () => { isPainting = false; });
+        
+        document.addEventListener('pointerlockchange', () => {
+            if (document.pointerLockElement === container) { 
+                inst.style.display = 'none'; 
+                gameActive = true; 
+            } else { 
+                inst.style.display = 'block'; 
+                gameActive = false; 
+                isPainting = false;
+                // Reset de movimiento al salir
+                moveForward = moveBackward = moveLeft = moveRight = false;
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (gameActive) {
+                camera.rotation.y -= e.movementX * 0.002;
+                camera.rotation.x -= e.movementY * 0.002;
+                camera.rotation.x = Math.max(-Math.PI/2.5, Math.min(Math.PI/2.5, camera.rotation.x));
+            }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (!gameActive && e.code !== 'KeyR') return;
+            if(e.code === 'KeyW' || e.code === 'ArrowUp') moveForward = true;
+            if(e.code === 'KeyS' || e.code === 'ArrowDown') moveBackward = true;
+            if(e.code === 'KeyA' || e.code === 'ArrowLeft') moveLeft = true;
+            if(e.code === 'KeyD' || e.code === 'ArrowRight') moveRight = true;
+            if(e.code === 'Space' && canJump) { verticalVelocity = JUMP_FORCE; canJump = false; }
+            if(e.code === 'KeyR') restorePosition();
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if(e.code === 'KeyW' || e.code === 'ArrowUp') moveForward = false;
+            if(e.code === 'KeyS' || e.code === 'ArrowDown') moveBackward = false;
+            if(e.code === 'KeyA' || e.code === 'ArrowLeft') moveLeft = false;
+            if(e.code === 'KeyD' || e.code === 'ArrowRight') moveRight = false;
+        });
+
+        setInterval(() => { if (gameActive) timeLeft--; document.getElementById('time-val').innerText = timeLeft; }, 1000);
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight; 
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
