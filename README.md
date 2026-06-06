@@ -10,6 +10,16 @@
 
 *No es un juego de disparos. Es un juego de trackear: marcar territorio y dejar tu firma.*
 
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4MTI1LnBuZw==/original/KQLcWZ.png" width="30%" alt="Metro">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4MTI5LnBuZw==/original/ayoYfT.png" width="30%" alt="Metro">
+  <img src="https://img.itch.zone/aW1nLzI3MTIxMDM5LmpwZw==/original/cZboip.jpg" width="30%" alt="Metro">
+  <br>
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Nzk0LmdpZg==/original/eBr%2FpG.gif" width="30%" alt="Metro gameplay">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Nzk4LmdpZg==/original/rjXKCU.gif" width="30%" alt="Metro gameplay">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2ODA2LmdpZg==/original/VWu641.gif" width="30%" alt="Metro gameplay">
+</p>
+
 ---
 
 [![Jugar Ahora](https://img.shields.io/badge/JUGAR_AHORA-FF9900?style=for-the-badge&logo=github&logoColor=black)](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/)
@@ -155,6 +165,22 @@ En Bodega Fluor, la deteccion es mas simple: `Math.abs` contra las coordenadas d
 
 ---
 
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4NTI1LnBuZw==/original/u76WYF.png" width="18%" alt="Gameplay">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3MjAxLnBuZw==/original/ixdXIK.png" width="18%" alt="Gameplay">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3OTk3LnBuZw==/original/8hWBY6.png" width="18%" alt="Gameplay">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzODk4LnBuZw==/original/uPh9Ab.png" width="18%" alt="Gameplay">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzOTA2LnBuZw==/original/Ocdn3F.png" width="18%" alt="Gameplay">
+  <br>
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NjY1LmdpZg==/original/DqZYnd.gif" width="18%" alt="Gameplay">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NjY5LmdpZg==/original/%2FJ%2B96w.gif" width="18%" alt="Gameplay">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzI5LmdpZg==/original/%2BVEOzt.gif" width="18%" alt="Gameplay">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Nzg0LmdpZg==/original/aVHe9T.gif" width="18%" alt="Gameplay">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4NTM5LnBuZw==/original/SJWreF.png" width="18%" alt="Gameplay">
+</p>
+
+---
+
 ## Los mapas
 
 <img width="144" height="68" alt="metro1" src="https://github.com/user-attachments/assets/9ae73a9b-e3a8-447a-b50f-269e039a506a" />
@@ -169,9 +195,18 @@ En Bodega Fluor, la deteccion es mas simple: `Math.abs` contra las coordenadas d
 
 El original. El que empezo todo. Lo escribi pensando en los talleres de la Linea 2 del Metro de Santiago, un hangar industrial enorme con formaciones NS-74 estacionadas en via muerta. Son 22 trenes azules `#00a9e0` con cabina, vidrios, acoples metalicos y luces de posicion.
 
-El mapa es un hangar de 400 por 600 metros con altura 50. Tres tuneles hacia los lados, andenes elevados, columnas de hierro cada 40 metros y unas 40 cajas de repuestos. Las luces de los tuneles son rojas `#ff3300`, intensidad 2, alcance 80. La niebla es `FogExp2(0x020202, 0.008)`.
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2ODA0LmdpZg==/original/J3NJWn.gif" width="30%" alt="Metro tren">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2ODA4LmdpZg==/original/aQxVgp.gif" width="30%" alt="Metro pintura">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2ODA5LmdpZg==/original/5dwhdf.gif" width="30%" alt="Metro tunel">
+</p>
 
-La pintura usa `CircleGeometry` con `MeshBasicMaterial`. Sin sistema de goteo -- esta version es anterior a ese desarrollo. Sin trenes en movimiento. Es el unico mapa que implementa rebote vertical sinusoidal al caminar, un detalle que despues saque porque molestaba al apuntar.
+El mapa es un hangar de 400 por 600 metros con altura 50. Tres tuneles hacia los lados, andenes elevados, columnas de hierro cada 40 metros y unas 40 cajas de repuestos. Las luces de los tuneles son rojas `#ff3300`, intensidad 2, alcance 80. La niebla es `FogExp2(0x020202, 0.008)`. La pintura usa `CircleGeometry` con `MeshBasicMaterial`. Sin sistema de goteo -- esta version es anterior a ese desarrollo. Sin trenes en movimiento.
+
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4MTE0LnBuZw==/original/xtXMwi.png" width="48%" alt="Metro snapshot">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4MTIxLnBuZw==/original/yQMlWG.png" width="48%" alt="Metro accion">
+</p>
 
 El timer marca 1200 segundos. Al llegar a cero hace `location.reload()`. Si caes por debajo de Y = -40, respawn automatico.
 
@@ -189,9 +224,20 @@ El timer marca 1200 segundos. Al llegar a cero hace `location.reload()`. Si caes
 
 La version neoyorquina. Estacion central de 400 por 100 metros con cuatro vias que se extienden en tuneles hacia el norte y el sur. Pasillos transversales cada 120 metros. Paredes de azulejo blanco `#dddddd`, columnas de acero verde NYC `#123524`. Tuneles en tubo cerrado con techo, piso y paredes curvas.
 
-14 trenes estilo NYC estacionados: metal plateado, techo negro, luces LED rojas en la cola. Los trenes son estaticos pero la ambientacion es tensa: oscuridad casi total, luces minimas, niebla densa (0.012).
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3MTMyLnBuZw==/original/aR5DO4.png" width="30%" alt="NYC Subway">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4NTE5LnBuZw==/original/smTjIS.png" width="30%" alt="NYC Subway">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4NTMwLnBuZw==/original/9Uouzu.png" width="30%" alt="NYC Subway">
+</p>
 
-Primer mapa en implementar `DecalGeometry` para la pintura y el sistema de goteo completo. Valvula de 0.1 a 5.0, permitiendo desde tags finisimos hasta throw-ups que cubren un tren en segundos.
+14 trenes estilo NYC estacionados: metal plateado, techo negro, luces LED rojas en la cola. Los trenes son estaticos pero la ambientacion es tensa: oscuridad casi total, luces minimas, niebla densa (0.012). Primer mapa en implementar `DecalGeometry` para la pintura y el sistema de goteo completo. Valvula de 0.1 a 5.0, permitiendo desde tags finisimos hasta throw-ups que cubren un tren en segundos.
+
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3MTk1LnBuZw==/original/9pwbF5.png" width="24%" alt="NYC interior">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3OTg3LnBuZw==/original/f8PbmW.png" width="24%" alt="NYC pintura">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3OTkwLnBuZw==/original/I4hjrd.png" width="24%" alt="NYC spray">
+  <img src="https://img.itch.zone/aW1nLzI3MTM3OTk1LnBuZw==/original/Kesm02.png" width="24%" alt="NYC gameplay">
+</p>
 
 - Movimiento: 0.45 / 0.75 (sprint)
 - Gravedad: 0.012, salto: 0.32, altura: 2.4
@@ -207,9 +253,20 @@ Primer mapa en implementar `DecalGeometry` para la pintura y el sistema de goteo
 
 990 lineas. El mapa mas grande y mas trabajado. Laberinto en grilla de 11 por 11 bloques, 1100 por 1100 metros. Bloques de 70m con pasillos de 30m. Estacion central vacia de 100 por 300 metros. Paredes beige crema `#e6dec3`, columnas de hierro oscuro `#2a302d`, paneles publicitarios en colores.
 
-Unico mapa con trenes en movimiento. Dos formaciones de 4 coches con faros frontales visibles a traves de la niebla. Circulan por vias fijas en X = -100 y X = +100. Si te quedas en la via, Game Over sin respawn.
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzNzEyLnBuZw==/original/3mj0P3.png" width="24%" alt="BA Subte">
+  <img src="https://img.itch.zone/aW1nLzI3NTI0MTcxLnBuZw==/original/TzYang.png" width="24%" alt="BA Subte trenes">
+  <img src="https://img.itch.zone/aW1nLzI3NTI0MTg0LnBuZw==/original/EKymke.png" width="24%" alt="BA Subte laberinto">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzNzk2LnBuZw==/original/XvZrkX.png" width="24%" alt="BA Subte gameplay">
+</p>
 
-En los ultimos 20 segundos, la pantalla pulsa en rojo, la niebla se vuelve sangre y un cartel de alerta titila. Es el unico mapa con verdadera urgencia de escape.
+Unico mapa con trenes en movimiento. Dos formaciones de 4 coches con faros frontales visibles a traves de la niebla. Circulan por vias fijas en X = -100 y X = +100. Si te quedas en la via, Game Over sin respawn. En los ultimos 20 segundos, la pantalla pulsa en rojo, la niebla se vuelve sangre y un cartel de alerta titila.
+
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzODA1LnBuZw==/original/0ejzuP.png" width="30%" alt="BA Subte tren movil">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzODEzLnBuZw==/original/69ayyr.png" width="30%" alt="BA Subte game over">
+  <img src="https://img.itch.zone/aW1nLzI3NTIzODc1LnBuZw==/original/XOo7nC.png" width="30%" alt="BA Subte menu">
+</p>
 
 Menu bilingue ES/EN con controles, mision y advertencias. Audio dual (YouTube en servidor, HTML5 Audio en local). Manejo avanzado de eventos: prevencion de menu contextual, reseteo en mouseleave/blur, ignorancia del primer mousemove.
 
@@ -230,9 +287,20 @@ Menu bilingue ES/EN con controles, mision y advertencias. Audio dual (YouTube en
 
 Seis galpones en grilla 2 por 3, cada uno 50x12x60m, con columnas internas y entrepisos parciales. Calles en cruz, zona de parkour con 12 pilas de cajas, tuberias subterraneas.
 
-Unico mapa con sombras activadas por hardware. Luna `DirectionalLight #556677` proyectando sombras de galpones y cajas. Tres PointLights gigantes: verde `#39ff14`, magenta `#ff00ff`, cian `#00ffff`. Es el mapa nocturno mas luminoso (AmbientLight 1.5).
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NTQxLmpwZw==/original/uyrEEi.jpg" width="30%" alt="Container">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Njk4LmdpZg==/original/ClpUdF.gif" width="30%" alt="Container gameplay">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzEzLmdpZg==/original/ikkq4n.gif" width="30%" alt="Container parkour">
+</p>
 
-Sin enemigos, sin peligro. La idea es recorrer, trepar y pintar. El timer corre pero no hace nada al llegar a cero. Caida > Y=-50, respawn.
+Unico mapa con sombras activadas por hardware. Luna `DirectionalLight #556677` proyectando sombras de galpones y cajas. Tres PointLights gigantes: verde `#39ff14`, magenta `#ff00ff`, cian `#00ffff`. Es el mapa nocturno mas luminoso (AmbientLight 1.5). Sin enemigos, sin peligro. La idea es recorrer, trepar y pintar.
+
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NjQzLmdpZg==/original/NQSFlF.gif" width="23%" alt="Container pintura">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NjUxLmdpZg==/original/%2BjKqLa.gif" width="23%" alt="Container spray">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NjU5LmdpZg==/original/LwEjno.gif" width="23%" alt="Container luces">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NjcyLmdpZg==/original/6Z4zsW.gif" width="23%" alt="Container sombras">
+</p>
 
 - Movimiento: 0.28 (sin sprint)
 - Gravedad: 0.009, salto: 0.24, altura: 2.5
@@ -268,11 +336,18 @@ Goteo agresivo: si no moves el mouse, el contador sube al doble de velocidad. Di
 
 El unico de dia. Cinco pisos, grilla 8x10 por planta, altura de piso 7. Rampas alternadas: piso 1 sube en esquina A, piso 2 en esquina B, forzando a recorrer cada planta. Ventanales cada 3 celdas, vidrio azul translucido `#add8e6` con opacidad 0.3. Piso 5 sin ventanas exteriores.
 
-50 rascacielos aleatorios alrededor: posicion, altura y dimensiones al azar. Forman un skyline envolvente.
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NDczLmpwZw==/original/xtwulo.jpg" width="30%" alt="Edificio">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzQwLmdpZg==/original/DaJkjS.gif" width="30%" alt="Edificio vista">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzQxLmdpZg==/original/JpuipW.gif" width="30%" alt="Edificio rampas">
+</p>
 
-Luz de dia: `AmbientLight` 0.6, `DirectionalLight` 0.9 sol. Cielo y niebla azules `#87CEEB`. Paredes gris hormigon `#999999`, pisos gris oscuro `#222222`.
+50 rascacielos aleatorios alrededor: posicion, altura y dimensiones al azar. Forman un skyline envolvente. Luz de dia: `AmbientLight` 0.6, `DirectionalLight` 0.9 sol. Cielo y niebla azules `#87CEEB`. Paredes gris hormigon `#999999`, pisos gris oscuro `#222222`. Sin goteo, sin enemigos.
 
-Sin goteo, sin enemigos. `CircleGeometry` comun.
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzQ3LmdpZg==/original/UD6LMn.gif" width="45%" alt="Edificio pintura">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzUwLmdpZg==/original/BJfE9R.gif" width="45%" alt="Edificio skyline">
+</p>
 
 - Movimiento: 0.25
 - Gravedad: 0.008, salto: 0.22, altura: 2.0
@@ -288,11 +363,20 @@ Sin goteo, sin enemigos. `CircleGeometry` comun.
 
 Laberinto exterior amurallado. Grilla 8x10 (mismo layout que un piso del Edificio), muros altura 6. Tren estatico negro al centro -- obstaculo que divide el laberinto. Bloques escalonados de 3 alturas para parkour.
 
-Containers dinamicos en el perimetro: cajas de colores `#ff9900, #ffcc00, #39ff14, #ff00ff, #00ffff` con alturas entre 2 y 8, distribuidas en los 4 bordes.
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NDg2LmpwZw==/original/IUC3Wb.jpg" width="24%" alt="Laberinto">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzY1LmdpZg==/original/2TtbmH.gif" width="24%" alt="Laberinto gameplay">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Nzc5LmdpZg==/original/p73fq%2B.gif" width="24%" alt="Laberinto pintura">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2Nzg0LmdpZg==/original/aVHe9T.gif" width="24%" alt="Laberinto parkour">
+</p>
 
-Unico mapa donde la pintura se adhiere como hijo del objeto `hit.object.add(mark)`, no de la escena. La posicion del decal se convierte a coordenadas locales con `worldToLocal`. Si el objeto se moviera, la pintura se moveria con el -- arquitectura preparada para objetos moviles.
+Containers dinamicos en el perimetro: cajas de colores `#ff9900, #ffcc00, #39ff14, #ff00ff, #00ffff` con alturas entre 2 y 8, distribuidas en los 4 bordes. Unico mapa donde la pintura se adhiere como hijo del objeto `hit.object.add(mark)`, no de la escena. La posicion del decal se convierte a coordenadas locales con `worldToLocal`. Luz de dia, niebla mas densa que Edificio (0.02), velocidad mas lenta (0.18).
 
-Luz de dia, niebla mas densa que Edificio (0.02), velocidad mas lenta (0.18).
+<p align="center">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4MjA4LnBuZw==/original/RGgx6G.png" width="30%" alt="Laberinto snapshot">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4MjEwLnBuZw==/original/fjeoxH.png" width="30%" alt="Laberinto detalle">
+  <img src="https://img.itch.zone/aW1nLzI3MTM4MjE1LnBuZw==/original/NxTraS.png" width="30%" alt="Laberinto accion">
+</p>
 
 - Movimiento: 0.18 (el mas lento del set)
 - Gravedad: 0.008, salto: 0.22, altura: 2.0
