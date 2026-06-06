@@ -8,7 +8,7 @@
 
 **Simulador de graffiti em primeira pessoa. HTML5, WebGL, Three.js. JavaScript puro.**
 
-*Nao e um jogo de tiro. E um jogo de marcar: conquiste territorio e deixe sua assinatura.*
+*Nao e um jogo de tiro. E um jogo de marcar territorio: conquiste o espaco e deixe sua assematura.*
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM4MTI1LnBuZw==/original/KQLcWZ.png" width="30%" alt="Metro">
@@ -37,7 +37,7 @@
 
 <div align="center">
 
-| # | Cenario | Tipo | Estilo | Play |
+| # | Cenario | Tipo | Estilo | Jugar |
 |---|---|---|---|---|
 | 1 | **Maestranza Metro/Tren** | Oficinas Ferroviarias, Santiago | Livre | [JOGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20METRO/) |
 | 2 | **NYC Subway** | Metro de Nova York | Livre | [JOGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20trenes%202/) |
@@ -67,15 +67,15 @@
 
 ## O Motor -- Componentes e Sistemas
 
-Everything is written in Vanilla JavaScript on top of Three.js r128+, loaded via CDN. No bundlers, no frameworks, no npm dependencies. A single HTML file per scenario withtaining all CSS, JS, and the 3D scene inline. File size per map ranges from 15 KB to 50 KB.
+Tudo foi escrito em JavaScript Vanilla sobre Three.js r128+, carregado via CDN. Sem bundlers, sem frameworks, sem dependencias npm. Um unico arquivo HTML por cenario contendo todo CSS, JS e a cena 3D inline. O tamanho por mapa varia de 15 KB a 50 KB.
 
 ### Sistema de Pintura por DecalGeometry
 
-In the NYC Subway and BA Subte maps, paint is applied unog `DecalGeometry` de Three.js. A procedural radial spray texture is generated on an offscreen 2D canvas, unog radial gradients with varying opacity and dispersion levels. That texture is passed as `map` a un `MeshBasicMaterial` withfigured with `alphaTest: 0.1`, `polygonOffset: true`, `polygonOffsetFactor: -4` y `depthWrite: false`. This eliminates Z-fighting between overlapping paint layers without modifying the wall geometry.
+Nos mapas NYC Subway e BA Subte, a pintura e aplicada usando `DecalGeometry` de Three.js. Uma textura procedural de spray radial e gerada em um canvas 2D offscreen, usando gradientes radiais com diferentes niveis de opacidade e dispersao. Essa textura e passada como `map` a un `MeshBasicMaterial` configurado com `alphaTest: 0.1`, `polygonOffset: true`, `polygonOffsetFactor: -4` y `depthWrite: false`. Isso elimina o Z-fighting entre camadas de pintura sobrepostas sem precisar modificar a geometria da parede.
 
-El `Raycaster` is cast from the camera position toward the center of the screen, with a withfigurable range of 6 to 15 unidades depending on the map. If the ray hits a surface, a `DecalGeometry` is placed at the impact point, oriented according to the intersected face normal. Decal size is withtrolled with the valve (slider en UI).
+El `Raycaster` e lancado da posicao da camera em direcao ao centro da tela, com alcance configuravel de 6 a 15 unidades dependendo do mapa. Se o raio atingir uma superficie, um `DecalGeometry` e colocado no ponto de impacto, orientado conforme a normal da face atingida. O tamanho do decal e controlado pela valvula (slider en UI).
 
-The remaining maps use `CircleGeometry` with `MeshBasicMaterial`, applying `renderOrder` incremental and `polygonOffset` with variable factor per layer. It's lighter but lacks the same spray texture fidelity.
+Nos demais mapas usa-se `CircleGeometry` con `MeshBasicMaterial`, aplicando `renderOrder` incremental e `polygonOffset` com fator variavel por camada. E mais leve mas nao tem a mesma fidelidade de textura de aerosol.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM3OTg3LnBuZw==/original/f8PbmW.png" width="32%" alt="Decal spray">
@@ -85,13 +85,13 @@ The remaining maps use `CircleGeometry` with `MeshBasicMaterial`, applying `rend
 
 ### Sistema de Gotejamento Procedural
 
-When the player holds the spray on the same spot, an internal counter `dripCounter` increments. Upon exceeding the `DRIP_THRESHOLD` (15 threshold on most maps), the engine spawns drips at the impact position. Each drip is a `BoxGeometry` very thin and elongated, with a semi-transparent material matching the active stroke color.
+Quando o jogador mantem o spray no mesmo ponto, um contador interno `dripCounter` incrementa. Ao ultrapassar o limite `DRIP_THRESHOLD` (15 na maioria dos mapas), o motor gera gotas na posicao de impacto. Cada gota e um `BoxGeometry` muito fino e alongado, com material semitransparente da mesma cor do traco ativo.
 
-Each drip has randomized properties generated at spawn: fall speed (`dripVelocidade`, between 0.08 and 0.25 unidades per frame), initial length (`dripLength`, between 0.05 and 0.3), and a random lateral offset to prevent all drips from falling in a perfect line. The drip stretches progressively on the Y axis (`scale.y += dripVelocidade * 0.1`) and displaces downward (`position.y -= dripVelocidade`). Cuando `scale.y` exceeds a maximum or the drip leaves the visible range, it is removed from the `activeDrips`.
+Cada gota tem propriedades aleatorias geradas ao ser criada: velocidade de queda (`dripSpeed`, entre 0.08 e 0.25 unidades por frame), comprimento inicial (`dripLength`, entre 0.05 e 0.3), e um offset lateral aleatorio para evitar que todas as gotas caiam em linha perfeita. A gota se estica progressivamente no eixo Y (`scale.y += dripSpeed * 0.1`) e se desloca para baixo (`position.y -= dripSpeed`). Cuando `scale.y` ultrapassa um maximo ou a gota sai do alcance visivel, ela e removida do array `activeDrips`.
 
-There is an active drip limit (300 a 400 depending on the map). When reached, the oldest drips are removed first (FIFO). In the Bodega and Bodega Fluor maps, the drip counter resets or slows down if the player moves the mouse, simulating spray spreading over a wider surface instead of accumulating in one spot.
+Ha um limite de gotas ativas (300 a 400 dependendo do mapa). Quando atingido, as gotas mais antigas sao removidas primeiro (FIFO). Nos mapas Bodega e Bodega Fluor, o contador de gotejamento reseta ou desacelera se o jogador mover o mouse, simulando o spray se espalhando por uma superficie maior em vez de acumular em um ponto.
 
-Specifically in Bodega Fluor, if the distance the mouse travels between frames is less than 0.05 unidades, `dripCounter` increments by 2 per frame (fast accumulation). If the mouse moves more, it apenas emcrements by 0.5.
+Especificamente no Bodega Fluor, se a distancia percorrida pelo mouse entre frames for menor que 0.05 unidades, `dripCounter` incrementa em 2 por frame (acumulacao rapida). Se o mouse se mover mais, incrementa apenas 0.5.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzA0LmdpZg==/original/HdS8d7.gif" width="24%" alt="Drip system">
@@ -102,13 +102,13 @@ Specifically in Bodega Fluor, if the distance the mouse travels between frames i
 
 ### Trens em Movimento e Colisao AABB
 
-Exclusive to the BA Subte map. Two trains run on fixed side tracks (X = -100 y X = +100). Each train has 4 cars assembled with `BoxGeometry`, totaling approximately 300 unidades in length. They carry a `PointLight` headlight acting as a beawith (`color: #ffeecc, intensity: 3, distance: 400`), visible through the fog.
+Exclusivo do mapa BA Subte. Ha duas formacoes que circulam por trilhos laterais fixos (X = -100 y X = +100). Cada formacao tem 4 vagoes montados com `BoxGeometry`, totalizando aproximadamente 300 unidades de comprimento. Carregam um `PointLight` frontal que atua como farol (`color: #ffeecc, intensity: 3, distance: 400`), visivel atraves da neblina.
 
-The movement logic is linear and deterministic: Train 1 moves in the +Z direction from Z = -550 until it disappears at Z > 650. Train 2 moves in the -Z direction from Z = +550 until Z < -650. Velocidade is 3.0 unidades per frame (at 60fps, roughly 180 virtual meters per sewithd). Upon disappearing, a respawn is scheduled with `setTimeout`: Train 1 every 120 sewithds exactly, Train 2 every 120 sewithds but offset (starts 75s after the first). The first train appears 15 sewithds after the game starts, the sewithd at 75 sewithds.
+A logica de movimento e linear e deterministica: o trem 1 avanca na direcao +Z de Z = -550 ate desaparecer em Z > 650. O trem 2 avanca na direcao -Z de Z = +550 ate Z < -650. A velocidade e de 3.0 unidades por frame (a 60fps, cerca de 180 metros virtuais por segundo). Ao desaparecer, um respawn e programado com `setTimeout`: trem 1 a cada 120 segundos exatos, trem 2 a cada 120 segundos mas defasado (inicia 75s depois do primeiro). O primeiro trem aparece aos 15 segundos de partida, o segundo aos 75 segundos.
 
-Collision detection uses AABB (Axis-Aligned Bounding Box). It does not use `Box3` from Three.js for this, but a direct range comparison: if the train's Z range (Z position plus/minus half its length) overlaps the player's Z range, and both share the same track X axis, there's a collision. The screen goes black, a red overlay appears with the text HIT BY THE TRAIN in sans-serif font, and a reload link. No respawn, no withtinue.
+A deteccao de colisao e por AABB (Axis-Aligned Bounding Box). Nao se usa `Box3` do Three.js para isso, mas uma comparacao direta de faixas: se a faixa Z do trem (posicao Z mais/menos metade do comprimento) se sobrepoe a faixa Z do jogador, e ambos compartilham o mesmo eixo X do trilho, ha colisao. A tela fica preta, um overlay vermelho aparece com o texto ATROPELADO PELO TREM em fonte sans-serif, e um link de recarga. Sem respawn, sem continuar.
 
-In the last 20 sewithds of the timer, the scene background (`scene.background`) begins to oscillate between black and dark red, the fog `FogExp2` shifts its color to `#330000`, and an HTML overlay with the text SECURITY ALERT -- LEAVE THE AREA IMMEDIATELY flashes over the canvas. This is implemented with `setInterval` at 500ms that toggles CSS classes and modifies scene color properties in real time.
+Nos ultimos 20 segundos do timer, o fundo da cena (`scene.background`) comeca a oscilar entre preto e vermelho escuro, a neblina `FogExp2` muda sua cor para `#330000`, e um overlay HTML com o texto ALERTA DE SEGURANCA -- ABANDONE A AREA IMEDIATAMENTE pisca sobre o canvas. Isso e implementado com `setInterval` a 500ms que alterna classes CSS e modifica as propriedades de cor da cena em tempo real.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3NTIzODA1LnBuZw==/original/0ejzuP.png" width="32%" alt="Tren moving">
@@ -118,19 +118,19 @@ In the last 20 sewithds of the timer, the scene background (`scene.background`) 
 
 ### Sistema de Audio e Radio
 
-All maps integrate the YouTube IFrame API. A hidden iframe element is created that loads the YouTube player without UI and starts playing a playlist with original music produced by Eduardo Fierro.
+Todos os mapas integram a YouTube IFrame API. Um elemento iframe oculto e criado que carrega o player do YouTube sem interface e comeca a reproduzir uma playlist com musica original produzida por Eduardo Fierro.
 
-The BA Subte map has a dual audio system. When the HTML is loaded from a web server (HTTP/HTTPS), the YouTube IFrame API is used normally. But when opened from `file://` (local double click), the browser blocks the YouTube IFrame API due to same-origin policies. In that case, the code automatically switches to HTML5 audio streams unog the `<audio>` element, with direct URLs to MP3 files. This allows the game to be functional even when run locally without a server.
+No mapa BA Subte ha um sistema dual de audio. Quando o HTML e carregado de um servidor web (HTTP/HTTPS), a YouTube IFrame API e usada normalmente. Mas quando aberto de `file://` (duplo clique local), o navegador bloqueia a IFrame API do YouTube por politicas de mesma origem. Nesse caso, o codigo comuta automaticamente para streams de audio HTML5 usando o elemento `<audio>` nativo, com URLs diretas para arquivos MP3. Isso permite que o jogo funcione mesmo executado localmente sem servidor.
 
-Detection is done by checking `window.location.protocol`: si es `file:`, the local audio fallback is activated. Si es `http:` o `https:`, YouTube is used. YouTube player volume is adjusted via `player.setVolume()` and the native audio element via `audio.volume`.
+A deteccao e feita verificando `window.location.protocol`: si es `file:`, o fallback de audio local e ativado. Si es `http:` o `https:`, o YouTube e usado. O volume do player do YouTube e ajustado via `player.setVolume()` e o elemento de audio nativo via `audio.volume`.
 
 ### Modo Snapshot -- Captura de Tela
 
-When presnog the `P`, key, `renderer.render(scene, camera)` is called to ensure the buffer is up to date, then the canvas withtent is extracted with `canvas.toDataURL('image/png')`. A temporary anchor element is created with `download = 'wdl-snapshot.png'`, the data URL is assigned as `href` and a programmatic click is triggered. The result is a PNG at the canvas native resolution, downloaded directly.
+Ao pressionar a tecla `P`, e executado `renderer.render(scene, camera)` para garantir que o buffer esteja atualizado, entao o conteudo do canvas e extraido com `canvas.toDataURL('image/png')`. Um elemento ancora temporario e criado com `download = 'wdl-snapshot.png'`, o data URL e atribuido como `href` e um clique programatico e disparado. O resultado e um PNG na resolucao nativa do canvas, baixado diretamente.
 
 ### Renderizacao e Neblina
 
-All maps use `FogExp2` from Three.js, which implements quadratic exponential fog: visibility decays according to `exp(-density * distance^2)`. Density varies between maps:
+Todos os mapas usam `FogExp2` do Three.js, que implementa neblina exponencial quadratica: a visibilidade decai conforme `exp(-density * distance^2)`. A densidade varia entre mapas:
 
 | Mapa | Densidad | Cor da Neblina |
 |---|---|---|
@@ -139,19 +139,19 @@ All maps use `FogExp2` from Three.js, which implements quadratic exponential fog
 | BA Subte | 0.008 | #020202 (muda para #330000 em alerta) |
 | Bodega | 0.004 | #0a0a0b |
 | Bodega Fluor | 0.03 | #020202 |
-| Edificio | 0.01 | #87CEEB (cielo) |
-| Laberinto | 0.02 | #87CEEB (cielo) |
+| Edificio | 0.01 | #87CEEB (ceu) |
+| Laberinto | 0.02 | #87CEEB (ceu) |
 
-NYC tem a neblina mais densa (0.012) para acentuar o ambiente fechado de tunel. Bodega Fluor tem 0.03, quase opaca a 50 metros. Bodega tem a mais leve (0.004), permitindo ver os galpoes a distancia. Edificio y Laberinto use ceu-blue color as they are daytime maps.
+NYC tem a neblina mais densa (0.012) para acentuar o ambiente fechado de tunel. Bodega Fluor tem 0.03, quase opaca a 50 metros. Bodega tem a mais leve (0.004), permitindo ver os galpoes a distancia. Edificio y Laberinto usan color azul ceu por ser mapas diurnos.
 
-### Per-Cenario Lighting
+### Iluminacao por Cenario
 
-Cada mapa tem iluminacao projetada para sua atmosfera:
+Cada mapa tem uma configuracao de luzes pensada para sua ambientacao:
 
-- **Metro:** `AmbientLight(0xffffff, 0.3)` base, `DirectionalLight(0xffffff, 0.4)`, `PointLight(#ff3300, 2, 80)` red lights in the tunnels.
-- **NYC Subway:** `AmbientLight(0xffffff, 0.08)` minimo, `PointLight(#dcf0f7, 0.15, 200)` cool lights in the station, `PointLight(#ffb84d, 0.1, 180)` warm lights in the tunnel tubes.
-- **BA Subte:** `AmbientLight(0xffffff, 0.08)`, `PointLight(#ffddaa, 0.2, 200)` calidas, `PointLight(#ffb84d, 0.1, 180)` at intersections.
-- **Bodega:** `AmbientLight(0xffffff, 1.5)`, `DirectionalLight(#556677, 1.5)` luna, `PointLight` RGB (verde, magenta, cian) + sombras `PCFSoftShadowMap`.
+- **Metro:** `AmbientLight(0xffffff, 0.3)` base, `DirectionalLight(0xffffff, 0.4)`, `PointLight(#ff3300, 2, 80)` vermelhas nos tuneis.
+- **NYC Subway:** `AmbientLight(0xffffff, 0.08)` minimo, `PointLight(#dcf0f7, 0.15, 200)` frias na estacao, `PointLight(#ffb84d, 0.1, 180)` quentes nos tubos.
+- **BA Subte:** `AmbientLight(0xffffff, 0.08)`, `PointLight(#ffddaa, 0.2, 200)` calidas, `PointLight(#ffb84d, 0.1, 180)` nas intersecoes.
+- **Bodega:** `AmbientLight(0xffffff, 1.5)`, `DirectionalLight(#556677, 1.5)` luna, `PointLight` RGB (verde, magenta, ciano) + sombras `PCFSoftShadowMap`.
 - **Bodega Fluor:** Solo `AmbientLight(#704045, 1.2)`. Uma unica luz avermelhada. E o mapa mais escuro.
 - **Edificio:** `AmbientLight(0xffffff, 0.6)`, `DirectionalLight(0xffffff, 0.9)` sol diurno.
 - **Laberinto:** `AmbientLight(0xffffff, 0.7)`, `DirectionalLight(0xffffff, 0.8)` sol diurno.
@@ -165,11 +165,11 @@ Cada mapa tem iluminacao projetada para sua atmosfera:
 
 ### Movimento do Jogador e Fisica
 
-First-person movement is implemented without unog `PointerLockControles` from Three.js. The camera rotates directly based on `movementX` y `movementY` from the `mousemove`. Pitch (Y) is clamped between -PI/2 and PI/2.
+O movimento em primeira pessoa e implementado sem usar `PointerLockControls` do Three.js. A camera gira diretamente conforme `movementX` y `movementY` do evento `mousemove`. O pitch (Y) e limitado entre -PI/2 e PI/2.
 
-WASD movement is relative to the camera orientation. A forward vector is calculated from `camera.rotation.y` usando `no/cos`, and a perpendicular right vector. Puloing uses `playerVelocity.y` which decreases by gravity each frame. A ground check keeps the player at Y = playerAltura.
+O movimento WASD e relativo a orientacao da camera. Um vetor forward e calculado a partir de `camera.rotation.y` usando `sem/cos`, e um vetor right perpendicular. O pulo usa `playerVelocity.y` que diminui por gravidade a cada frame. Uma verificacao de chao mantem o jogador em Y = playerHeight.
 
-Parameters by map:
+Parametros por mapa:
 
 | Mapa | Velocidade | Sprint | Gravidade | Pulo | Altura |
 |---|---|---|---|---|---|
@@ -181,13 +181,13 @@ Parameters by map:
 | Edificio | 0.25 | -- | 0.008 | 0.22 | 2.0 |
 | Laberinto | 0.18 | -- | 0.008 | 0.22 | 2.0 |
 
-The train maps share agile parameters with sprint. The rest are slower, designed for unhurried exploration.
+Os mapas de trem compartilham parametros ageis com sprint. Os demais sao mais lentos, pensados para exploracao tranquila.
 
 ### Deteccao de Colisoes com o Ambiente
 
-Collisions against walls and objects are handled with `Box3` de Three.js. Each static geometry gets a bounding box via `computeBoundingBox()`. Before applying player movement, a temporary `Box3` is created around the future position and tested with `intersectsBox()` against all colliders. If there's an intersection, movement on that axis is cancelled.
+As colisoes contra paredes e objetos sao tratadas com `Box3` de Three.js. Cada geometria estatica recebe um bounding box via `computeBoundingBox()`. Antes de aplicar o movimento do jogador, um temporario `Box3` e criado ao redor da posicao futura e testado com `intersectsBox()` contra todos os colisores. Se houver intersecao, o movimento nesse eixo e cancelado.
 
-In Bodega Fluor, detection is simpler: `Math.abs` against the maze grid coordinates. In BA Subte, the maze walls are hundreds of individual `BoxGeometry` each with its own `Box3`.
+No Bodega Fluor, a deteccao e mais simples: `Math.abs` contra as coordenadas do grid do labirinto. No BA Subte, as paredes do labirinto sao centenas de `BoxGeometry` individuais, cada uma com seu `Box3`.
 
 ---
 
@@ -219,7 +219,7 @@ In Bodega Fluor, detection is simpler: `Math.abs` against the maze grid coordina
 
 ### 1. Maestranza Metro/Trem -- Santiago, Oficinas L2
 
-O original. O que comecou tudo. Escrevi pensando nas oficinas da Linha 2 do Metro de Santiago, um hangar industrial enorme com trens NS-74 estacionados em via morta. Sao 22 trens azuis `#00a9e0` com cabines, vidros, engates metalicos e luzes de posicao.
+O original. O que comecou tudo. Escrevi pensando nas oficinas da Linha 2 do Metro de Santiago, um hangar industrial enorme com formacoes NS-74 estacionadas em via morta. Sao 22 trens azuis `#00a9e0` com cabine, vidros, engates metalicos e luzes de posicao.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2ODA0LmdpZg==/original/J3NJWn.gif" width="30%" alt="Metro tren">
@@ -227,19 +227,19 @@ O original. O que comecou tudo. Escrevi pensando nas oficinas da Linha 2 do Metr
   <img src="https://img.itch.zone/aW1nLzI2ODY2ODA5LmdpZg==/original/5dwhdf.gif" width="30%" alt="Metro tunel">
 </p>
 
-O mapa e um hangar de 400 por 600 metros com altura 50. Tres tuneis laterais, plataformas elevadas, colunas de ferro a cada 40 metros e cerca de 40 caixas de pecas. As luzes dos tuneis sao vermelhas `#ff3300`, intensity 2, range 80. The fog is `FogExp2(0x020202, 0.008)`. A pintura usa `CircleGeometry` with `MeshBasicMaterial`. Sem sistema de gotejamento -- esta versao e anterior a esse desenvolvimento. Sem trens em movimento.
+O mapa e um hangar de 400 por 600 metros com altura 50. Tres tuneis para os lados, plataformas elevadas, colunas de ferro a cada 40 metros e cerca de 40 caixas de pecas. As luzes dos tuneis sao vermelhas `#ff3300`, intensidade 2, alcance 80. A neblina e `FogExp2(0x020202, 0.008)`. A pintura usa `CircleGeometry` con `MeshBasicMaterial`. Sem sistema de gotejamento -- esta versao e anterior a esse desenvolvimento. Sem trens em movimento.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM4MTE0LnBuZw==/original/xtXMwi.png" width="48%" alt="Metro snapshot">
   <img src="https://img.itch.zone/aW1nLzI3MTM4MTIxLnBuZw==/original/yQMlWG.png" width="48%" alt="Metro accion">
 </p>
 
-The timer runs 1200 sewithds. When it reaches zero it calls `location.reload()`. Se cair abaixo de Y = -40, respawn automatico.
+O timer marca 1200 segundos. Ao chegar a zero chama `location.reload()`. Se cair abaixo de Y = -40, respawn automatico.
 
-- Movimento: 0.45 caminando, 0.75 corriendo (Shift)
-- Gravidade: 0.012, salto: 0.32, altura jugador: 2.4
+- Movimento: 0.45 andando, 0.75 correndo (Shift)
+- Gravidade: 0.012, salto: 0.32, altura do jogador: 2.4
 - Alcance do spray: 15 unidades
-- Valvula: 0.1 a 1.4, passo 0.05, default 0.4
+- Valvula: 0.1 a 1.4, passo 0.05, padrao 0.4
 - 533 linhas de codigo
 
 [JOGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20METRO/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger)
@@ -248,7 +248,7 @@ The timer runs 1200 sewithds. When it reaches zero it calls `location.reload()`.
 
 ### 2. NYC Subway -- Nova York
 
-A versao nova-iorquina. Estacao central de 400 por 100 metros com quatro trilhos em tuneis para norte e sul. Corredores transversais a cada 120 metros. Paredes de azulejo branco `#dddddd`, colunas de aco verde NYC `#123524`. Tuneis em tubo fechado com teto, piso e paredes curvas.
+A versao nova-iorquina. Estacao central de 400 por 100 metros com quatro trilhos que se estendem em tuneis para o norte e sul. Corredores transversais a cada 120 metros. Paredes de azulejo branco `#dddddd`, colunas de aco verde NYC `#123524`. Tuneis em tubo fechado com teto, piso e paredes curvas.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM3MTMyLnBuZw==/original/aR5DO4.png" width="30%" alt="NYC Subway">
@@ -256,7 +256,7 @@ A versao nova-iorquina. Estacao central de 400 por 100 metros com quatro trilhos
   <img src="https://img.itch.zone/aW1nLzI3MTM4NTMwLnBuZw==/original/9Uouzu.png" width="30%" alt="NYC Subway">
 </p>
 
-14 Trens estilo NYC estacionados: metal prateado, teto preto, luzes LED vermelhas. Os trens sao estaticos mas o clima e tenso: escuridao quase total, luzes minimas, neblina densa (0.012). Primeiro mapa a implementar `DecalGeometry` for painting and the complete drip system. Valve from 0.1 to 5.0, allowing from ultra-fine tags to throw-ups that cover a train in sewithds.
+14 trens estilo NYC estacionados: metal prateado, teto preto, luzes LED vermelhas na traseira. Os trens sao estaticos mas a ambientacao e tensa: escuridao quase total, luzes minimas, neblina densa (0.012). Primeiro mapa a implementar `DecalGeometry` para a pintura e o sistema de gotejamento completo. Valvula de 0.1 a 5.0, permitindo de tags finissimos ate throw-ups que cobrem um trem em segundos.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM3MTk1LnBuZw==/original/9pwbF5.png" width="24%" alt="NYC interior">
@@ -267,8 +267,8 @@ A versao nova-iorquina. Estacao central de 400 por 100 metros com quatro trilhos
 
 - Movimento: 0.45 / 0.75 (sprint)
 - Gravidade: 0.012, salto: 0.32, altura: 2.4
-- Alcance do spray: 15, Valvula: 0.1 a 5.0, default 1.0
-- Goteo: DRIP_THRESHOLD 15, max 400 gotas activas
+- Alcance do spray: 15, Valvula: 0.1 a 5.0, padrao 1.0
+- Gotejamento: DRIP_THRESHOLD 15, max 400 gotas ativas
 - 666 linhas de codigo
 
 [JOGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20trenes%202/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-ny-subway)
@@ -277,7 +277,7 @@ A versao nova-iorquina. Estacao central de 400 por 100 metros com quatro trilhos
 
 ### 3. BA Subte -- Buenos Aires (o mais completo)
 
-990 lines. The largest and most polished map. A grid maze of 11 por 11 blocks, 1100 por 1100 metros. 70m blocks with 30m passages. Empty central station of 100 by 300 meters. Cream beige walls `#e6dec3`, dark iron columns `#2a302d`, colored advertinog panels.
+990 linhas. O mapa mais extenso e mais trabalhado. Labirinto em grade de 11 por 11 blocos, 1100 por 1100 metros. Blocos de 70m com corredores de 30m. Estacao central vazia de 100 por 300 metros. Paredes bege creme `#e6dec3`, colunas de ferro escuro `#2a302d`, paineis publicitarios coloridos.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3NTIzNzEyLnBuZw==/original/3mj0P3.png" width="24%" alt="BA Subte">
@@ -286,7 +286,7 @@ A versao nova-iorquina. Estacao central de 400 por 100 metros com quatro trilhos
   <img src="https://img.itch.zone/aW1nLzI3NTIzNzk2LnBuZw==/original/XvZrkX.png" width="24%" alt="BA Subte gameplay">
 </p>
 
-The only map with moving trains. Two 4-car trains with front headlights visible through the fog. They run on fixed tracks at X = -100 and X = +100. If you stay on the track, Game Over with no respawn. In the last 20 sewithds, the screen pulses red, the fog turns blood-colored, and a warning sign flashes.
+Unico mapa com trens em movimento. Duas formacoes de 4 vagoes com farois dianteiros visiveis atraves da neblina. Circulam por trilhos fixos em X = -100 e X = +100. Se voce ficar no trilho, Game Over sem respawn. Nos ultimos 20 segundos, a tela pulsa em vermelho, a neblina fica cor de sangue e um aviso de alerta pisca.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3NTIzODA1LnBuZw==/original/0ejzuP.png" width="30%" alt="BA Subte tren movil">
@@ -294,14 +294,14 @@ The only map with moving trains. Two 4-car trains with front headlights visible 
   <img src="https://img.itch.zone/aW1nLzI3NTIzODc1LnBuZw==/original/XOo7nC.png" width="30%" alt="BA Subte menu">
 </p>
 
-Bilingual ES/EN menu with withtrols, mission, and warnings. Dual audio (YouTube no servidor, HTML5 Audio locally). Advanced event handling: withtext menu prevention, mouseleave/blur resets, first mousemove ignored.
+Menu bilingue ES/EN com controles, missao e avisos. Audio Dual (YouTube no servidor, HTML5 Audio localmente). Gerenciamento avancado de eventos: prevencao de menu contextual, reset em mouseleave/blur, primeiro mousemove ignorado.
 
 - Movimento: 0.45 / 0.75 (sprint)
 - Gravidade: 0.012, salto: 0.32, altura: 2.4
-- Alcance do spray: 15, Valvula: 0.1 a 5.0, default 1.0
-- Goteo: DRIP_THRESHOLD 15, max 400 gotas
-- Timer: 1200s with alerta visual a los 20s finales
-- Trenes: 2 en movimiento, colision AABB, Game Over
+- Alcance do spray: 15, Valvula: 0.1 a 5.0, padrao 1.0
+- Gotejamento: DRIP_THRESHOLD 15, max 400 gotas
+- Timer: 1200s com alerta visual nos 20s finais
+- Trens: 2 en movimiento, colision AABB, Game Over
 - Audio: dual YouTube + HTML5 Audio fallback
 - 990 linhas de codigo
 
@@ -311,7 +311,7 @@ Bilingual ES/EN menu with withtrols, mission, and warnings. Dual audio (YouTube 
 
 ### 4. Container 1 / Galpoes Noturnos
 
-Six warehouses in a 2 by 3 grid, each 50x12x60m, with internal columns and partial mezzanines. Cross-shaped streets, a parkour zone with 12 crate stacks, underground pipes.
+Seis galpoes em grade 2 por 3, cada um 50x12x60m, com colunas internas e mezaninos parciais. Ruas em cruz, zona de parkour com 12 pilhas de caixas, tubulacoes subterraneas.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NTQxLmpwZw==/original/uyrEEi.jpg" width="30%" alt="Container">
@@ -319,7 +319,7 @@ Six warehouses in a 2 by 3 grid, each 50x12x60m, with internal columns and parti
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzEzLmdpZg==/original/ikkq4n.gif" width="30%" alt="Container parkour">
 </p>
 
-The only map with hardware-accelerated shadows. Moonlight `DirectionalLight #556677` casting shadows from warehouses and crates. Three giant PointLights: green `#39ff14`, magenta `#ff00ff`, cian `#00ffff`. It's the brightest night map (AmbientLight 1.5). No enemies, no danger. The idea is to wander, climb, and paint.
+Unico mapa com sombras ativadas por hardware. Luar `DirectionalLight #556677` projetando sombras de galpoes e caixas. Tres PointLights gigantes: verde `#39ff14`, magenta `#ff00ff`, ciano `#00ffff`. E o mapa noturno mais luminoso (AmbientLight 1.5). Sem inimigos, sem perigo. A ideia e percorrer, escalar e pintar.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NjQzLmdpZg==/original/NQSFlF.gif" width="23%" alt="Container pintura">
@@ -328,20 +328,20 @@ The only map with hardware-accelerated shadows. Moonlight `DirectionalLight #556
   <img src="https://img.itch.zone/aW1nLzI2ODY2NjcyLmdpZg==/original/6Z4zsW.gif" width="23%" alt="Container sombras">
 </p>
 
-- Movimento: 0.28 (no sprint)
+- Movimento: 0.28 (sem sprint)
 - Gravidade: 0.009, salto: 0.24, altura: 2.5
-- Alcance do spray: 12, Valvula: 0.05 a 0.8, default 0.25
-- Goteo: DRIP_THRESHOLD 15, max 400 gotas, anti-withstante por mouse
+- Alcance do spray: 12, Valvula: 0.05 a 0.8, padrao 0.25
+- Gotejamento: DRIP_THRESHOLD 15, max 400 gotas, anti-estatico por movimento do mouse
 - Sombras: PCFSoftShadowMap activado
 - 504 linhas de codigo
 
-[JOGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20BODEGA/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-withtainers-1)
+[JOGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20BODEGA/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-containers-1)
 
 ---
 
 ### 5. Bodega Fluor
 
-The smallest one. 365 lineas. A 15 by 20 cell maze (120x160m) with passages one block wide. Near-total darkness -- only `AmbientLight #704045` at intensity 1.2. Neon green UI on black.
+O menor. 365 lineas. Labirinto de 15 por 20 celulas (120x160m) com corredores de um bloco de largura. Escuridao quase total -- apenas `AmbientLight #704045` a intensidade 1.2. UI verde neon sobre preto.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzY4LmdpZg==/original/DevNdf.gif" width="30%" alt="Fluor oscuro">
@@ -349,13 +349,13 @@ The smallest one. 365 lineas. A 15 by 20 cell maze (120x160m) with passages one 
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzcxLmdpZg==/original/QzmamK.gif" width="30%" alt="Fluor gameplay">
 </p>
 
-Maze hardcoded as a 2D matrix, not procedural. Walls are `BoxGeometry` of 8 unidades, height 6. Collision via `Math.abs`, no `Box3`. Aggressive drip: if you don't move the mouse, the counter increases at double speed. Designed to get lost in the maze, paint in the dark, and let the walls fill with drips.
+Labirinto hardcoded como matriz 2D, nao procedural. Paredes sao `BoxGeometry` de 8 unidades, altura 6. Colisao via `Math.abs`, sem `Box3`. Gotejamento agressivo: se voce nao mover o mouse, o contador sobe ao dobro da velocidade. Projetado para se perder no labirinto, pintar na escuridao e deixar as paredes cheias de escorrimentos.
 
 - Movimento: 0.20 (el mas lento)
 - Gravidade: 0.008, salto: 0.18, altura: 2.0
 - Alcance do spray: 6
-- Goteo: DRIP_THRESHOLD 20, max 300 gotas, acumulacion acelerada
-- Iluminacion: solo AmbientLight rojiza
+- Gotejamento: DRIP_THRESHOLD 20, max 300 gotas, acumulacao acelerada
+- Iluminacao: solo AmbientLight rojiza
 - 365 linhas de codigo
 
 [JOGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20BODEGA%20FLUOR/)
@@ -364,7 +364,7 @@ Maze hardcoded as a 2D matrix, not procedural. Walls are `BoxGeometry` of 8 unid
 
 ### 6. Edificio Abandonado
 
-O unico diurno. Cinco andares, grade 8x10 por nivel, altura 7. Alternating ramps: floor 1 rises in corner A, floor 2 in corner B, forcing you to traverse each level. Windows every 3 cells, translucent blue glass `#add8e6` with 0.3 opacity. Floor 5 has no exterior windows.
+O unico diurno. Cinco andares, grade 8x10 por planta, altura do andar 7. Rampas alternadas: andar 1 sobe no canto A, andar 2 no canto B, forcando percorrer cada andar. Janeloes a cada 3 celulas, vidro azul translucido `#add8e6` con opacidad 0.3. Piso 5 sem ventanas exteriores.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NDczLmpwZw==/original/xtwulo.jpg" width="30%" alt="Edificio">
@@ -372,17 +372,17 @@ O unico diurno. Cinco andares, grade 8x10 por nivel, altura 7. Alternating ramps
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzQxLmdpZg==/original/JpuipW.gif" width="30%" alt="Edificio rampas">
 </p>
 
-50 random ceuscrapers around: position, height, and dimensions randomized. They form an enveloping ceuline. Luz do Dia: `AmbientLight` 0.6, `DirectionalLight` 0.9 sun. Blue ceu and fog `#87CEEB`. Concrete gray walls `#999999`, dark gray floors `#222222`. No drip, no enemies.
+50 rascaceus aleatorios alrededor: posicion, altura y dimensiones al azar. Forman un skyline envolvente. Luz do Dia: `AmbientLight` 0.6, `DirectionalLight` 0.9 sol. Ceu e neblina azuis `#87CEEB`. Paredes cinza concreto `#999999`, pisos cinza escuro `#222222`. Sin goteo, sem enemigos.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzQ3LmdpZg==/original/UD6LMn.gif" width="45%" alt="Edificio pintura">
-  <img src="https://img.itch.zone/aW1nLzI2ODY2NzUwLmdpZg==/original/BJfE9R.gif" width="45%" alt="Edificio ceuline">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzUwLmdpZg==/original/BJfE9R.gif" width="45%" alt="Edificio skyline">
 </p>
 
 - Movimento: 0.25
 - Gravidade: 0.008, salto: 0.22, altura: 2.0
-- Alcance do spray: 6, Valvula: 0.05 a 0.6, default 0.25
-- 5 pisos with rampas alternadas, 50 rascacielos procedurales
+- Alcance do spray: 6, Valvula: 0.05 a 0.6, padrao 0.25
+- 5 andares com rampas alternadas, 50 rascaceus procedurales
 - 486 linhas de codigo
 
 [JOGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20EDIFICIO/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-edificio-abandonado)
@@ -391,7 +391,7 @@ O unico diurno. Cinco andares, grade 8x10 por nivel, altura 7. Alternating ramps
 
 ### 7. Labirinto Noturno
 
-Labirinto Externo Murado. Grilla 8x10 (mismo layout que un piso del Edificio), walls 6 high. Black static train at the center -- an obstacle that divides the maze. Stepped blocks of 3 heights for parkour.
+Labirinto Externo Murado. Grilla 8x10 (mismo layout que un piso del Edificio), muros altura 6. Trem estatico preto ao centro -- obstaculo que divide o labirinto. Blocos escalonados de 3 alturas para parkour.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NDg2LmpwZw==/original/IUC3Wb.jpg" width="24%" alt="Laberinto">
@@ -400,7 +400,7 @@ Labirinto Externo Murado. Grilla 8x10 (mismo layout que un piso del Edificio), w
   <img src="https://img.itch.zone/aW1nLzI2ODY2Nzg0LmdpZg==/original/aVHe9T.gif" width="24%" alt="Laberinto parkour">
 </p>
 
-Dynamic withtainers along the perimeter: colored boxes `#ff9900, #ffcc00, #39ff14, #ff00ff, #00ffff` with heights between 2 and 8, distributed on all 4 edges. The only map where paint attaches as a child of the hit object `hit.object.add(mark)`, not of the scene. The decal position is withverted to local coordinates with `worldToLocal`. Luz do Dia, denser fog than the Building (0.02), slower speed (0.18).
+Containers dinamicos no perimetro: caixas coloridas `#ff9900, #ffcc00, #39ff14, #ff00ff, #00ffff` com alturas entre 2 e 8, distribuidas nos 4 lados. Unico mapa onde a pintura se fixa como filha do objeto `hit.object.add(mark)`, nao da cena. A posicao do decal e convertida para coordenadas locais com `worldToLocal`. Luz do dia, neblina mais densa que o Edificio (0.02), velocidade mais lenta (0.18).
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM4MjA4LnBuZw==/original/RGgx6G.png" width="30%" alt="Laberinto snapshot">
@@ -410,16 +410,16 @@ Dynamic withtainers along the perimeter: colored boxes `#ff9900, #ffcc00, #39ff1
 
 - Movimento: 0.18 (el mas lento del set)
 - Gravidade: 0.008, salto: 0.22, altura: 2.0
-- Alcance do spray: 6, Valvula: 0.05 a 0.6, default 0.25
-- Pintura Fixada a objetos (hit.object.add + worldToLocal)
-- Tren estatico central + parkour + withtainers perimetrales
+- Alcance do spray: 6, Valvula: 0.05 a 0.6, padrao 0.25
+- Pintura fixada a objetos (hit.object.add + worldToLocal)
+- Trem estatico central + parkour + containers perimetrales
 - 511 linhas de codigo
 
 [JOGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20LABERINTO/) | [itch.io](https://fierroduque.itch.io/wdl-master-taggerlaberinto-de-noche)
 
 ---
 
-## Cenario Comparison
+## Comparativo de Cenarios
 
 | Caracteristica | Metro | NYC | BA Subte | Container | Fluor | Edificio | Laberinto |
 |---|---|---|---|---|---|---|---|
@@ -451,11 +451,11 @@ Dynamic withtainers along the perimeter: colored boxes `#ff9900, #ffcc00, #39ff1
 
 | Tecla | Acao |
 |---|---|
-| `W A S D` / arrows | Movimento |
+| `W A S D` / setas | Movimento |
 | `SHIFT` | Correr (apenas em Metro, NYC, BA Subte) |
-| `ESPACIO` | Pulo |
+| `ESPACO` | Pular |
 | `MOUSE` | Olhar ao redor |
-| `CLICK IZQUIERDO` | Pintar spray |
+| `CLIQUE ESQUERDO` | Pintar spray |
 | `P` | Captura de Tela (PNG) |
 | `R` | Respawn |
 | `ESC` | Soltar ponteiro |
@@ -464,34 +464,34 @@ Dynamic withtainers along the perimeter: colored boxes `#ff9900, #ffcc00, #39ff1
 
 ## Especificacoes Tecnicas Gerais
 
-- **Motor:** Three.js WebGL, loaded via CDN (jsdelivr/unpkg)
-- **Linguagem:** JavaScript Vanilla, no TipoScript or transpilers
-- **Size per map:** 15 KB a 50 KB (CSS + JS inline)
+- **Motor:** Three.js WebGL, carregado via CDN (jsdelivr/unpkg)
+- **Linguagem:** JavaScript Vanilla, sem TypeScript ni transpiladores
+- **Tamanho por mapa:** 15 KB a 50 KB (CSS + JS inline)
 - **Dependencias externas:** Three.js r128+ y YouTube IFrame API
-- **Renderizacao:** `WebGLRenderer` with `requestAnimationFrame`, target 60fps
+- **Renderizacao:** `WebGLRenderer` con `requestAnimationFrame`, target 60fps
 - **Compatibilidade:** Chrome, Edge, Firefox, Opera, Brave
 - **Controles:** Pointer Lock API + eventos de teclado/mouse nativos
 - **Formato:** un solo archivo HTML autonomo por escenario
 
 ### Arquitetura do Codigo
 
-Each HTML file follows the same structure:
+Cada arquivo HTML segue a mesma estrutura:
 
-1. Metadata and inline CSS (primeras 100-200 lineas)
-2. Constant declarations: speeds, gravity, timer, colors, dimensions
-3. Three.js setup: scene, camera, renderer, fog, lights
-4. Geometry withstruction: walls, floors, trains, columns, objects
-5. Event withfiguration: keyboard, mouse, pointer lock, visibility, resize
-6. Game loop: `requestAnimationFrame` with movimiento, fisica, colisiones, goteo, trenes, timer y UI
-7. Utilities: spawn, respawn, capture, game over, alert
+1. Metadados e CSS inline (primeras 100-200 lineas)
+2. Declaracao de constantes: velocidades, gravidade, timer, cores, dimensoes
+3. Setup do Three.js: cena, camera, renderizador, neblina, luzes
+4. Construcao de geometria: paredes, pisos, trens, colunas, objetos
+5. Configuracao de eventos: teclado, mouse, pointer lock, visibilidade, resize
+6. Game loop: `requestAnimationFrame` com movimento, fisica, colisoes, gotejamento, trens, timer e UI
+7. Utilitarios: spawn, respawn, captura, game over, alerta
 
 ---
 
 ## Fundamento Artistico
 
-WDL Master Tagger is not a game to win. It's a game to be in -- to immerse yourself in the atmosphere of an abandoned subway, feel the pressure of the clock, hear the hum of the rails, and know that at any moment a train can erase you.
+WDL Master Tagger nao e um jogo para vencer. E um jogo para estar -- para mergulhar na atmosfera de um metro abandonado, sentir a pressao do relogio, ouvir o zumbido dos trilhos e saber que a qualquer momento um trem pode te apagar.
 
-This project was born as a practice and visualization tool for graffiti writers, designers, and visual artists. It has no scoring, no levels, no achievements. It's a space for aesthetic simulation where you can test color combinations, compositions, and styles before taking them into the real world, or simply enjoy the creative flow in an atmospheric industrial environment.
+Este projeto nasce como uma ferramenta de pratica e visualizacao para escritores de graffiti, designers e artistas visuais. Nao tem pontuacao, nao tem niveis, nao tem conquistas. E um espaco de simulacao estetica onde testar combinacoes de cores, composicoes e estilos antes de leva-los ao mundo real, ou simplesmente desfrutar do fluxo criativo em um ambiente industrial atmosferico.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM4NTM5LnBuZw==/original/SJWreF.png" width="32%" alt="Arte 1">
@@ -503,19 +503,19 @@ This project was born as a practice and visualization tool for graffiti writers,
 
 ## Roadmap
 
-- [x] 7 playable scenarios via browser
-- [x] Sistema de pintura with DecalGeometry y goteo procedural
-- [x] Trens em Movimento with colision AABB (BA Subte)
-- [x] Radio YouTube integrada with musica original
+- [x] 7 cenarios jogaveis via navegador
+- [x] Sistema de pintura con DecalGeometry y goteo procedural
+- [x] Trens em Movimento con colision AABB (BA Subte)
+- [x] Radio YouTube integrada con musica original
 - [x] Snapshot mode (captura PNG)
-- [x] Menu principal with acceso a todos los mapas
-- [x] Audio Dual with fallback para ejecucion local
+- [x] Menu principal con acceso a todos los mapas
+- [x] Audio Dual con fallback para ejecucion local
 - [x] Sombras proyectadas (Container 1)
-- [ ] Native compilation .exe (Standalone)
+- [ ] Compilacao nativa .exe (Standalone)
 - [ ] Post-procesamiento visual: bloom, SSAO, motion blur
-- [ ] New maps: abandoned factory, railway bridge, withtainer depot 2
-- [ ] Gamepad support
-- [ ] Local multiplayer (pantalla dividida)
+- [ ] Novos mapas: fabrica abandonada, ponte ferroviaria, deposito containers 2
+- [ ] Suporte para gamepad
+- [ ] Multijogador local (tela dividida)
 
 ---
 
@@ -537,7 +537,7 @@ This project was born as a practice and visualization tool for graffiti writers,
 | Metro/Tren Santiago | [fierroduque.itch.io/wdl-master-tagger](https://fierroduque.itch.io/wdl-master-tagger) |
 | NYC Subway | [fierroduque.itch.io/wdl-master-tagger-ny-subway](https://fierroduque.itch.io/wdl-master-tagger-ny-subway) |
 | BA Subte | [fierroduque.itch.io/wdl-master-tagger-tren-3](https://fierroduque.itch.io/wdl-master-tagger-tren-3) |
-| Container 1 / Bodega | [fierroduque.itch.io/wdl-master-tagger-withtainers-1](https://fierroduque.itch.io/wdl-master-tagger-withtainers-1) |
+| Container 1 / Bodega | [fierroduque.itch.io/wdl-master-tagger-containers-1](https://fierroduque.itch.io/wdl-master-tagger-containers-1) |
 | Edificio Abandonado | [fierroduque.itch.io/wdl-master-tagger-edificio-abandonado](https://fierroduque.itch.io/wdl-master-tagger-edificio-abandonado) |
 | Labirinto Noturno | [fierroduque.itch.io/wdl-master-taggerlaberinto-de-noche](https://fierroduque.itch.io/wdl-master-taggerlaberinto-de-noche) |
 
@@ -566,13 +566,13 @@ WDL-MASTER-TAGGER-VERSION-METRO-/
 │   └── index.html
 ├── juego grafiti BODEGA FLUOR/         # Laberinto Neon
 │   └── index.html
-├── juego grafiti EDIFICIO/             # Edificio Abandonado (5 pisos)
+├── juego grafiti EDIFICIO/             # Edificio Abandonado (5 andares)
 │   └── index.html
 └── juego grafiti LABERINTO/            # Labirinto Noturno
     └── index.html
 ```
 
-Each folder withtains a single standalone `index.html` . No dependencies, no installation. Open any in your browser and start painting.
+Cada pasta contem um unico `index.html` autonomo. Sin dependencias, sem instalacion. Abri cualquiera en tu navegador y empeza a pintar.
 
 ---
 

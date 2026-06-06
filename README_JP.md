@@ -6,9 +6,9 @@
 
 # WDL MASTER TAGGER
 
-**Ichijin shou graffiti shimyureetaa. HTML5, WebGL, Three.js. Jun JavaScript.**
+**一人称視点のグラフィティシミュレーター. HTML5, WebGL, Three.js. JavaScript sin frameworks.**
 
-*Shuuting geemu dewa arimasen. Kore wa torakkingu geemu desu: nawabari o kaite, anata no sain o nokoshimasu.*
+*シューティングゲームではない. Es un juego de trackear: 縄張りをマークしサインを残せ.*
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM4MTI1LnBuZw==/original/KQLcWZ.png" width="30%" alt="Metro">
@@ -22,7 +22,7 @@
 
 ---
 
-[![Ima Sugu Purei](https://img.shields.io/badge/PUREI-FF9900?style=for-the-badge&logo=github&logoColor=black)](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/)
+[![今すぐ遊ぶ](https://img.shields.io/badge/PLAY-FF9900?style=for-the-badge&logo=github&logoColor=black)](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/)
 [![itch.io](https://img.shields.io/badge/itch.io-FA5C5C?style=for-the-badge&logo=itch.io&logoColor=white)](https://fierroduque.itch.io/)
 [![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@WDLMASTERTAGGER)
 [![Website](https://img.shields.io/badge/fierroduque.com-000000?style=for-the-badge&logo=safari&logoColor=white)](https://fierroduque.com)
@@ -33,23 +33,23 @@
 
 ---
 
-## Korekushon -- Burauza de Purei Kanou na 7 Shinario
+## コレクション -- ブラウザで遊べる7つのシナリオ
 
 <div align="center">
 
-| # | Shinario | Taipu | Sutairu | Play |
+| # | Escenario | Tipo | Estilo | Jugar |
 |---|---|---|---|---|
-| 1 | **Maestranza Metro/Tren** | Sanchiago Tetsudou Koujou | Jiyuu | [PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20METRO/) |
-| 2 | **NYC Subway** | Nyuu Yooku Chikatetsu | Jiyuu | [PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20trenes%202/) |
-| 3 | **BA Subte** | Buenosu Airesu Chikatetsu | Kiken | [PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20trenes%203/) |
-| 4 | **Container 1** | Sangyou Zouensenjo | Jiyuu | [PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20BODEGA/) |
-| 5 | **Bodega Fluor** | Ankoku Meiro | Jiyuu | [PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20BODEGA%20FLUOR/) |
-| 6 | **Abandoned Building** | Chou Kousou Biru, 5 Kaisou | Jiyuu | [PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20EDIFICIO/) |
-| 7 | **Night Maze** | Shougai Meiro | Jiyuu | [PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20LABERINTO/) |
+| 1 | **Maestranza Metro/Tren** | Talleres ferroviarios, Santiago | Libre | [JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20METRO/) |
+| 2 | **NYC Subway** | Metro de Nueva York | Libre | [JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20trenes%202/) |
+| 3 | **BA Subte** | Subte Buenos Aires | Con peligro | [JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20trenes%203/) |
+| 4 | **Container 1** | Astillero industrial | Libre | [JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20BODEGA/) |
+| 5 | **Bodega Fluor** | Laberinto oscuro | Libre | [JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20BODEGA%20FLUOR/) |
+| 6 | **Edificio Abandonado** | Rascacielos, 5 pisos | Libre | [JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20EDIFICIO/) |
+| 7 | **Laberinto de Noche** | Laberinto exterior amurallado | Libre | [JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20LABERINTO/) |
 
 </div>
 
-> Subete no mappu ni YouTube IFrame API ni yoru Eduardo Fierro seisaku no ongaku rajio ga tousai sareteimasu. Kaku mappu wa hitotsu no HTML fairu de, sokuji ni roodo saremasu. Daanroodo ya insutooru wa fuyou desu.
+> 全マップにYouTube IFrame API経由でEduardo Fierro制作の音楽ラジオを搭載 integrada con musica producida por Eduardo Fierro, via YouTube IFrame API. 各マップは即時読み込みの単一HTMLファイル。ダウンロード不要、インストール不要。
 
 ---
 
@@ -60,22 +60,22 @@
     <img src="https://img.youtube.com/vi/KE8L0RL6YC8/0.jpg" alt="Trailer WDL MASTER TAGGER" width="600">
   </a>
   <br>
-  <a href="https://youtu.be/KE8L0RL6YC8">YOUTUBE DE YOKOKUHEN O MIRU</a>
+  <a href="https://youtu.be/KE8L0RL6YC8">VER TRAILER EN YOUTUBE</a>
 </p>
 
 ---
 
-## Enjin -- Kousei Youso to Shisutemu
+## エンジン -- コンポーネントとシステム
 
-Everything is written in Vanilla JavaScript on top of Three.js r128+, loaded via CDN. No bundlers, no frameworks, no npm dependencies. A single HTML file per scenario withtaining all CSS, JS, and the 3D scene inline. File size per map ranges from 15 KB to 50 KB.
+Todo esta escrito en JavaScript Vanilla sobre Three.js r128 o superior, cargado via CDN. No hay bundlers, no hay frameworks, no hay dependencias de npm. Un solo archivo HTML por escenario que contiene todo el CSS, JS y la escena 3D inline. El peso por mapa va de 15 KB a 50 KB.
 
-### DecalGeometry Toryou Shisutemu
+### Sistema de pintura por DecalGeometry
 
-In the NYC Subway and BA Subte maps, paint is applied unog `DecalGeometry` de Three.js. A procedural radial spray texture is generated on an offscreen 2D canvas, unog radial gradients with varying opacity and dispersion levels. That texture is passed as `map` a un `MeshBasicMaterial` withfigured with `alphaTest: 0.1`, `polygonOffset: true`, `polygonOffsetFactor: -4` y `depthWrite: false`. This eliminates Z-fighting between overlapping paint layers without modifying the wall geometry.
+En マップ一覧 NYC Subway y BA Subte, la pintura se aplica usando `DecalGeometry` de Three.js. Se genera una textura procedural de spray radial sobre un canvas 2D offscreen, usando degradados radiales con distintos niveles de opacidad y dispersion. Esa textura se pasa como `map` a un `MeshBasicMaterial` configurado con `alphaTest: 0.1`, `polygonOffset: true`, `polygonOffsetFactor: -4` y `depthWrite: false`. Esto elimina el Z-fighting entre capas de pintura superpuestas sin necesidad de modificar la geometria de la pared.
 
-El `Raycaster` is cast from the camera position toward the center of the screen, with a withfigurable range of 6 to 15 tan'i depending on the map. If the ray hits a surface, a `DecalGeometry` is placed at the impact point, oriented according to the intersected face normal. Decal size is withtrolled with the valve (slider en UI).
+El `Raycaster` se lanza desde la posicion de la camara en direccion al centro de la pantalla, con un alcance configurable de 6 a 15 unidades segun el mapa. Si el rayo intersecta una superficie, se instancia un `DecalGeometry` en el punto de impacto, orientado segun la normal de la cara intersectada. El tamano del decal se controla con la valvula (slider en UI).
 
-The remaining maps use `CircleGeometry` with `MeshBasicMaterial`, applying `renderOrder` incremental and `polygonOffset` with variable factor per layer. It's lighter but lacks the same spray texture fidelity.
+En el resto de マップ一覧 se usa `CircleGeometry` con `MeshBasicMaterial`, aplicando `renderOrder` incremental y `polygonOffset` con factor variable por capa. Es mas ligero pero no tiene la misma fidelidad de textura de aerosol.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM3OTg3LnBuZw==/original/f8PbmW.png" width="32%" alt="Decal spray">
@@ -83,15 +83,15 @@ The remaining maps use `CircleGeometry` with `MeshBasicMaterial`, applying `rend
   <img src="https://img.itch.zone/aW1nLzI3MTM3OTk1LnBuZw==/original/Kesm02.png" width="32%" alt="Decal result">
 </p>
 
-### Puroshiijaru Tekika Shisutemu
+### Sistema de goteo procedural
 
-When the player holds the spray on the same spot, an internal counter `dripCounter` increments. Upon exceeding the `DRIP_THRESHOLD` (15 threshold on most maps), the engine spawns drips at the impact position. Each drip is a `BoxGeometry` very thin and elongated, with a semi-transparent material matching the active stroke color.
+Cuando el jugador mantiene el spray sobre un mismo punto, un contador interno `dripCounter` se incrementa. Al superar el umbral `DRIP_THRESHOLD` (15 en la mayoria de mapas), el motor genera gotas en la posicion de impacto. Cada gota es un `BoxGeometry` muy fino y alargado, con material semitransparente del mismo color que el trazo activo.
 
-Each drip has randomized properties generated at spawn: fall speed (`dripSokudo`, between 0.08 and 0.25 tan'i per frame), initial length (`dripLength`, between 0.05 and 0.3), and a random lateral offset to prevent all drips from falling in a perfect line. The drip stretches progressively on the Y axis (`scale.y += dripSokudo * 0.1`) and displaces downward (`position.y -= dripSokudo`). Cuando `scale.y` exceeds a maximum or the drip leaves the visible range, it is removed from the `activeDrips`.
+Cada gota tiene propiedades aleatorias generadas al instanciarse: velocidad de caida (`dripSpeed`, entre 0.08 y 0.25 unidades por frame), longitud inicial (`dripLength`, entre 0.05 y 0.3), y un offset lateral aleatorio para evitar que todas las gotas caigan en linea perfecta. La gota se estira progresivamente en el eje Y (`scale.y += dripSpeed * 0.1`) y se desplaza hacia abajo (`position.y -= dripSpeed`). Cuando `scale.y` supera un maximo o la gota sale del rango visible, se elimina del array `activeDrips`.
 
-There is an active drip limit (300 a 400 depending on the map). When reached, the oldest drips are removed first (FIFO). In the Bodega and Bodega Fluor maps, the drip counter resets or slows down if the player moves the mouse, simulating spray spreading over a wider surface instead of accumulating in one spot.
+Hay un limite de gotas activas (300 a 400 segun el mapa). Cuando se alcanza, las gotas mas antiguas se eliminan primero (FIFO). En マップ一覧 Bodega y Bodega Fluor, el contador de goteo se resetea o se ralentiza si el jugador mueve el mouse, simulando que el aerosol se distribuye sobre una superficie mas amplia en lugar de acumularse en un punto.
 
-Specifically in Bodega Fluor, if the distance the mouse travels between frames is less than 0.05 tan'i, `dripCounter` increments by 2 per frame (fast accumulation). If the mouse moves more, it no nomicrements by 0.5.
+En Bodega Fluor especificamente, si la distancia recorrida por el mouse entre frames es menor a 0.05 unidades, `dripCounter` incrementa en 2 por frame (acumulacion rapida). Si el mouse se mueve mas, solo incrementa en 0.5.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzA0LmdpZg==/original/HdS8d7.gif" width="24%" alt="Drip system">
@@ -100,15 +100,15 @@ Specifically in Bodega Fluor, if the distance the mouse travels between frames i
   <img src="https://img.itch.zone/aW1nLzI2ODY2ODA0LmdpZg==/original/J3NJWn.gif" width="24%" alt="Drip result">
 </p>
 
-### Idou Ressha to AABB Shoutotsu Hanntei
+### Trenes en movimiento y colision AABB
 
-Exclusive to the BA Subte map. Two trains run on fixed side tracks (X = -100 y X = +100). Each train has 4 cars assembled with `BoxGeometry`, totaling approximately 300 tan'i in length. They carry a `PointLight` headlight acting as a beawith (`color: #ffeecc, intensity: 3, distance: 400`), visible through the fog.
+Exclusivo del mapa BA Subte. Hay dos formaciones que circulan por vias laterales fijas (X = -100 y X = +100). Cada formacion tiene 4 coches ensamblados con `BoxGeometry`, totalizando aproximadamente 300 unidades de largo. Llevan un `PointLight` frontal que actua como faro (`color: #ffeecc, intensity: 3, distance: 400`), visible a traves de la niebla.
 
-The movement logic is linear and deterministic: Train 1 moves in the +Z direction from Z = -550 until it disappears at Z > 650. Train 2 moves in the -Z direction from Z = +550 until Z < -650. Sokudo is 3.0 tan'i per frame (at 60fps, roughly 180 virtual meters per sewithd). Upon disappearing, a respawn is scheduled with `setTimeout`: Train 1 every 120 sewithds exactly, Train 2 every 120 sewithds but offset (starts 75s after the first). The first train appears 15 sewithds after the game starts, the sewithd at 75 sewithds.
+La logica de movimiento es lineal y determinista: el tren 1 avanza en direccion +Z desde Z = -550 hasta desaparecer en Z > 650. El tren 2 avanza en direccion -Z desde Z = +550 hasta Z < -650. La velocidad es de 3.0 unidades por frame (a 60fps, unos 180 metros virtuales por segundo). Al desaparecer, se programa un respawn con `setTimeout`: tren 1 cada 120 segundos exactos, tren 2 cada 120 segundos pero desfasado (inicia 75s despues del primero). El primer tren aparece a los 15 segundos de iniciada la partida, el segundo a los 75 segundos.
 
-Collision detection uses AABB (Axis-Aligned Bounding Box). It does not use `Box3` from Three.js for this, but a direct range comparison: if the train's Z range (Z position plus/minus half its length) overlaps the player's Z range, and both share the same track X axis, there's a collision. The screen goes black, a red overlay appears with the text HIT BY THE TRAIN in sans-serif font, and a reload link. No respawn, no withtinue.
+La deteccion de colision es por AABB (Axis-Aligned Bounding Box). No se usa `Box3` de Three.js para esto, sino una comparacion directa de rangos: si el rango Z del tren (posicion Z mas/menos mitad del largo) se solapa con el rango Z del jugador, y ambos comparten el mismo eje X de via, hay colision. La pantalla se pone en negro, aparece un overlay rojo con el texto ATROPELLADO POR EL TREN en tipografia sans-serif, y un enlace de recarga. Sin respawn, sin continuar.
 
-In the last 20 sewithds of the timer, the scene background (`scene.background`) begins to oscillate between black and dark red, the fog `FogExp2` shifts its color to `#330000`, and an HTML overlay with the text SECURITY ALERT -- LEAVE THE AREA IMMEDIATELY flashes over the canvas. This is implemented with `setInterval` at 500ms that toggles CSS classes and modifies scene color properties in real time.
+En los ultimos 20 segundos del timer, el fondo de la escena (`scene.background`) comienza a oscilar entre negro y rojo oscuro, la niebla `FogExp2` muta su color a `#330000`, y un overlay HTML con el texto ALERTA DE SEGURIDAD -- ABANDONE EL AREA INMEDIATAMENTE titila sobre el canvas. Esto esta implementado con `setInterval` a 500ms que alterna clases CSS y modifica las propiedades de color de la escena en tiempo real.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3NTIzODA1LnBuZw==/original/0ejzuP.png" width="32%" alt="Tren moving">
@@ -116,45 +116,45 @@ In the last 20 sewithds of the timer, the scene background (`scene.background`) 
   <img src="https://img.itch.zone/aW1nLzI3NTIzODc1LnBuZw==/original/XOo7nC.png" width="32%" alt="Alerta roja">
 </p>
 
-### Oodio to Rajio Shisutemu
+### Sistema de audio y radio
 
-All maps integrate the YouTube IFrame API. A hidden iframe element is created that loads the YouTube player without UI and starts playing a playlist with original music produced by Eduardo Fierro.
+Todos マップ一覧 integran la YouTube IFrame API. Se crea un elemento iframe oculto que carga el reproductor de YouTube sin interfaz y comienza a reproducir una playlist con musica original producida por Eduardo Fierro.
 
-The BA Subte map has a dual audio system. When the HTML is loaded from a web server (HTTP/HTTPS), the YouTube IFrame API is used normally. But when opened from `file://` (local double click), the browser blocks the YouTube IFrame API due to same-origin policies. In that case, the code automatically switches to HTML5 audio streams unog the `<audio>` element, with direct URLs to MP3 files. This allows the game to be functional even when run locally without a server.
+En el mapa BA Subte hay un sistema dual de audio. Cuando el HTML se carga desde un servidor web (HTTP/HTTPS), se usa la YouTube IFrame API normalmente. Pero cuando se abre desde `file://` (doble clic local), el navegador bloquea la IFrame API de YouTube por politicas de mismo origen. En ese caso, el codigo conmuta automaticamente a streams de audio HTML5 usando el elemento `<audio>` nativo, con URLs directas a archivos MP3. Esto permite que el juego sea funcional incluso ejecutado localmente sin servidor.
 
-Detection is done by checking `window.location.protocol`: si es `file:`, the local audio fallback is activated. Si es `http:` o `https:`, YouTube is used. YouTube player volume is adjusted via `player.setVolume()` and the native audio element via `audio.volume`.
+La deteccion se hace verificando `window.location.protocol`: si es `file:`, se activa el fallback de audio local. Si es `http:` o `https:`, se usa YouTube. El volumen del reproductor de YouTube se ajusta via `player.setVolume()` y el elemento de audio nativo via `audio.volume`.
 
-### Sunappushotto Moodo -- Sukuriinshotto Shuutoku
+### Snapshot mode -- captura de pantalla
 
-When presnog the `P`, key, `renderer.render(scene, camera)` is called to ensure the buffer is up to date, then the canvas withtent is extracted with `canvas.toDataURL('image/png')`. A temporary anchor element is created with `download = 'wdl-snapshot.png'`, the data URL is assigned as `href` and a programmatic click is triggered. The result is a PNG at the canvas native resolution, downloaded directly.
+Al presionar la tecla `P`, se ejecuta `renderer.render(scene, camera)` para asegurar que el buffer este actualizado, luego se extrae el contenido del canvas con `canvas.toDataURL('image/png')`. Se crea un elemento ancla temporal con `download = 'wdl-snapshot.png'`, se le asigna el data URL como `href` y se dispara un clic programatico. El resultado es un PNG a la resolucion nativa del canvas, descargado directamente.
 
-### Rendaringu to Kiri
+### Renderizado y niebla
 
-All maps use `FogExp2` from Three.js, which implements quadratic exponential fog: visibility decays according to `exp(-density * distance^2)`. Density varies between maps:
+Todos マップ一覧 usan `FogExp2` de Three.js, que implementa niebla exponencial cuadratica: la visibilidad decae segun `exp(-density * distance^2)`. La densidad varia entre mapas:
 
-| Mapa | Densidad | Kiri no Iro |
+| Mapa | Densidad | Color niebla |
 |---|---|---|
 | Metro | 0.008 | #020202 |
 | NYC Subway | 0.012 | #020202 |
-| BA Subte | 0.008 | #020202 (ni henka #330000 keihou ji) |
+| BA Subte | 0.008 | #020202 (cambia a #330000 en alerta) |
 | Bodega | 0.004 | #0a0a0b |
 | Bodega Fluor | 0.03 | #020202 |
 | Edificio | 0.01 | #87CEEB (cielo) |
 | Laberinto | 0.02 | #87CEEB (cielo) |
 
-NYC has the densest fog (0.012) to accentuate the enclosed tunnel atmosphere. Bodega Fluor has 0.03, nearly opaque at 50 meters. Bodega has the lightest (0.004), allowing the warehouses to be seen at a distance. Edificio y Laberinto use sora-blue color as they are daytime maps.
+NYC tiene la niebla mas densa (0.012) para acentuar el ambiente cerrado de tunel. Bodega Fluor tiene 0.03, casi opaca a 50 metros. Bodega tiene la mas ligera (0.004), permitiendo ver los galpones a distancia. Edificio y Laberinto usan color azul cielo por ser mapas diurnos.
 
-### Per-Shinario Lighting
+### Iluminacion por escenario
 
-Each map has a lighting setup designed for its atmosphere:
+Cada mapa tiene una configuracion de luces pensada para su ambientacion:
 
-- **Metro:** `AmbientLight(0xffffff, 0.3)` base, `DirectionalLight(0xffffff, 0.4)`, `PointLight(#ff3300, 2, 80)` red lights in the tunnels.
-- **NYC Subway:** `AmbientLight(0xffffff, 0.08)` minimo, `PointLight(#dcf0f7, 0.15, 200)` cool lights in the station, `PointLight(#ffb84d, 0.1, 180)` warm lights in the tunnel tubes.
-- **BA Subte:** `AmbientLight(0xffffff, 0.08)`, `PointLight(#ffddaa, 0.2, 200)` calidas, `PointLight(#ffb84d, 0.1, 180)` at intersections.
+- **Metro:** `AmbientLight(0xffffff, 0.3)` base, `DirectionalLight(0xffffff, 0.4)`, `PointLight(#ff3300, 2, 80)` rojas en los tuneles.
+- **NYC Subway:** `AmbientLight(0xffffff, 0.08)` minimo, `PointLight(#dcf0f7, 0.15, 200)` frias en estacion, `PointLight(#ffb84d, 0.1, 180)` calidas en tubos.
+- **BA Subte:** `AmbientLight(0xffffff, 0.08)`, `PointLight(#ffddaa, 0.2, 200)` calidas, `PointLight(#ffb84d, 0.1, 180)` en intersecciones.
 - **Bodega:** `AmbientLight(0xffffff, 1.5)`, `DirectionalLight(#556677, 1.5)` luna, `PointLight` RGB (verde, magenta, cian) + sombras `PCFSoftShadowMap`.
-- **Bodega Fluor:** Solo `AmbientLight(#704045, 1.2)`. A single reddish light. It's the darkest map.
-- **Edificio:** `AmbientLight(0xffffff, 0.6)`, `DirectionalLight(0xffffff, 0.9)` daylight sun.
-- **Laberinto:** `AmbientLight(0xffffff, 0.7)`, `DirectionalLight(0xffffff, 0.8)` daylight sun.
+- **Bodega Fluor:** Solo `AmbientLight(#704045, 1.2)`. Una unica luz rojiza. Es el mapa mas oscuro.
+- **Edificio:** `AmbientLight(0xffffff, 0.6)`, `DirectionalLight(0xffffff, 0.9)` sol diurno.
+- **Laberinto:** `AmbientLight(0xffffff, 0.7)`, `DirectionalLight(0xffffff, 0.8)` sol diurno.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2Njc5LmdpZg==/original/TYMWnA.gif" width="23%" alt="Luz Metro">
@@ -163,15 +163,15 @@ Each map has a lighting setup designed for its atmosphere:
   <img src="https://img.itch.zone/aW1nLzI2ODY2Njk4LmdpZg==/original/ClpUdF.gif" width="23%" alt="Luz Container">
 </p>
 
-### Pureiyaa Idou to Butsuri
+### Movimiento del jugador y fisica
 
-First-person movement is implemented without unog `PointerLockSousa Houhou` from Three.js. The camera rotates directly based on `movementX` y `movementY` from the `mousemove`. Pitch (Y) is clamped between -PI/2 and PI/2.
+El movimiento en primera persona esta implementado sin usar `PointerLockControls` de Three.js. La camara se rota directamente segun `movementX` y `movementY` del evento `mousemove`. El pitch (Y) se clampanea entre -PI/2 y PI/2.
 
-WASD movement is relative to the camera orientation. A forward vector is calculated from `camera.rotation.y` usando `no/cos`, and a perpendicular right vector. Janpuing uses `playerVelocity.y` which decreases by gravity each frame. A ground check keeps the player at Y = playerTakasa.
+El movimiento WASD es relativo a la orientacion de la camara. Se calcula un vector forward a partir de `camera.rotation.y` usando `sin/cos`, y un vector right perpendicular. El salto usa `playerVelocity.y` que decrece por gravedad cada frame. Una comprobacion de piso mantiene al jugador en Y = playerHeight.
 
-Parameters by map:
+Parametros por mapa:
 
-| Mapa | Sokudo | Sprint | Juuryoku | Janpu | Takasa |
+| Mapa | Velocidad | Sprint | Gravedad | Salto | Altura |
 |---|---|---|---|---|---|
 | Metro | 0.45 | 0.75 | 0.012 | 0.32 | 2.4 |
 | NYC | 0.45 | 0.75 | 0.012 | 0.32 | 2.4 |
@@ -181,13 +181,13 @@ Parameters by map:
 | Edificio | 0.25 | -- | 0.008 | 0.22 | 2.0 |
 | Laberinto | 0.18 | -- | 0.008 | 0.22 | 2.0 |
 
-The train maps share agile parameters with sprint. The rest are slower, designed for unhurried exploration.
+マップ一覧 de tren comparten parametros agiles con sprint. Los demas son mas lentos, pensados para exploracion pausada.
 
-### Kankyou Shoutotsu Kenchi
+### Deteccion de colisiones con el entorno
 
-Collisions against walls and objects are handled with `Box3` de Three.js. Each static geometry gets a bounding box via `computeBoundingBox()`. Before applying player movement, a temporary `Box3` is created around the future position and tested with `intersectsBox()` against all colliders. If there's an intersection, movement on that axis is cancelled.
+Las colisiones contra paredes y objetos se manejan con `Box3` de Three.js. Cada geometria estatica recibe un bounding box con `computeBoundingBox()`. Antes de aplicar el movimiento del jugador, se crea un `Box3` temporal alrededor de la posicion futura y se prueba con `intersectsBox()` contra todos los colisionadores. Si hay interseccion, el movimiento en ese eje se cancela.
 
-In Bodega Fluor, detection is simpler: `Math.abs` against the maze grid coordinates. In BA Subte, the maze walls are hundreds of individual `BoxGeometry` each with its own `Box3`.
+En Bodega Fluor, la deteccion es mas simple: `Math.abs` contra las coordenadas del grid del laberinto. En BA Subte, las paredes del laberinto son cientos de `BoxGeometry` individuales, cada una con su `Box3`.
 
 ---
 
@@ -207,7 +207,7 @@ In Bodega Fluor, detection is simpler: `Math.abs` against the maze grid coordina
 
 ---
 
-## Mappu Ichiran
+## マップ一覧
 
 <img width="144" height="68" alt="metro1" src="https://github.com/user-attachments/assets/9ae73a9b-e3a8-447a-b50f-269e039a506a" />
 <img width="144" height="68" alt="metro2" src="https://github.com/user-attachments/assets/62368dac-d8d3-49ea-9a60-97818bd30655" />
@@ -217,9 +217,9 @@ In Bodega Fluor, detection is simpler: `Math.abs` against the maze grid coordina
 
 ---
 
-### 1. Maestranza Metro/Train -- Santiago, L2 Workshops
+### 1. Maestranza Metro/Tren -- Santiago, Talleres L2
 
-The original. The one that started it all. I wrote it thinking about the Line 2 workshops of the Santiago Metro, a massive industrial hangar with NS-74 trains parked on dead tracks. There are 22 blue trains `#00a9e0` with cabins, glass windows, metal couplers, and position lights.
+El original. El que empezo todo. Lo escribi pensando en los talleres de la Linea 2 del Metro de Santiago, un hangar industrial enorme con formaciones NS-74 estacionadas en via muerta. Son 22 trenes azules `#00a9e0` con cabina, vidrios, acoples metalicos y luces de posicion.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2ODA0LmdpZg==/original/J3NJWn.gif" width="30%" alt="Metro tren">
@@ -227,28 +227,28 @@ The original. The one that started it all. I wrote it thinking about the Line 2 
   <img src="https://img.itch.zone/aW1nLzI2ODY2ODA5LmdpZg==/original/5dwhdf.gif" width="30%" alt="Metro tunel">
 </p>
 
-The map is a 400 by 600 meter hangar with a height of 50. Three side tunnels, elevated platforms, iron columns every 40 meters, and about 40 spare parts crates. The tunnel lights are red `#ff3300`, intensity 2, range 80. The fog is `FogExp2(0x020202, 0.008)`. The paint uses `CircleGeometry` with `MeshBasicMaterial`. No drip system -- this version predates that development. No moving trains.
+El mapa es un hangar de 400 por 600 metros con altura 50. Tres tuneles hacia los lados, andenes elevados, columnas de hierro cada 40 metros y unas 40 cajas de repuestos. Las luces de los tuneles son rojas `#ff3300`, intensidad 2, alcance 80. La niebla es `FogExp2(0x020202, 0.008)`. La pintura usa `CircleGeometry` con `MeshBasicMaterial`. Sin sistema de goteo -- esta version es anterior a ese desarrollo. Sin trenes en movimiento.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM4MTE0LnBuZw==/original/xtXMwi.png" width="48%" alt="Metro snapshot">
   <img src="https://img.itch.zone/aW1nLzI3MTM4MTIxLnBuZw==/original/yQMlWG.png" width="48%" alt="Metro accion">
 </p>
 
-The timer runs 1200 sewithds. When it reaches zero it calls `location.reload()`. If you fall below Y = -40, automatic respawn.
+El timer marca 1200 segundos. Al llegar a cero hace `location.reload()`. Si caes por debajo de Y = -40, respawn automatico.
 
-- Idou: 0.45 caminando, 0.75 corriendo (Shift)
-- Juuryoku: 0.012, salto: 0.32, altura jugador: 2.4
-- Spray range: 15 tan'i
-- Valve: 0.1 a 1.4, step 0.05, default 0.4
-- 533 gyou
+- Movimiento: 0.45 caminando, 0.75 corriendo (Shift)
+- Gravedad: 0.012, salto: 0.32, altura jugador: 2.4
+- Alcance del spray: 15 unidades
+- Valvula: 0.1 a 1.4, paso 0.05, default 0.4
+- 533 lineas de codigo
 
-[PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20METRO/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger)
+[JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20METRO/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger)
 
 ---
 
 ### 2. NYC Subway -- New York City
 
-The New York version. A 400 by 100 meter central station with four tracks extending in tunnels to the north and south. Cross-passages every 120 meters. White tile walls `#dddddd`, NYC green steel columns `#123524`. Tunnels in closed tube with ceiling, floor, and curved walls.
+La version neoyorquina. Estacion central de 400 por 100 metros con cuatro vias que se extienden en tuneles hacia el norte y el sur. Pasillos transversales cada 120 metros. Paredes de azulejo blanco `#dddddd`, columnas de acero verde NYC `#123524`. Tuneles en tubo cerrado con techo, piso y paredes curvas.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM3MTMyLnBuZw==/original/aR5DO4.png" width="30%" alt="NYC Subway">
@@ -256,7 +256,7 @@ The New York version. A 400 by 100 meter central station with four tracks extend
   <img src="https://img.itch.zone/aW1nLzI3MTM4NTMwLnBuZw==/original/9Uouzu.png" width="30%" alt="NYC Subway">
 </p>
 
-14 NYC-style trains parked: silver metal, black roof, red LED tail lights. The trains are static but the atmosphere is tense: near-total darkness, minimal lights, dense fog (0.012). First map to implement `DecalGeometry` for painting and the complete drip system. Valve from 0.1 to 5.0, allowing from ultra-fine tags to throw-ups that cover a train in sewithds.
+14 trenes estilo NYC estacionados: metal plateado, techo negro, luces LED rojas en la cola. Los trenes son estaticos pero la ambientacion es tensa: oscuridad casi total, luces minimas, niebla densa (0.012). Primer mapa en implementar `DecalGeometry` para la pintura y el sistema de goteo completo. Valvula de 0.1 a 5.0, permitiendo desde tags finisimos hasta throw-ups que cubren un tren en segundos.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM3MTk1LnBuZw==/original/9pwbF5.png" width="24%" alt="NYC interior">
@@ -265,19 +265,19 @@ The New York version. A 400 by 100 meter central station with four tracks extend
   <img src="https://img.itch.zone/aW1nLzI3MTM3OTk1LnBuZw==/original/Kesm02.png" width="24%" alt="NYC gameplay">
 </p>
 
-- Idou: 0.45 / 0.75 (sprint)
-- Juuryoku: 0.012, salto: 0.32, altura: 2.4
-- Spray range: 15, Valve: 0.1 a 5.0, default 1.0
+- Movimiento: 0.45 / 0.75 (sprint)
+- Gravedad: 0.012, salto: 0.32, altura: 2.4
+- Alcance del spray: 15, Valvula: 0.1 a 5.0, default 1.0
 - Goteo: DRIP_THRESHOLD 15, max 400 gotas activas
-- 666 gyou
+- 666 lineas de codigo
 
-[PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20trenes%202/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-ny-subway)
+[JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20trenes%202/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-ny-subway)
 
 ---
 
-### 3. BA Subte -- Buenos Aires (the most complete)
+### 3. BA Subte -- Buenos Aires (el mas completo)
 
-990 lines. The largest and most polished map. A grid maze of 11 por 11 blocks, 1100 por 1100 metros. 70m blocks with 30m passages. Empty central station of 100 by 300 meters. Cream beige walls `#e6dec3`, dark iron columns `#2a302d`, colored advertinog panels.
+990 lineas. El mapa mas grande y mas trabajado. Laberinto en grilla de 11 por 11 bloques, 1100 por 1100 metros. Bloques de 70m con pasillos de 30m. Estacion central vacia de 100 por 300 metros. Paredes beige crema `#e6dec3`, columnas de hierro oscuro `#2a302d`, paneles publicitarios en colores.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3NTIzNzEyLnBuZw==/original/3mj0P3.png" width="24%" alt="BA Subte">
@@ -286,7 +286,7 @@ The New York version. A 400 by 100 meter central station with four tracks extend
   <img src="https://img.itch.zone/aW1nLzI3NTIzNzk2LnBuZw==/original/XvZrkX.png" width="24%" alt="BA Subte gameplay">
 </p>
 
-The only map with moving trains. Two 4-car trains with front headlights visible through the fog. They run on fixed tracks at X = -100 and X = +100. If you stay on the track, Game Over with no respawn. In the last 20 sewithds, the screen pulses red, the fog turns blood-colored, and a warning sign flashes.
+Unico mapa con trenes en movimiento. Dos formaciones de 4 coches con faros frontales visibles a traves de la niebla. Circulan por vias fijas en X = -100 y X = +100. Si te quedas en la via, Game Over sin respawn. En los ultimos 20 segundos, la pantalla pulsa en rojo, la niebla se vuelve sangre y un cartel de alerta titila.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3NTIzODA1LnBuZw==/original/0ejzuP.png" width="30%" alt="BA Subte tren movil">
@@ -294,24 +294,24 @@ The only map with moving trains. Two 4-car trains with front headlights visible 
   <img src="https://img.itch.zone/aW1nLzI3NTIzODc1LnBuZw==/original/XOo7nC.png" width="30%" alt="BA Subte menu">
 </p>
 
-Bilingual ES/EN menu with withtrols, mission, and warnings. Dual audio (YouTube on server, HTML5 Audio locally). Advanced event handling: withtext menu prevention, mouseleave/blur resets, first mousemove ignored.
+Menu bilingue ES/EN con 操作方法, mision y advertencias. Audio dual (YouTube en servidor, HTML5 Audio en local). Manejo avanzado de eventos: prevencion de menu contextual, reseteo en mouseleave/blur, ignorancia del primer mousemove.
 
-- Idou: 0.45 / 0.75 (sprint)
-- Juuryoku: 0.012, salto: 0.32, altura: 2.4
-- Spray range: 15, Valve: 0.1 a 5.0, default 1.0
+- Movimiento: 0.45 / 0.75 (sprint)
+- Gravedad: 0.012, salto: 0.32, altura: 2.4
+- Alcance del spray: 15, Valvula: 0.1 a 5.0, default 1.0
 - Goteo: DRIP_THRESHOLD 15, max 400 gotas
-- Timer: 1200s with alerta visual a los 20s finales
+- Timer: 1200s con alerta visual a los 20s finales
 - Trenes: 2 en movimiento, colision AABB, Game Over
 - Audio: dual YouTube + HTML5 Audio fallback
-- 990 gyou
+- 990 lineas de codigo
 
-[PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20trenes%203/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-tren-3) | [Gameplay](https://www.youtube.com/watch?v=dHxB3NoJs1k)
+[JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20graffiti%20trenes%203/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-tren-3) | [Gameplay](https://www.youtube.com/watch?v=dHxB3NoJs1k)
 
 ---
 
-### 4. Container 1 / Night Warehouses
+### 4. Container 1 / Bodegas de Noche
 
-Six warehouses in a 2 by 3 grid, each 50x12x60m, with internal columns and partial mezzanines. Cross-shaped streets, a parkour zone with 12 crate stacks, underground pipes.
+Seis galpones en grilla 2 por 3, cada uno 50x12x60m, con columnas internas y entrepisos parciales. Calles en cruz, zona de parkour con 12 pilas de cajas, tuberias subterraneas.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NTQxLmpwZw==/original/uyrEEi.jpg" width="30%" alt="Container">
@@ -319,7 +319,7 @@ Six warehouses in a 2 by 3 grid, each 50x12x60m, with internal columns and parti
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzEzLmdpZg==/original/ikkq4n.gif" width="30%" alt="Container parkour">
 </p>
 
-The only map with hardware-accelerated shadows. Moonlight `DirectionalLight #556677` casting shadows from warehouses and crates. Three giant PointLights: green `#39ff14`, magenta `#ff00ff`, cian `#00ffff`. It's the brightest night map (AmbientLight 1.5). No enemies, no danger. The idea is to wander, climb, and paint.
+Unico mapa con sombras activadas por hardware. Luna `DirectionalLight #556677` proyectando sombras de galpones y cajas. Tres PointLights gigantes: verde `#39ff14`, magenta `#ff00ff`, cian `#00ffff`. Es el mapa nocturno mas luminoso (AmbientLight 1.5). Sin enemigos, sin peligro. La idea es recorrer, trepar y pintar.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NjQzLmdpZg==/original/NQSFlF.gif" width="23%" alt="Container pintura">
@@ -328,20 +328,20 @@ The only map with hardware-accelerated shadows. Moonlight `DirectionalLight #556
   <img src="https://img.itch.zone/aW1nLzI2ODY2NjcyLmdpZg==/original/6Z4zsW.gif" width="23%" alt="Container sombras">
 </p>
 
-- Idou: 0.28 (no sprint)
-- Juuryoku: 0.009, salto: 0.24, altura: 2.5
-- Spray range: 12, Valve: 0.05 a 0.8, default 0.25
-- Goteo: DRIP_THRESHOLD 15, max 400 gotas, anti-withstante por mouse
-- Kage: PCFSoftShadowMap activado
-- 504 gyou
+- Movimiento: 0.28 (sin sprint)
+- Gravedad: 0.009, salto: 0.24, altura: 2.5
+- Alcance del spray: 12, Valvula: 0.05 a 0.8, default 0.25
+- Goteo: DRIP_THRESHOLD 15, max 400 gotas, anti-constante por mouse
+- Sombras: PCFSoftShadowMap activado
+- 504 lineas de codigo
 
-[PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20BODEGA/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-withtainers-1)
+[JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20BODEGA/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-containers-1)
 
 ---
 
 ### 5. Bodega Fluor
 
-The smallest one. 365 lineas. A 15 by 20 cell maze (120x160m) with passages one block wide. Near-total darkness -- only `AmbientLight #704045` at intensity 1.2. Neon green UI on black.
+El mas chico. 365 lineas. Laberinto de 15 por 20 celdas (120x160m) con pasillos de un bloque de ancho. Oscuridad casi total -- solo `AmbientLight #704045` a intensidad 1.2. UI verde neon sobre negro.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzY4LmdpZg==/original/DevNdf.gif" width="30%" alt="Fluor oscuro">
@@ -349,22 +349,22 @@ The smallest one. 365 lineas. A 15 by 20 cell maze (120x160m) with passages one 
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzcxLmdpZg==/original/QzmamK.gif" width="30%" alt="Fluor gameplay">
 </p>
 
-Maze hardcoded as a 2D matrix, not procedural. Walls are `BoxGeometry` of 8 tan'i, height 6. Collision via `Math.abs`, no `Box3`. Aggressive drip: if you don't move the mouse, the counter increases at double speed. Designed to get lost in the maze, paint in the dark, and let the walls fill with drips.
+Laberinto hardcodeado como matriz 2D, no procedural. Paredes `BoxGeometry` de 8 unidades, altura 6. Colision por `Math.abs`, sin `Box3`. Goteo agresivo: si no moves el mouse, el contador sube al doble de velocidad. Disenado para perderse en el laberinto, pintar en la oscuridad y que las paredes se llenen de chorreados.
 
-- Idou: 0.20 (el mas lento)
-- Juuryoku: 0.008, salto: 0.18, altura: 2.0
-- Spray range: 6
+- Movimiento: 0.20 (el mas lento)
+- Gravedad: 0.008, salto: 0.18, altura: 2.0
+- Alcance del spray: 6
 - Goteo: DRIP_THRESHOLD 20, max 300 gotas, acumulacion acelerada
 - Iluminacion: solo AmbientLight rojiza
-- 365 gyou
+- 365 lineas de codigo
 
-[PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20BODEGA%20FLUOR/)
+[JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20BODEGA%20FLUOR/)
 
 ---
 
-### 6. Abandoned Building
+### 6. Edificio Abandonado
 
-The only daytime one. Five floors, 8x10 grid per level, floor height 7. Alternating ramps: floor 1 rises in corner A, floor 2 in corner B, forcing you to traverse each level. Windows every 3 cells, translucent blue glass `#add8e6` with 0.3 opacity. Floor 5 has no exterior windows.
+El unico de dia. Cinco pisos, grilla 8x10 por planta, altura de piso 7. Rampas alternadas: piso 1 sube en esquina A, piso 2 en esquina B, forzando a recorrer cada planta. Ventanales cada 3 celdas, vidrio azul translucido `#add8e6` con opacidad 0.3. Piso 5 sin ventanas exteriores.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NDczLmpwZw==/original/xtwulo.jpg" width="30%" alt="Edificio">
@@ -372,26 +372,26 @@ The only daytime one. Five floors, 8x10 grid per level, floor height 7. Alternat
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzQxLmdpZg==/original/JpuipW.gif" width="30%" alt="Edificio rampas">
 </p>
 
-50 random sorascrapers around: position, height, and dimensions randomized. They form an enveloping soraline. Hiruma: `AmbientLight` 0.6, `DirectionalLight` 0.9 sun. Blue sora and fog `#87CEEB`. Concrete gray walls `#999999`, dark gray floors `#222222`. No drip, no enemies.
+50 rascacielos aleatorios alrededor: posicion, altura y dimensiones al azar. Forman un skyline envolvente. Luz de dia: `AmbientLight` 0.6, `DirectionalLight` 0.9 sol. Cielo y niebla azules `#87CEEB`. Paredes gris hormigon `#999999`, pisos gris oscuro `#222222`. Sin goteo, sin enemigos.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NzQ3LmdpZg==/original/UD6LMn.gif" width="45%" alt="Edificio pintura">
-  <img src="https://img.itch.zone/aW1nLzI2ODY2NzUwLmdpZg==/original/BJfE9R.gif" width="45%" alt="Edificio soraline">
+  <img src="https://img.itch.zone/aW1nLzI2ODY2NzUwLmdpZg==/original/BJfE9R.gif" width="45%" alt="Edificio skyline">
 </p>
 
-- Idou: 0.25
-- Juuryoku: 0.008, salto: 0.22, altura: 2.0
-- Spray range: 6, Valve: 0.05 a 0.6, default 0.25
-- 5 pisos with rampas alternadas, 50 rascacielos procedurales
-- 486 gyou
+- Movimiento: 0.25
+- Gravedad: 0.008, salto: 0.22, altura: 2.0
+- Alcance del spray: 6, Valvula: 0.05 a 0.6, default 0.25
+- 5 pisos con rampas alternadas, 50 rascacielos procedurales
+- 486 lineas de codigo
 
-[PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20EDIFICIO/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-edificio-abandonado)
+[JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20EDIFICIO/) | [itch.io](https://fierroduque.itch.io/wdl-master-tagger-edificio-abandonado)
 
 ---
 
-### 7. Night Maze
+### 7. Laberinto de Noche
 
-Shougai Meiro. Grilla 8x10 (mismo layout que un piso del Edificio), walls 6 high. Black static train at the center -- an obstacle that divides the maze. Stepped blocks of 3 heights for parkour.
+Laberinto exterior amurallado. Grilla 8x10 (mismo layout que un piso del Edificio), muros altura 6. Tren estatico negro al centro -- obstaculo que divide el laberinto. Bloques escalonados de 3 alturas para parkour.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI2ODY2NDg2LmpwZw==/original/IUC3Wb.jpg" width="24%" alt="Laberinto">
@@ -400,7 +400,7 @@ Shougai Meiro. Grilla 8x10 (mismo layout que un piso del Edificio), walls 6 high
   <img src="https://img.itch.zone/aW1nLzI2ODY2Nzg0LmdpZg==/original/aVHe9T.gif" width="24%" alt="Laberinto parkour">
 </p>
 
-Dynamic withtainers along the perimeter: colored boxes `#ff9900, #ffcc00, #39ff14, #ff00ff, #00ffff` with heights between 2 and 8, distributed on all 4 edges. The only map where paint attaches as a child of the hit object `hit.object.add(mark)`, not of the scene. The decal position is withverted to local coordinates with `worldToLocal`. Hiruma, denser fog than the Building (0.02), slower speed (0.18).
+Containers dinamicos en el perimetro: cajas de colores `#ff9900, #ffcc00, #39ff14, #ff00ff, #00ffff` con alturas entre 2 y 8, distribuidas en los 4 bordes. Unico mapa donde la pintura se adhiere como hijo del objeto `hit.object.add(mark)`, no de la escena. La posicion del decal se convierte a coordenadas locales con `worldToLocal`. Luz de dia, niebla mas densa que Edificio (0.02), velocidad mas lenta (0.18).
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM4MjA4LnBuZw==/original/RGgx6G.png" width="30%" alt="Laberinto snapshot">
@@ -408,34 +408,34 @@ Dynamic withtainers along the perimeter: colored boxes `#ff9900, #ffcc00, #39ff1
   <img src="https://img.itch.zone/aW1nLzI3MTM4MjE1LnBuZw==/original/NxTraS.png" width="30%" alt="Laberinto accion">
 </p>
 
-- Idou: 0.18 (el mas lento del set)
-- Juuryoku: 0.008, salto: 0.22, altura: 2.0
-- Spray range: 6, Valve: 0.05 a 0.6, default 0.25
-- Kotei Toryou a objetos (hit.object.add + worldToLocal)
-- Tren estatico central + parkour + withtainers perimetrales
-- 511 gyou
+- Movimiento: 0.18 (el mas lento del set)
+- Gravedad: 0.008, salto: 0.22, altura: 2.0
+- Alcance del spray: 6, Valvula: 0.05 a 0.6, default 0.25
+- Pintura adherida a objetos (hit.object.add + worldToLocal)
+- Tren estatico central + parkour + containers perimetrales
+- 511 lineas de codigo
 
-[PUREI](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20LABERINTO/) | [itch.io](https://fierroduque.itch.io/wdl-master-taggerlaberinto-de-noche)
+[JUGAR](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/juego%20grafiti%20LABERINTO/) | [itch.io](https://fierroduque.itch.io/wdl-master-taggerlaberinto-de-noche)
 
 ---
 
-## Shinario Comparison
+## シナリオ比較
 
-| Kinou | Metro | NYC | BA Subte | Container | Fluor | Edificio | Laberinto |
+| Caracteristica | Metro | NYC | BA Subte | Container | Fluor | Edificio | Laberinto |
 |---|---|---|---|---|---|---|---|
 | Lineas de codigo | 533 | 666 | 990 | 504 | 365 | 486 | 511 |
 | DecalGeometry | No | Si | Si | No | No | No | No |
-| Tekika Shisutemu | No | Si | Si | Si | Si | No | No |
-| Idou Ressha | No | No | Si | No | No | No | No |
+| Sistema goteo | No | Si | Si | Si | Si | No | No |
+| Trenes en movimiento | No | No | Si | No | No | No | No |
 | Game Over | No | No | Si | No | No | No | No |
-| 20 Byou Mae Keihou | No | No | Si | No | No | No | No |
+| Alerta 20s | No | No | Si | No | No | No | No |
 | Sprint | Si | Si | Si | No | No | No | No |
-| Kage | No | No | No | Si | No | No | No |
-| Fukusuu Kaisou | No | No | No | No | No | Si | No |
-| Kotei Toryou | No | No | No | No | No | No | Si |
-| Hiruma | No | No | No | No | No | Si | Si |
-| Daburu Oodio | No | No | Si | No | No | No | No |
-| Sokudo mov | 0.45 | 0.45 | 0.45 | 0.28 | 0.20 | 0.25 | 0.18 |
+| Sombras | No | No | No | Si | No | No | No |
+| Multiples pisos | No | No | No | No | No | Si | No |
+| Pintura adherida | No | No | No | No | No | No | Si |
+| Luz de dia | No | No | No | No | No | Si | Si |
+| Audio dual | No | No | Si | No | No | No | No |
+| Velocidad mov | 0.45 | 0.45 | 0.45 | 0.28 | 0.20 | 0.25 | 0.18 |
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM3MTk1LnBuZw==/original/9pwbF5.png" width="18%" alt="Comp 1">
@@ -447,51 +447,51 @@ Dynamic withtainers along the perimeter: colored boxes `#ff9900, #ffcc00, #39ff1
 
 ---
 
-## Sousa Houhou
+## 操作方法
 
-| Kii | Akushon |
+| Tecla | Accion |
 |---|---|
-| `W A S D` / arrows | Idou |
-| `SHIFT` | Hashiru (no nomi Metro, NYC, BA Subte) |
-| `ESPACIO` | Janpu |
-| `MOUSE` | Shuui o Miru |
-| `CLICK IZQUIERDO` | Supuree Toryou |
-| `P` | Sukuriinshotto (PNG) |
+| `W A S D` / flechas | Movimiento |
+| `SHIFT` | Correr (solo en Metro, NYC, BA Subte) |
+| `ESPACIO` | Saltar |
+| `MOUSE` | Mirar alrededor |
+| `CLICK IZQUIERDO` | Pintar spray |
+| `P` | Captura de pantalla (PNG) |
 | `R` | Respawn |
-| `ESC` | Pointaa Kaihou |
+| `ESC` | Soltar puntero |
 
 ---
 
-## Gijutsu Shiyou
+## 技術仕様
 
-- **Engine:** Three.js WebGL, loaded via CDN (jsdelivr/unpkg)
-- **Language:** JavaScript Vanilla, no TaipuScript or transpilers
-- **Size per map:** 15 KB a 50 KB (CSS + JS inline)
+- **Motor:** Three.js WebGL, cargado via CDN (jsdelivr/unpkg)
+- **Lenguaje:** JavaScript Vanilla, sin TypeScript ni transpiladores
+- **Peso por mapa:** 15 KB a 50 KB (CSS + JS inline)
 - **Dependencias externas:** Three.js r128+ y YouTube IFrame API
-- **Rendering:** `WebGLRenderer` with `requestAnimationFrame`, target 60fps
-- **Compatibility:** Chrome, Edge, Firefox, Opera, Brave
-- **Sousa Houhou:** Pointer Lock API + eventos de teclado/mouse nativos
-- **Format:** un solo archivo HTML autonomo por escenario
+- **Renderizado:** `WebGLRenderer` con `requestAnimationFrame`, target 60fps
+- **Compatibilidad:** Chrome, Edge, Firefox, Opera, Brave
+- **操作方法:** Pointer Lock API + eventos de teclado/mouse nativos
+- **Formato:** un solo archivo HTML autonomo por escenario
 
-### Koodo Aakitekucha
+### Arquitectura del codigo
 
-Each HTML file follows the same structure:
+Cada archivo HTML sigue la misma estructura:
 
-1. Metadata and inline CSS (primeras 100-200 lineas)
-2. Constant declarations: speeds, gravity, timer, colors, dimensions
-3. Three.js setup: scene, camera, renderer, fog, lights
-4. Geometry withstruction: walls, floors, trains, columns, objects
-5. Event withfiguration: keyboard, mouse, pointer lock, visibility, resize
-6. Game loop: `requestAnimationFrame` with movimiento, fisica, colisiones, goteo, trenes, timer y UI
-7. Utilities: spawn, respawn, capture, game over, alert
+1. Metadatos y CSS inline (primeras 100-200 lineas)
+2. Declaracion de constantes: velocidades, gravedad, timer, colores, dimensiones
+3. Setup de Three.js: escena, camara, renderer, niebla, luces
+4. Construccion de geometria: paredes, pisos, trenes, columnas, objetos
+5. Configuracion de eventos: teclado, mouse, pointer lock, visibilidad, resize
+6. Game loop: `requestAnimationFrame` con movimiento, fisica, colisiones, goteo, trenes, timer y UI
+7. Utilidades: spawn, respawn, captura, game over, alerta
 
 ---
 
-## Geijutsuteki Seimei
+## 芸術的声明
 
-WDL Master Tagger is not a game to win. It's a game to be in -- to immerse yourself in the atmosphere of an abandoned subway, feel the pressure of the clock, hear the hum of the rails, and know that at any moment a train can erase you.
+WDL Master Tagger no es un juego para ganar. Es un juego para estar -- para meterse en la atmosfera de un subte abandonado, sentir la presion del reloj, escuchar el zumbido de los rieles y saber que en cualquier momento un tren te puede borrar.
 
-This project was born as a practice and visualization tool for graffiti writers, designers, and visual artists. It has no scoring, no levels, no achievements. It's a space for aesthetic simulation where you can test color combinations, compositions, and styles before taking them into the real world, or simply enjoy the creative flow in an atmospheric industrial environment.
+Este proyecto nace como una herramienta de practica y visualizacion para escritores de graffiti, disenadores y artistas visuales. No tiene scoring, no tiene niveles, no tiene logros. Es un espacio de simulacion estetica donde probar combinaciones de colores, composiciones y estilos antes de llevarlos al mundo real, o simplemente disfrutar del flujo creativo en un ambiente industrial atmosferico.
 
 <p align="center">
   <img src="https://img.itch.zone/aW1nLzI3MTM4NTM5LnBuZw==/original/SJWreF.png" width="32%" alt="Arte 1">
@@ -501,83 +501,83 @@ This project was born as a practice and visualization tool for graffiti writers,
 
 ---
 
-## Roudomappu
+## ロードマップ
 
-- [x] 7 playable scenarios via browser
-- [x] Sistema de pintura with DecalGeometry y goteo procedural
-- [x] Idou Ressha with colision AABB (BA Subte)
-- [x] Radio YouTube integrada with musica original
+- [x] 7 escenarios jugables via navegador
+- [x] Sistema de pintura con DecalGeometry y goteo procedural
+- [x] Trenes en movimiento con colision AABB (BA Subte)
+- [x] Radio YouTube integrada con musica original
 - [x] Snapshot mode (captura PNG)
-- [x] Menu principal with acceso a todos los mapas
-- [x] Daburu Oodio with fallback para ejecucion local
-- [x] Kage proyectadas (Container 1)
-- [ ] Native compilation .exe (Standalone)
+- [x] Menu principal con acceso a todos マップ一覧
+- [x] Audio dual con fallback para ejecucion local
+- [x] Sombras proyectadas (Container 1)
+- [ ] Compilacion nativa .exe (Standalone)
 - [ ] Post-procesamiento visual: bloom, SSAO, motion blur
-- [ ] New maps: abandoned factory, railway bridge, withtainer depot 2
-- [ ] Gamepad support
-- [ ] Local multiplayer (pantalla dividida)
+- [ ] Nuevos mapas: fabrica abandonada, puente ferroviario, deposito containers 2
+- [ ] Soporte para gamepad
+- [ ] Multijugador local (pantalla dividida)
 
 ---
 
-## Rinku
+## リンク
 
 <p align="center">
 
-[![GitHub Pages](https://img.shields.io/badge/PUREI-FF9900?style=for-the-badge&logo=github&logoColor=black)](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/)
+[![GitHub Pages](https://img.shields.io/badge/PLAY-FF9900?style=for-the-badge&logo=github&logoColor=black)](https://eduardofierroduque-sudo.github.io/WDL-MASTER-TAGGER-VERSION-METRO-/)
 [![itch.io](https://img.shields.io/badge/itch.io-FA5C5C?style=for-the-badge&logo=itch.io&logoColor=white)](https://fierroduque.itch.io/)
 [![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@WDLMASTERTAGGER)
 [![Website](https://img.shields.io/badge/fierroduque.com-000000?style=for-the-badge&logo=safari&logoColor=white)](https://fierroduque.com)
 
 </p>
 
-### itch.io no shinario betsu:
+### Por escenario en itch.io:
 
-| Shinario | itch.io |
+| Escenario | itch.io |
 |---|---|
 | Metro/Tren Santiago | [fierroduque.itch.io/wdl-master-tagger](https://fierroduque.itch.io/wdl-master-tagger) |
 | NYC Subway | [fierroduque.itch.io/wdl-master-tagger-ny-subway](https://fierroduque.itch.io/wdl-master-tagger-ny-subway) |
 | BA Subte | [fierroduque.itch.io/wdl-master-tagger-tren-3](https://fierroduque.itch.io/wdl-master-tagger-tren-3) |
-| Container 1 / Bodega | [fierroduque.itch.io/wdl-master-tagger-withtainers-1](https://fierroduque.itch.io/wdl-master-tagger-withtainers-1) |
-| Abandoned Building | [fierroduque.itch.io/wdl-master-tagger-edificio-abandonado](https://fierroduque.itch.io/wdl-master-tagger-edificio-abandonado) |
-| Night Maze | [fierroduque.itch.io/wdl-master-taggerlaberinto-de-noche](https://fierroduque.itch.io/wdl-master-taggerlaberinto-de-noche) |
+| Container 1 / Bodega | [fierroduque.itch.io/wdl-master-tagger-containers-1](https://fierroduque.itch.io/wdl-master-tagger-containers-1) |
+| Edificio Abandonado | [fierroduque.itch.io/wdl-master-tagger-edificio-abandonado](https://fierroduque.itch.io/wdl-master-tagger-edificio-abandonado) |
+| Laberinto de Noche | [fierroduque.itch.io/wdl-master-taggerlaberinto-de-noche](https://fierroduque.itch.io/wdl-master-taggerlaberinto-de-noche) |
 
 ### Videos:
 
 | Video | Link |
 |---|---|
-| Koushiki Yokokuhen | [youtu.be/KE8L0RL6YC8](https://youtu.be/KE8L0RL6YC8) |
+| Trailer Oficial | [youtu.be/KE8L0RL6YC8](https://youtu.be/KE8L0RL6YC8) |
 | Gameplay Metro/Tren | [youtube.com/watch?v=dHxB3NoJs1k](https://www.youtube.com/watch?v=dHxB3NoJs1k) |
 
 ---
 
-## Ripojitori Kousei
+## リポジトリ構成
 
 ```
 WDL-MASTER-TAGGER-VERSION-METRO-/
-├── index.html                          # 7tsu no mappu ni akusesu dekiru mein menyuu
-├── README.md                           # Kono Bunsho
+├── index.html                          # Menu principal con acceso a los 7 mapas
+├── README.md                           # Este documento
 ├── juego graffiti METRO/               # Maestranza Metro/Tren (Santiago)
 │   └── index.html
 ├── juego graffiti trenes 2/            # NYC Subway Edition
 │   └── index.html
 ├── juego graffiti trenes 3/            # BA Subte Edition
 │   └── index.html
-├── juego grafiti BODEGA/               # Container 1 / Night Warehouses
+├── juego grafiti BODEGA/               # Container 1 / Bodegas de Noche
 │   └── index.html
 ├── juego grafiti BODEGA FLUOR/         # Laberinto Neon
 │   └── index.html
-├── juego grafiti EDIFICIO/             # Abandoned Building (5 pisos)
+├── juego grafiti EDIFICIO/             # Edificio Abandonado (5 pisos)
 │   └── index.html
-└── juego grafiti LABERINTO/            # Night Maze
+└── juego grafiti LABERINTO/            # Laberinto de Noche
     └── index.html
 ```
 
-Each folder withtains a single standalone `index.html` . No dependencies, no installation. Open any in your browser and start painting.
+Cada carpeta contiene un unico `index.html` autonomo. Sin dependencias, sin instalacion. Abri cualquiera en tu navegador y empeza a pintar.
 
 ---
 
 <p align="center">
-  <em>WDL -- Sutorito kara koodo e.</em><br>
+  <em>WDL -- ストリートからコードへ.</em><br>
   <strong>(c) 2025-2026 Eduardo Fierro -- fierroduque.com</strong><br><br>
-  <sub>Bijuaru asetto no sakusei ni seisei AI wa shiyou sareteimasen. Ichigyou ichigyou, tezukuri desu.</sub>
+  <sub>ビジュアルアセットに生成AIは不使用 en la creacion de assets visuales. 一行一行、手作り.</sub>
 </p>
