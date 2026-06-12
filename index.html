@@ -292,6 +292,7 @@ function initAudio() {
 
 function startMusic() {
   if (musicStarted) return;
+  stopMenuMusic();
   initAudio();
   musicStarted = true;
   playNextTrack();
@@ -456,11 +457,9 @@ function checkCollision(pos) {
   _pCenter.set(pos.x, pos.y, pos.z);
   _pSize.set(cfg.physics.collisionBox[0], cfg.physics.collisionBox[1], cfg.physics.collisionBox[2]);
   _pBox.setFromCenterAndSize(_pCenter, _pSize);
-  const playerFeet = pos.y - cfg.physics.playerHeight;
   for (let obj of collidables) {
-    if (!obj.bbox) continue;
+    if (!obj.bbox) { obj.updateMatrixWorld(); obj.bbox = new THREE.Box3().setFromObject(obj); }
     if (obj.isRamp) continue;
-    if (obj.bbox.max.y <= playerFeet + 0.25) continue;
     if (_pBox.intersectsBox(obj.bbox)) return true;
   }
   return false;
