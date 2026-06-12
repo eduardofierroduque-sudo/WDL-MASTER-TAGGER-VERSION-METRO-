@@ -7,8 +7,10 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0a;overflow:hidden;font-family:'Segoe UI','Arial Black',sans-serif;width:100vw;height:100vh}
-canvas{display:block;position:fixed;top:0;left:0;z-index:1}
+:focus-visible{outline:2px solid #ff6600;outline-offset:2px;border-radius:2px}
+body{background:#0a0a0a;overflow:hidden;font-family:'Segoe UI','Arial Black',sans-serif;width:100vw;height:100vh;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+canvas{display:block;position:fixed;top:0;left:0;z-index:1;touch-action:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}}
 
 /* ===== MENU SCREEN - FULL BG ===== */
 #menu-screen{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;display:flex;flex-direction:column;align-items:center;overflow-y:auto;overflow-x:hidden}
@@ -29,7 +31,7 @@ canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 #menu-screen .logo-area{padding:25px 20px 5px;text-align:center;position:relative;z-index:1}
 #menu-screen .logo-area img{width:min(650px,90vw);height:auto;margin-bottom:5px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.8));border-radius:6px}
 #menu-screen .logo-area h1{font-family:'Permanent Marker',cursive;font-size:clamp(28px,6vw,56px);letter-spacing:6px;text-transform:uppercase;color:#fff;text-shadow:3px 3px 0 #000,6px 6px 0 rgba(255,100,0,0.5),0 0 40px rgba(255,150,0,0.4);line-height:1.2}
-#menu-screen .user-area{margin:8px 0 16px;display:flex;gap:12px;align-items:center;position:relative;z-index:1}
+#menu-screen .user-area{margin:8px 0 16px;display:flex;gap:8px;align-items:center;position:relative;z-index:1;flex-wrap:wrap;justify-content:center}
 #menu-screen .user-area input{padding:12px 18px;background:rgba(0,0,0,0.7);border:2px solid #555;color:#fff;font-size:15px;width:240px;text-align:center;letter-spacing:3px;outline:none;transition:all .3s;text-transform:uppercase;font-weight:700;backdrop-filter:blur(4px)}
 #menu-screen .user-area input:focus{border-color:#ff6600;box-shadow:0 0 25px rgba(255,100,0,0.3),inset 0 0 10px rgba(255,100,0,0.1)}
 #menu-screen .user-area input::placeholder{color:#555;letter-spacing:2px}
@@ -44,7 +46,7 @@ canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 .map-card::after{content:'';position:absolute;bottom:12px;right:15px;width:28px;height:28px;background:currentColor;border-radius:50%;opacity:0.08;transition:all .35s;filter:blur(6px)}
 .map-card:hover{transform:translateY(-6px) scale(1.02);backdrop-filter:blur(2px)}
 .map-card:hover::after{width:45px;height:45px;opacity:0.15;bottom:5px;right:5px}
-.map-card .icon{font-size:38px;margin-bottom:10px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6))}
+.map-card .icon{font-size:24px;margin-bottom:8px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:900}
 .map-card .name{font-size:16px;font-weight:900;letter-spacing:3px;text-transform:uppercase;margin-bottom:5px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.8)}
 .map-card .desc{font-size:11px;color:#888;letter-spacing:2px;text-align:center;text-transform:uppercase}
 .map-card .tag{position:absolute;top:0;right:12px;font-size:9px;padding:4px 10px;letter-spacing:2px;text-transform:uppercase;color:#000;font-weight:900;clip-path:polygon(0 0,100% 0,100% 70%,90% 100%,0 100%)}
@@ -113,6 +115,7 @@ canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 
 /* ===== ALERT WARNING ===== */
 #alert-warning{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#f00;font-size:clamp(20px,3vw,32px);font-weight:bold;text-align:center;z-index:6;pointer-events:none;text-shadow:0 0 40px rgba(255,0,0,0.9);letter-spacing:4px;display:none;text-transform:uppercase}
+#alert-warning::before{content:'!';display:block;font-size:clamp(48px,6vw,72px);line-height:1;margin-bottom:8px}
 #alert-warning span{font-size:14px;color:#f66;display:block;margin-top:4px}
 
 /* ===== HUD TOP - VIDRIO ===== */
@@ -155,62 +158,63 @@ canvas{display:block;position:fixed;top:0;left:0;z-index:1}
     <h1>WDL MASTER TAGGER</h1>
   </div>
   <div class="user-area">
-    <input type="text" id="username-input" placeholder="TU NOMBRE DE USUARIO" maxlength="20">
-    <button onclick="saveUsername()">ENTRAR</button>
+    <label for="username-input" style="color:#999;font-size:12px;letter-spacing:2px;text-transform:uppercase">TAGGER NAME</label>
+    <input type="text" id="username-input" placeholder="TU NOMBRE" maxlength="20" autocomplete="username">
+    <button onclick="saveUsername()" aria-label="Guardar nombre">ENTRAR</button>
   </div>
   <div class="maps-grid">
-    <div class="map-card card-metro" onclick="startGame('metro')">
+    <div class="map-card card-metro" onclick="startGame('metro')" role="button" tabindex="0" aria-label="MAESTRANZA METRO TREN">
       <span class="tag" style="background:#00a9e0">ORIGINAL</span>
-      <span class="icon">🚇</span>
+      <span class="icon" style="background:rgba(0,169,224,0.15);color:#00a9e0">&#9776;</span>
       <span class="name">MAESTRANZA METRO/TREN</span>
       <span class="desc">Versión original del simulador</span>
     </div>
-    <div class="map-card card-nyc" onclick="startGame('nyc')">
+    <div class="map-card card-nyc" onclick="startGame('nyc')" role="button" tabindex="0" aria-label="NYC SUBWAY">
       <span class="tag" style="background:#ff9900">V2</span>
-      <span class="icon">🚃</span>
+      <span class="icon" style="background:rgba(255,153,0,0.15);color:#ff9900">&#9733;</span>
       <span class="name">NYC SUBWAY</span>
       <span class="desc">New York City Subway Edition</span>
     </div>
-    <div class="map-card card-subte" onclick="startGame('subte')">
+    <div class="map-card card-subte" onclick="startGame('subte')" role="button" tabindex="0" aria-label="BA SUBTE">
       <span class="tag" style="background:#ffcc00">V2</span>
-      <span class="icon">🚉</span>
+      <span class="icon" style="background:rgba(255,204,0,0.15);color:#ffcc00">&#9889;</span>
       <span class="name">BA SUBTE</span>
       <span class="desc">Buenos Aires Subte Edition</span>
     </div>
-    <div class="map-card card-bodega" onclick="startGame('bodega')">
+    <div class="map-card card-bodega" onclick="startGame('bodega')" role="button" tabindex="0" aria-label="BODEGAS DE NOCHE">
       <span class="tag" style="background:#39ff14">V2</span>
-      <span class="icon">🏭</span>
+      <span class="icon" style="background:rgba(57,255,20,0.15);color:#39ff14">&#9632;</span>
       <span class="name">BODEGAS DE NOCHE 1</span>
       <span class="desc">Bodega nocturna industrial</span>
     </div>
-    <div class="map-card card-fluor" onclick="startGame('fluor')">
+    <div class="map-card card-fluor" onclick="startGame('fluor')" role="button" tabindex="0" aria-label="BODEGA FLUOR">
       <span class="tag" style="background:#0f0">V2</span>
-      <span class="icon">💡</span>
+      <span class="icon" style="background:rgba(0,255,0,0.15);color:#0f0">&#9679;</span>
       <span class="name">BODEGA FLUOR</span>
       <span class="desc">Laberinto fluorescente</span>
     </div>
-    <div class="map-card card-edificio" onclick="startGame('edificio')">
+    <div class="map-card card-edificio" onclick="startGame('edificio')" role="button" tabindex="0" aria-label="EDIFICIO ABANDONADO">
       <span class="tag" style="background:#fff;color:#000">V2</span>
-      <span class="icon">🏬</span>
+      <span class="icon" style="background:rgba(255,255,255,0.15);color:#fff">&#9633;</span>
       <span class="name">EDIFICIO ABANDONADO 1</span>
       <span class="desc">Edificio abandonado</span>
     </div>
-    <div class="map-card card-laberinto" onclick="startGame('laberinto')">
+    <div class="map-card card-laberinto" onclick="startGame('laberinto')" role="button" tabindex="0" aria-label="LABERINTO">
       <span class="tag" style="background:#f33">V2</span>
-      <span class="icon">🚪</span>
+      <span class="icon" style="background:rgba(255,51,51,0.15);color:#f33">&#10005;</span>
       <span class="name">LABERINTO 1</span>
       <span class="desc">Laberinto de graffiti</span>
     </div>
   </div>
-  <button class="btn-gallery" style="position:static;margin-bottom:20px" onclick="openGallery()">📸 GALERÍA</button>
+  <button class="btn-gallery" style="position:static;margin-bottom:20px" onclick="openGallery()" aria-label="GALERIA">GALERIA</button>
   <div class="footer-credits">&copy; 2026 <a href="https://fierroduque.com" target="_blank">FIERRODUQUE</a></div>
 </div>
 
 <div id="gallery-screen">
   <img id="gallery-bg" src="ARTE PARA JUEGO/WDLMASTERTAGGER 630x500 4.jpg" alt="">
-  <h2>📸 GALERÍA DE ARTE</h2>
+  <h2>GALERIA DE ARTE</h2>
   <div class="gallery-grid" id="gallery-grid"></div>
-  <button class="btn-delete" onclick="clearGallery()">🗑 BORRAR GALERÍA</button>
+  <button class="btn-delete" onclick="clearGallery()">BORRAR GALERIA</button>
   <button class="btn-back" onclick="closeGallery()">VOLVER</button>
 </div>
 
@@ -246,9 +250,9 @@ canvas{display:block;position:fixed;top:0;left:0;z-index:1}
   <p class="reload" onclick="returnToMenu()">[ VOLVER AL MENÚ ]</p>
 </div>
 
-<div id="alert-warning">
-  ⚠ ALERTA DE SEGURIDAD ⚠<br>
-  <span>ABANDONE EL ÁREA INMEDIATAMENTE</span><br>
+<div id="alert-warning" role="alert" aria-live="assertive">
+  ALERTA DE SEGURIDAD<br>
+  <span>ABANDONE EL AREA INMEDIATAMENTE</span><br>
   <span style="font-size:12px;color:#c00">TOME SUS CAPTURAS Y HUYA</span>
 </div>
 
@@ -1211,7 +1215,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('username-input').value = username;
   document.getElementById('hud-username').textContent = username || 'ANONIMO';
   initAudio();
-  // menu music starts on first user click (browser autoplay policy)
+  // Keyboard support for map cards
+  document.querySelectorAll('.map-card').forEach(card => {
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); } });
+  });
 });
 </script>
 </body>
