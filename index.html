@@ -306,14 +306,23 @@ function stopMusic() {
   musicStarted = false;
 }
 
+let menuMusicReady = false;
+
 function startMenuMusic() {
   if (!menuMusic) initAudio();
-  if (menuMusic) { menuMusic.play().catch(() => {}); }
+  if (menuMusic && menuMusic.paused) { menuMusic.play().catch(() => {}); }
 }
 
 function stopMenuMusic() {
   if (menuMusic) { menuMusic.pause(); menuMusic.currentTime = 0; }
 }
+
+// Browsers bloquean autoplay: activar musica en la primera interaccion del usuario
+document.addEventListener('click', function firstClick() {
+  menuMusicReady = true;
+  startMenuMusic();
+  document.removeEventListener('click', firstClick);
+}, { once: true });
 
 // ============ MAP CONFIGURATIONS ============
 const MAP_CONFIGS = {
@@ -949,7 +958,13 @@ function createDrip(point, normal, color, brushSize) {
 }
 
 // ============ INPUT HANDLING ============
+let inputHandlersSetup = false;
+let gameTimerInterval = null;
+
 function setupInputHandlers() {
+  if (inputHandlersSetup) return;
+  inputHandlersSetup = true;
+
   const container = document.getElementById('gameCanvas');
   const inst = document.getElementById('instructions');
   let ignoreNextMouseMove = false;
@@ -998,12 +1013,12 @@ function setupInputHandlers() {
     if (code === 'KeyD' || key === 'd') moveRight = false;
     if (code === 'ShiftLeft' || code === 'ShiftRight') isSprinting = false;
   });
-  window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+  window.addEventListener('resize', () => { if (camera) { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); } if (renderer) renderer.setSize(window.innerWidth, window.innerHeight); });
 
   document.getElementById('brushSize').addEventListener('input', function () { document.getElementById('brushSizeLabel').textContent = this.value; });
 
-  setInterval(() => {
-    if (gameActive) {
+  gameTimerInterval = setInterval(() => {
+    if (gameActive && cfg) {
       timeLeft--;
       document.getElementById('time-val').innerText = timeLeft;
       if (timeLeft <= 0) { stopMusic(); returnToMenu(); }
@@ -1049,6 +1064,7 @@ window.returnToMenu = function () {
   animRunning = false;
   if (document.pointerLockElement) document.exitPointerLock();
   stopMusic();
+  if (gameTimerInterval) { clearInterval(gameTimerInterval); gameTimerInterval = null; }
   document.getElementById('instructions').style.display = 'none';
   document.getElementById('controls-panel').style.display = 'none';
   document.getElementById('crosshair').style.display = 'none';
@@ -1061,6 +1077,7 @@ window.returnToMenu = function () {
   if (scene) { scene.clear(); scene = null; }
   if (renderer) { renderer.dispose(); renderer = null; }
   camera = null; currentMap = null; cfg = null;
+  inputHandlersSetup = false;
   startMenuMusic();
 };
 
@@ -1175,7 +1192,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('username-input').value = username;
   document.getElementById('hud-username').textContent = username || 'ANONIMO';
   initAudio();
-  startMenuMusic();
+  // menu music starts on first user click (browser autoplay policy)
 });
 </script>
 </body>
