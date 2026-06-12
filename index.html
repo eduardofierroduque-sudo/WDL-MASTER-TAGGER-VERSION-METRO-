@@ -405,6 +405,7 @@ const TRAIN_SPEED = 3.0, TRAIN1_RAIL_X = -100, TRAIN2_RAIL_X = 100;
 let lastHitPoint = new THREE.Vector3();
 let username = '';
 let animRunning = false;
+let animFrameId = null;
 let _dir = new THREE.Vector3();
 let _side = new THREE.Vector3();
 let _move = new THREE.Vector3();
@@ -1072,6 +1073,7 @@ function clearGallery() { if (confirm('¿Borrar toda la galería?')) { localStor
 window.returnToMenu = function () {
   gameActive = false;
   animRunning = false;
+  if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
   if (document.pointerLockElement) document.exitPointerLock();
   stopMusic();
   if (gameTimerInterval) { clearInterval(gameTimerInterval); gameTimerInterval = null; }
@@ -1137,7 +1139,7 @@ window.startGame = function (mapId) {
 // ============ GAME LOOP ============
 function animateLoop() {
   if (!animRunning) return;
-  requestAnimationFrame(animateLoop);
+  animFrameId = requestAnimationFrame(animateLoop);
   if (!gameActive) { if (renderer && scene && camera) renderer.render(scene, camera); return; }
 
   frameCounter += 0.05;
@@ -1167,7 +1169,7 @@ function animateLoop() {
   if (ground.length > 0 && ground[0].distance <= cfg.physics.playerHeight && verticalVel <= 0) {
     camera.position.y += (cfg.physics.playerHeight - ground[0].distance); verticalVel = 0; canJump = true;
   }
-  if (canJump && direction.length() > 0) camera.position.y = cfg.physics.playerHeight + Math.sin(frameCounter * 10) * (isSprinting ? 0.15 : 0.08);
+  if (canJump && _move.length() > 0) camera.position.y = cfg.physics.playerHeight + Math.sin(frameCounter * 10) * (isSprinting ? 0.15 : 0.08);
   if (camera.position.y < -40) { camera.position.copy(startPos); verticalVel = 0; }
 
   if (isPainting) performSpray();
@@ -1175,7 +1177,7 @@ function animateLoop() {
     const d = drip.userData;
     if (d.currentLength < d.maxLength) { d.currentLength += d.speed; drip.scale.set(1, d.currentLength * 15, 1); drip.position.y -= d.speed * 0.7; }
   });
-  if (activeDrips.length > 400) { const old = activeDrips.shift(); scene.remove(old); }
+  if (activeDrips.length > 200) { const old = activeDrips.shift(); scene.remove(old); }
 
   if (cfg.hasMovingTrains) {
     if (movingTrain1) { movingTrain1.position.z += TRAIN_SPEED; if (movingTrain1.position.z > 650) { scene.remove(movingTrain1); movingTrain1 = null; } else if (checkTrainCollision(movingTrain1, TRAIN1_RAIL_X)) { gameOver('ATROPELLADO POR EL TREN'); } }
