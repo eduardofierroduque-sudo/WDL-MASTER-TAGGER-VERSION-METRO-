@@ -1,237 +1,1182 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WDL MASTER TAGGER</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WDL MASTER TAGGER</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;overflow:hidden;font-family:'Segoe UI','Arial Black',sans-serif;width:100vw;height:100vh}
+canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 
-        body {
-            background: #0a0a0a;
-            color: #fff;
-            font-family: 'Segoe UI', 'Arial', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-image:
-                radial-gradient(ellipse at 20% 50%, rgba(255, 153, 0, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(57, 255, 20, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(255, 204, 0, 0.04) 0%, transparent 50%);
-        }
+/* ===== MENU SCREEN - FULL BG ===== */
+#menu-screen{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;display:flex;flex-direction:column;align-items:center;overflow-y:auto;overflow-x:hidden}
+#menu-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;object-fit:cover;filter:brightness(0.25) saturate(0.6)}
+#menu-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 120px 80px at 15% 30%, rgba(255,60,0,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 90px 60px at 75% 55%, rgba(0,255,100,0.10) 0%, transparent 70%),
+    radial-gradient(ellipse 150px 100px at 45% 75%, rgba(255,200,0,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 70px 50px at 85% 15%, rgba(200,0,255,0.10) 0%, transparent 70%),
+    radial-gradient(ellipse 100px 70px at 25% 85%, rgba(0,180,255,0.10) 0%, transparent 70%),
+    radial-gradient(ellipse 60px 40px at 60% 20%, rgba(255,255,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50px 35px at 10% 65%, rgba(255,100,0,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 80px 55px at 90% 80%, rgba(255,0,100,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40px 30px at 40% 40%, rgba(0,200,255,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 35px 25px at 70% 10%, rgba(255,200,0,0.05) 0%, transparent 50%)}
 
-        .header {
-            text-align: center;
-            padding: 40px 20px 10px;
-        }
+#menu-screen .logo-area{padding:25px 20px 5px;text-align:center;position:relative;z-index:1}
+#menu-screen .logo-area img{width:min(650px,90vw);height:auto;margin-bottom:5px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.8));border-radius:6px}
+#menu-screen .logo-area h1{font-family:'Permanent Marker',cursive;font-size:clamp(28px,6vw,56px);letter-spacing:6px;text-transform:uppercase;color:#fff;text-shadow:3px 3px 0 #000,6px 6px 0 rgba(255,100,0,0.5),0 0 40px rgba(255,150,0,0.4);line-height:1.2}
+#menu-screen .user-area{margin:8px 0 16px;display:flex;gap:12px;align-items:center;position:relative;z-index:1}
+#menu-screen .user-area input{padding:12px 18px;background:rgba(0,0,0,0.7);border:2px solid #555;color:#fff;font-size:15px;width:240px;text-align:center;letter-spacing:3px;outline:none;transition:all .3s;text-transform:uppercase;font-weight:700;backdrop-filter:blur(4px)}
+#menu-screen .user-area input:focus{border-color:#ff6600;box-shadow:0 0 25px rgba(255,100,0,0.3),inset 0 0 10px rgba(255,100,0,0.1)}
+#menu-screen .user-area input::placeholder{color:#555;letter-spacing:2px}
+#menu-screen .user-area button{padding:12px 28px;background:linear-gradient(135deg,#ff6600,#ff3300);border:none;color:#000;font-weight:900;cursor:pointer;font-size:14px;letter-spacing:2px;text-transform:uppercase;transition:all .3s;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);box-shadow:0 4px 15px rgba(255,60,0,0.4)}
+#menu-screen .user-area button:hover{transform:scale(1.08);box-shadow:0 6px 25px rgba(255,60,0,0.6)}
 
-        .header h1 {
-            font-size: clamp(24px, 5vw, 48px);
-            font-weight: 900;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #ff9900, #ffcc00, #39ff14);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: none;
-            animation: glitch 3s infinite;
-        }
+/* ===== MAP CARDS - GRAFFITI STYLE ===== */
+.maps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;padding:10px 24px 30px;max-width:1050px;width:100%;position:relative;z-index:1}
+.map-card{position:relative;background:rgba(10,10,10,0.85);border:2px solid #333;padding:22px 18px;cursor:pointer;transition:all .35s;display:flex;flex-direction:column;align-items:center;overflow:hidden;backdrop-filter:blur(6px);
+  clip-path:polygon(0 4px,4px 0,calc(100% - 4px) 0,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0 calc(100% - 4px))}
+.map-card::before{content:'';position:absolute;top:-2px;left:-2px;right:-2px;height:5px;transition:all .35s;z-index:2}
+.map-card::after{content:'';position:absolute;bottom:12px;right:15px;width:28px;height:28px;background:currentColor;border-radius:50%;opacity:0.08;transition:all .35s;filter:blur(6px)}
+.map-card:hover{transform:translateY(-6px) scale(1.02);backdrop-filter:blur(2px)}
+.map-card:hover::after{width:45px;height:45px;opacity:0.15;bottom:5px;right:5px}
+.map-card .icon{font-size:38px;margin-bottom:10px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6))}
+.map-card .name{font-size:16px;font-weight:900;letter-spacing:3px;text-transform:uppercase;margin-bottom:5px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.8)}
+.map-card .desc{font-size:11px;color:#888;letter-spacing:2px;text-align:center;text-transform:uppercase}
+.map-card .tag{position:absolute;top:0;right:12px;font-size:9px;padding:4px 10px;letter-spacing:2px;text-transform:uppercase;color:#000;font-weight:900;clip-path:polygon(0 0,100% 0,100% 70%,90% 100%,0 100%)}
 
-        .header .subtitle {
-            color: #888;
-            font-size: 14px;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            margin-top: 8px;
-        }
+/* Per-card accent colors */
+.card-metro{background:rgba(0,30,50,0.85);border-color:rgba(0,169,224,0.3)}.card-metro::before{background:linear-gradient(90deg,transparent,#00a9e0,#0066cc,transparent)}.card-metro:hover{border-color:#00a9e0;box-shadow:0 0 40px rgba(0,169,224,0.3),inset 0 0 30px rgba(0,169,224,0.05);color:#00a9e0}
+.card-nyc{background:rgba(40,20,0,0.85);border-color:rgba(255,153,0,0.3)}.card-nyc::before{background:linear-gradient(90deg,transparent,#ff9900,#ff6600,transparent)}.card-nyc:hover{border-color:#ff9900;box-shadow:0 0 40px rgba(255,153,0,0.3),inset 0 0 30px rgba(255,153,0,0.05);color:#ff9900}
+.card-subte{background:rgba(40,35,0,0.85);border-color:rgba(255,204,0,0.3)}.card-subte::before{background:linear-gradient(90deg,transparent,#ffcc00,#ff9900,transparent)}.card-subte:hover{border-color:#ffcc00;box-shadow:0 0 40px rgba(255,204,0,0.3),inset 0 0 30px rgba(255,204,0,0.05);color:#ffcc00}
+.card-bodega{background:rgba(0,35,10,0.85);border-color:rgba(57,255,20,0.3)}.card-bodega::before{background:linear-gradient(90deg,transparent,#39ff14,#00aa00,transparent)}.card-bodega:hover{border-color:#39ff14;box-shadow:0 0 40px rgba(57,255,20,0.3),inset 0 0 30px rgba(57,255,20,0.05);color:#39ff14}
+.card-fluor{background:rgba(0,30,5,0.85);border-color:rgba(0,255,0,0.3)}.card-fluor::before{background:linear-gradient(90deg,transparent,#0f0,#39ff14,transparent)}.card-fluor:hover{border-color:#0f0;box-shadow:0 0 40px rgba(0,255,0,0.3),inset 0 0 30px rgba(0,255,0,0.05);color:#0f0}
+.card-edificio{background:rgba(25,25,25,0.85);border-color:rgba(255,255,255,0.3)}.card-edificio::before{background:linear-gradient(90deg,transparent,#ccc,#fff,transparent)}.card-edificio:hover{border-color:#fff;box-shadow:0 0 40px rgba(255,255,255,0.25),inset 0 0 30px rgba(255,255,255,0.05);color:#fff}
+.card-laberinto{background:rgba(35,5,5,0.85);border-color:rgba(255,51,51,0.3)}.card-laberinto::before{background:linear-gradient(90deg,transparent,#f33,#f00,transparent)}.card-laberinto:hover{border-color:#ff3333;box-shadow:0 0 40px rgba(255,51,51,0.3),inset 0 0 30px rgba(255,51,51,0.05);color:#ff3333}
 
-        @keyframes glitch {
-            0%, 90%, 100% { opacity: 1; }
-            92% { opacity: 0.8; transform: translateX(-2px); }
-            94% { opacity: 1; transform: translateX(2px); }
-            96% { opacity: 0.9; transform: translateX(-1px); }
-        }
+/* ===== GALLERY SCREEN ===== */
+#gallery-screen{position:fixed;top:0;left:0;width:100%;height:100%;z-index:20;background:#0a0a0a;display:none;flex-direction:column;align-items:center;overflow-y:auto;padding:20px}
+#gallery-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;object-fit:cover;filter:brightness(0.2) saturate(0.3)}
+#gallery-screen h2{font-family:'Permanent Marker',cursive;color:#ff6600;font-size:32px;margin:20px 0;letter-spacing:5px;text-shadow:3px 3px 0 #000,0 0 30px rgba(255,100,0,0.5);position:relative;z-index:1}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;max-width:1100px;width:100%;position:relative;z-index:1}
+.gallery-item{background:rgba(10,10,10,0.5);border:1px solid rgba(255,255,255,0.1);overflow:hidden;cursor:pointer;transition:all .3s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  clip-path:polygon(0 3px,3px 0,calc(100% - 3px) 0,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0 calc(100% - 3px));
+  box-shadow:0 4px 15px rgba(0,0,0,0.4)}
+.gallery-item:hover{transform:scale(1.06);border-color:rgba(255,102,0,0.6);box-shadow:0 0 30px rgba(255,100,0,0.4);z-index:2}
+.gallery-item img{width:100%;height:auto;display:block}
+.gallery-item .info{padding:8px 12px;font-size:10px;color:#999;letter-spacing:1px;text-transform:uppercase}
+#gallery-screen .btn-back{padding:14px 40px;background:linear-gradient(135deg,#ff6600,#ff3300);border:none;color:#000;font-weight:900;cursor:pointer;margin:24px 0;font-size:15px;letter-spacing:2px;text-transform:uppercase;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);box-shadow:0 4px 15px rgba(255,60,0,0.4);position:relative;z-index:1}
+#gallery-screen .btn-back:hover{transform:scale(1.08)}
+#gallery-screen .btn-delete{padding:12px 28px;background:rgba(255,255,255,0.05);border:1px solid #333;color:#aaa;cursor:pointer;margin:8px;font-size:12px;letter-spacing:2px;text-transform:uppercase;position:relative;z-index:1;transition:all .2s}
+#gallery-screen .btn-delete:hover{border-color:#f00;color:#f00}
 
-        .maps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 30px 20px;
-            max-width: 1000px;
-            width: 100%;
-        }
+/* ===== LOADING SCREEN - FULL BG ===== */
+#loading-screen{position:fixed;top:0;left:0;width:100%;height:100%;z-index:15;display:none;flex-direction:column;justify-content:center;align-items:center}
+#loading-bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.3) saturate(0.4);z-index:-1}
+#loading-screen .loader-text{font-family:'Permanent Marker',cursive;color:#ff6600;font-size:clamp(20px,3vw,32px);letter-spacing:8px;animation:pulse 1s infinite;text-shadow:3px 3px 0 #000,0 0 40px rgba(255,100,0,0.6);z-index:1}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.05)}}
 
-        .map-card {
-            position: relative;
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 12px;
-            padding: 25px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow: hidden;
-        }
+/* ===== INSTRUCTIONS PANEL - VIDRIO GRAFFITI ===== */
+#instructions{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;background:rgba(10,10,10,0.55);color:#fff;padding:32px 44px;text-align:center;display:none;border:1px solid rgba(255,255,255,0.2);pointer-events:auto;cursor:pointer;max-width:min(520px,92vw);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  clip-path:polygon(0 8px,8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px));
+  box-shadow:0 8px 40px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.08),0 0 0 1px rgba(255,100,0,0.08)}
+#instructions::before{content:'';position:absolute;top:-1px;left:15px;right:15px;height:3px;background:linear-gradient(90deg,transparent,rgba(255,102,0,0.6),rgba(255,51,0,0.4),transparent);border-radius:2px}
+#instructions p{margin:5px 0;font-size:14px;letter-spacing:2px;line-height:1.8;text-transform:uppercase}
+#instructions .highlight{color:#ff6600;font-weight:900;font-size:15px;text-shadow:0 0 10px rgba(255,100,0,0.5)}
 
-        .map-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
-            transition: all 0.3s ease;
-        }
+/* ===== CROSSHAIR - SPRAY CAN STYLE ===== */
+#crosshair{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;pointer-events:none;display:none;width:28px;height:28px}
+#crosshair::before{content:'';position:absolute;top:50%;left:0;width:100%;height:1px;background:rgba(255,255,255,0.6);box-shadow:0 0 4px rgba(255,255,255,0.3)}
+#crosshair::after{content:'';position:absolute;left:50%;top:0;width:1px;height:100%;background:rgba(255,255,255,0.6);box-shadow:0 0 4px rgba(255,255,255,0.3)}
 
-        .map-card:hover {
-            transform: translateY(-4px);
-            border-color: #444;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-        }
+/* ===== CONTROLS PANEL - VIDRIO ===== */
+#controls-panel{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:4;display:none;gap:16px;align-items:center;background:rgba(10,10,10,0.5);padding:14px 26px;border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  clip-path:polygon(0 6px,6px 0,calc(100% - 6px) 0,100% 6px,100% calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,0 calc(100% - 6px));
+  box-shadow:0 6px 30px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.06)}
+#controls-panel::before{content:'';position:absolute;bottom:-1px;left:20px;right:20px;height:2px;background:linear-gradient(90deg,transparent,rgba(255,102,0,0.4),transparent)}
+#controls-panel input[type=color]{width:40px;height:40px;border:1px solid rgba(255,255,255,0.25);border-radius:50%;cursor:pointer;background:transparent;padding:0;transition:all .2s}
+#controls-panel input[type=color]:hover{border-color:#ff6600;box-shadow:0 0 18px rgba(255,100,0,0.4)}
+#controls-panel input[type=range]{width:120px;accent-color:#ff6600}
+#controls-panel label{color:rgba(255,255,255,0.8);font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:700}
 
-        .map-card.metro { border-color: #ff660033; }
-        .map-card.metro::before { background: linear-gradient(90deg, #ff6600, #ff9900); }
-        .map-card.metro:hover { border-color: #ff6600; box-shadow: 0 8px 30px rgba(255,102,0,0.2); }
+/* ===== GAME OVER ===== */
+#game-over{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:999;display:none;flex-direction:column;justify-content:center;align-items:center;backdrop-filter:blur(8px)}
+#game-over h1{font-family:'Permanent Marker',cursive;color:#ff0000;font-size:clamp(40px,8vw,80px);letter-spacing:12px;margin:0;text-shadow:4px 4px 0 #000,0 0 60px rgba(255,0,0,0.6);animation:gameover-pulse 0.8s infinite}
+@keyframes gameover-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+#game-over p{color:#ddd;font-size:20px;margin-top:24px;letter-spacing:3px;text-transform:uppercase}
+#game-over .reload{color:#888;font-size:14px;margin-top:50px;cursor:pointer;letter-spacing:3px;text-transform:uppercase;transition:color .3s}
+#game-over .reload:hover{color:#ff6600}
 
-        .map-card.nyc { border-color: #ff990033; }
-        .map-card.nyc::before { background: linear-gradient(90deg, #ff9900, #ff6600); }
-        .map-card.nyc:hover { border-color: #ff9900; box-shadow: 0 8px 30px rgba(255,153,0,0.2); }
+/* ===== ALERT WARNING ===== */
+#alert-warning{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#f00;font-size:clamp(20px,3vw,32px);font-weight:bold;text-align:center;z-index:6;pointer-events:none;text-shadow:0 0 40px rgba(255,0,0,0.9);letter-spacing:4px;display:none;text-transform:uppercase}
+#alert-warning span{font-size:14px;color:#f66;display:block;margin-top:4px}
 
-        .map-card.subte { border-color: #ffcc0033; }
-        .map-card.subte::before { background: linear-gradient(90deg, #ffcc00, #ff9900); }
-        .map-card.subte:hover { border-color: #ffcc00; box-shadow: 0 8px 30px rgba(255,204,0,0.2); }
+/* ===== HUD TOP - VIDRIO ===== */
+#hud-top{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:4;display:none;color:rgba(255,255,255,0.9);font-size:13px;letter-spacing:2px;background:rgba(10,10,10,0.45);padding:10px 22px;border:1px solid rgba(255,255,255,0.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  clip-path:polygon(0 4px,4px 0,calc(100% - 4px) 0,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0 calc(100% - 4px));
+  box-shadow:0 4px 20px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.05)}
+#hud-top span{color:#ff6600;font-weight:900;text-shadow:0 0 8px rgba(255,100,0,0.5)}
 
-        .map-card.bodega { border-color: #39ff1433; }
-        .map-card.bodega::before { background: linear-gradient(90deg, #39ff14, #00aa00); }
-        .map-card.bodega:hover { border-color: #39ff14; box-shadow: 0 8px 30px rgba(57,255,20,0.2); }
+/* ===== BUTTONS ===== */
+.btn-gallery{position:fixed;top:16px;right:16px;z-index:10;background:linear-gradient(135deg,#ff6600,#ff3300);color:#000;border:none;padding:12px 22px;font-weight:900;cursor:pointer;letter-spacing:2px;font-size:13px;text-transform:uppercase;transition:all .3s;
+  clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);box-shadow:0 4px 15px rgba(255,60,0,0.4)}
+.btn-gallery:hover{transform:scale(1.08);box-shadow:0 6px 25px rgba(255,60,0,0.6)}
 
-        .map-card.fluor { border-color: #00ff0033; }
-        .map-card.fluor::before { background: linear-gradient(90deg, #0f0, #39ff14); }
-        .map-card.fluor:hover { border-color: #0f0; box-shadow: 0 8px 30px rgba(0,255,0,0.2); }
+/* Back to menu button (in-game) */
+#btn-back-menu{position:fixed;top:16px;left:16px;z-index:10;display:none;width:42px;height:42px;background:rgba(20,20,20,0.65);border:1px solid rgba(255,255,255,0.15);cursor:pointer;border-radius:50%;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:all .3s;align-items:center;justify-content:center}
+#btn-back-menu::after{content:'\00d7';color:rgba(255,255,255,0.8);font-size:22px;font-weight:300;line-height:1}
+#btn-back-menu:hover{background:rgba(255,60,0,0.3);border-color:rgba(255,100,0,0.5);box-shadow:0 0 20px rgba(255,60,0,0.3);transform:scale(1.1)}
 
-        .map-card.edificio { border-color: #ffffff33; }
-        .map-card.edificio::before { background: linear-gradient(90deg, #aaa, #fff); }
-        .map-card.edificio:hover { border-color: #fff; box-shadow: 0 8px 30px rgba(255,255,255,0.15); }
+.footer-credits{text-align:center;padding:18px;color:#444;font-size:11px;letter-spacing:3px;margin-top:auto;position:relative;z-index:1;text-transform:uppercase}
+.footer-credits a{color:#ff6600;text-decoration:none;font-weight:700}
 
-        .map-card.laberinto { border-color: #ff333333; }
-        .map-card.laberinto::before { background: linear-gradient(90deg, #ff3333, #ff0000); }
-        .map-card.laberinto:hover { border-color: #ff3333; box-shadow: 0 8px 30px rgba(255,51,51,0.2); }
-
-        .map-card .icon {
-            font-size: 40px;
-            margin-bottom: 12px;
-        }
-
-        .map-card .name {
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
-        .map-card .desc {
-            font-size: 12px;
-            color: #666;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-
-        .map-card .tag {
-            position: absolute;
-            top: 10px;
-            right: 12px;
-            font-size: 9px;
-            padding: 3px 8px;
-            border-radius: 10px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .tag-v2 { background: #ff6600; color: #000; }
-        .tag-new { background: #39ff14; color: #000; }
-
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: #444;
-            font-size: 12px;
-            letter-spacing: 2px;
-        }
-
-        .footer a {
-            color: #ff9900;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            color: #ffcc00;
-        }
-    </style>
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0a0a0a}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#ff6600}
+</style>
 </head>
 <body>
-    <div class="header">
-        <h1>WDL MASTER TAGGER</h1>
-        <div class="subtitle">Selecciona un mapa</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<button id="btn-back-menu" onclick="returnToMenu()" title="VOLVER AL MENÚ"></button>
+
+<div id="menu-screen">
+  <img id="menu-bg" src="ARTE PARA JUEGO/WDLMASTERTAGGER 1920x1080 5.jpg" alt="">
+  <div id="menu-overlay"></div>
+  <div class="logo-area">
+    <img src="ARTE PARA JUEGO/WDLMASTERTAGGER 630x500.jpg" alt="WDL MASTER TAGGER" onerror="this.style.display='none'">
+    <h1>WDL MASTER TAGGER</h1>
+  </div>
+  <div class="user-area">
+    <input type="text" id="username-input" placeholder="TU NOMBRE DE USUARIO" maxlength="20">
+    <button onclick="saveUsername()">ENTRAR</button>
+  </div>
+  <div class="maps-grid">
+    <div class="map-card card-metro" onclick="startGame('metro')">
+      <span class="tag" style="background:#00a9e0">ORIGINAL</span>
+      <span class="icon">🚇</span>
+      <span class="name">MAESTRANZA METRO/TREN</span>
+      <span class="desc">Versión original del simulador</span>
     </div>
-
-    <div class="maps-grid">
-        <a href="juego graffiti METRO/" class="map-card metro">
-            <span class="tag tag-v2">Original</span>
-            <span class="icon">&#x1F687;</span>
-            <span class="name">MAESTRANZA METRO/TREN</span>
-            <span class="desc">Version original del simulador</span>
-        </a>
-
-        <a href="juego graffiti trenes 2/" class="map-card nyc">
-            <span class="tag tag-new">v2</span>
-            <span class="icon">&#x1F683;</span>
-            <span class="name">NYC SUBWAY</span>
-            <span class="desc">New York City Subway Edition</span>
-        </a>
-
-        <a href="juego graffiti trenes 3/" class="map-card subte">
-            <span class="tag tag-new">v2</span>
-            <span class="icon">&#x1F689;</span>
-            <span class="name">BA SUBTE</span>
-            <span class="desc">Buenos Aires Subte Edition</span>
-        </a>
-
-        <a href="juego grafiti BODEGA/" class="map-card bodega">
-            <span class="tag tag-new">v2</span>
-            <span class="icon">&#x1F3ED;</span>
-            <span class="name">BODEGAS DE NOCHE 1</span>
-            <span class="desc">Bodega nocturna</span>
-        </a>
-
-        <a href="juego grafiti BODEGA FLUOR/" class="map-card fluor">
-            <span class="tag tag-new">v2</span>
-            <span class="icon">&#x1F4A1;</span>
-            <span class="name">BODEGA FLUOR</span>
-            <span class="desc">Bodega fluorescente</span>
-        </a>
-
-        <a href="juego grafiti EDIFICIO/" class="map-card edificio">
-            <span class="tag tag-new">v2</span>
-            <span class="icon">&#x1F3EC;</span>
-            <span class="name">EDIFICIO ABANDONADO 1</span>
-            <span class="desc">Edificio abandonado</span>
-        </a>
-
-        <a href="juego grafiti LABERINTO/" class="map-card laberinto">
-            <span class="tag tag-new">v2</span>
-            <span class="icon">&#x1F6AA;</span>
-            <span class="name">LABERINTO 1</span>
-            <span class="desc">Laberinto de graffiti</span>
-        </a>
+    <div class="map-card card-nyc" onclick="startGame('nyc')">
+      <span class="tag" style="background:#ff9900">V2</span>
+      <span class="icon">🚃</span>
+      <span class="name">NYC SUBWAY</span>
+      <span class="desc">New York City Subway Edition</span>
     </div>
-
-    <div class="footer">
-        &copy; 2026 <a href="https://fierroduque.com" target="_blank">FIERRODUQUE</a>
+    <div class="map-card card-subte" onclick="startGame('subte')">
+      <span class="tag" style="background:#ffcc00">V2</span>
+      <span class="icon">🚉</span>
+      <span class="name">BA SUBTE</span>
+      <span class="desc">Buenos Aires Subte Edition</span>
     </div>
+    <div class="map-card card-bodega" onclick="startGame('bodega')">
+      <span class="tag" style="background:#39ff14">V2</span>
+      <span class="icon">🏭</span>
+      <span class="name">BODEGAS DE NOCHE 1</span>
+      <span class="desc">Bodega nocturna industrial</span>
+    </div>
+    <div class="map-card card-fluor" onclick="startGame('fluor')">
+      <span class="tag" style="background:#0f0">V2</span>
+      <span class="icon">💡</span>
+      <span class="name">BODEGA FLUOR</span>
+      <span class="desc">Laberinto fluorescente</span>
+    </div>
+    <div class="map-card card-edificio" onclick="startGame('edificio')">
+      <span class="tag" style="background:#fff;color:#000">V2</span>
+      <span class="icon">🏬</span>
+      <span class="name">EDIFICIO ABANDONADO 1</span>
+      <span class="desc">Edificio abandonado</span>
+    </div>
+    <div class="map-card card-laberinto" onclick="startGame('laberinto')">
+      <span class="tag" style="background:#f33">V2</span>
+      <span class="icon">🚪</span>
+      <span class="name">LABERINTO 1</span>
+      <span class="desc">Laberinto de graffiti</span>
+    </div>
+  </div>
+  <button class="btn-gallery" style="position:static;margin-bottom:20px" onclick="openGallery()">📸 GALERÍA</button>
+  <div class="footer-credits">&copy; 2026 <a href="https://fierroduque.com" target="_blank">FIERRODUQUE</a></div>
+</div>
+
+<div id="gallery-screen">
+  <img id="gallery-bg" src="ARTE PARA JUEGO/WDLMASTERTAGGER 630x500 4.jpg" alt="">
+  <h2>📸 GALERÍA DE ARTE</h2>
+  <div class="gallery-grid" id="gallery-grid"></div>
+  <button class="btn-delete" onclick="clearGallery()">🗑 BORRAR GALERÍA</button>
+  <button class="btn-back" onclick="closeGallery()">VOLVER</button>
+</div>
+
+<div id="loading-screen">
+  <img id="loading-bg" src="" alt="">
+  <div class="loader-text">CARGANDO ESCENARIO...</div>
+</div>
+
+<div id="instructions">
+  <p><span class="highlight">WASD</span> MOVERSE &nbsp;|&nbsp; <span class="highlight">SHIFT</span> CORRER &nbsp;|&nbsp; <span class="highlight">ESPACIO</span> SALTAR</p>
+  <p><span class="highlight">MOUSE</span> MIRAR &nbsp;|&nbsp; <span class="highlight">CLICK</span> PINTAR &nbsp;|&nbsp; <span class="highlight">P</span> CAPTURA</p>
+  <p><span class="highlight">ESC</span> LIBERAR MOUSE Y CAMBIAR HERRAMIENTAS</p>
+  <p style="margin-top:10px;color:#666;font-size:11px">CLICK PARA EMPEZAR</p>
+</div>
+
+<div id="crosshair"></div>
+
+<div id="controls-panel">
+  <input type="color" id="paintColor" value="#ff3300">
+  <label>TAMAÑO</label>
+  <input type="range" id="brushSize" min="0.1" max="5.0" step="0.05" value="0.5">
+  <label id="brushSizeLabel">0.5</label>
+  <label style="margin-left:10px">TURNO: <span id="time-val">1200</span>s</label>
+</div>
+
+<div id="hud-top">
+  <span id="hud-map-name"></span> | JUGADOR: <span id="hud-username"></span>
+</div>
+
+<div id="game-over">
+  <h1>GAME OVER</h1>
+  <p id="game-over-reason">ATROPELLADO POR EL TREN</p>
+  <p class="reload" onclick="returnToMenu()">[ VOLVER AL MENÚ ]</p>
+</div>
+
+<div id="alert-warning">
+  ⚠ ALERTA DE SEGURIDAD ⚠<br>
+  <span>ABANDONE EL ÁREA INMEDIATAMENTE</span><br>
+  <span style="font-size:12px;color:#c00">TOME SUS CAPTURAS Y HUYA</span>
+</div>
+
+<script type="module">
+import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+import { DecalGeometry } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/geometries/DecalGeometry.js';
+
+// ============ AUDIO SYSTEM ============
+const PLAYLIST = [
+  'musica para juego/Cables Cortantes__f4307dfb.mp3',
+  'musica para juego/fierroduque__da651b28.mp3',
+  'musica para juego/fierroduque__db5fce48.mp3',
+  'musica para juego/fierroduque__d247b0d5.mp3',
+  'musica para juego/fierroduque__d65799eb.mp3',
+  'musica para juego/fierroduque__dc742f3d.mp3',
+  'musica para juego/Basement Psalms__e7a24729.mp3',
+  'musica para juego/Basement Orders__5b383276.mp3',
+  'musica para juego/Barricade Bassline__2cf03d10.mp3'
+];
+
+let bgMusic = null;
+let menuMusic = null;
+let currentTrack = -1;
+let musicStarted = false;
+
+function initAudio() {
+  if (bgMusic) return;
+  bgMusic = new Audio();
+  bgMusic.volume = 0.25;
+  bgMusic.addEventListener('ended', playNextTrack);
+  bgMusic.addEventListener('error', () => { setTimeout(playNextTrack, 1000); });
+
+  menuMusic = new Audio('musica para juego/22.mp4');
+  menuMusic.volume = 0.3;
+  menuMusic.loop = true;
+}
+
+function startMusic() {
+  if (musicStarted) return;
+  initAudio();
+  musicStarted = true;
+  playNextTrack();
+}
+
+function playNextTrack() {
+  if (!bgMusic) return;
+  currentTrack = (currentTrack + 1) % PLAYLIST.length;
+  bgMusic.src = PLAYLIST[currentTrack];
+  const playPromise = bgMusic.play();
+  if (playPromise) playPromise.catch(() => setTimeout(playNextTrack, 2000));
+}
+
+function stopMusic() {
+  if (bgMusic) { bgMusic.pause(); bgMusic.currentTime = 0; }
+  musicStarted = false;
+}
+
+function startMenuMusic() {
+  if (!menuMusic) initAudio();
+  if (menuMusic) { menuMusic.play().catch(() => {}); }
+}
+
+function stopMenuMusic() {
+  if (menuMusic) { menuMusic.pause(); menuMusic.currentTime = 0; }
+}
+
+// ============ MAP CONFIGURATIONS ============
+const MAP_CONFIGS = {
+  metro: {
+    name: 'MAESTRANZA METRO/TREN', themeColor: '#00a9e0', icon: '🚇',
+    startPos: [-10, 4.4, -600],
+    physics: { gravity: 0.012, jump: 0.32, playerHeight: 2.4, speed: 0.45, sprintSpeed: 0.75, collisionBox: [1.6, 4, 1.6] },
+    fog: { color: 0x020202, density: 0.008 }, background: 0x020202,
+    ambient: { color: 0xffffff, intensity: 0.3 },
+    brushRange: [0.1, 1.4, 0.4], hasMovingTrains: false, hasWarning: false, dayNight: 'night',
+    loadImage: 'ARTE PARA JUEGO/metrotagger_santiago (21).png'
+  },
+  nyc: {
+    name: 'NYC SUBWAY', themeColor: '#ff9900', icon: '🚃',
+    startPos: [0, 4.4, 0],
+    physics: { gravity: 0.012, jump: 0.32, playerHeight: 2.4, speed: 0.45, sprintSpeed: 0.75, collisionBox: [1.6, 4, 1.6] },
+    fog: { color: 0x020202, density: 0.012 }, background: 0x020202,
+    ambient: { color: 0xffffff, intensity: 0.08 },
+    brushRange: [0.1, 5.0, 1.0], hasMovingTrains: false, hasWarning: false, dayNight: 'night',
+    loadImage: 'ARTE PARA JUEGO/metrotagger_nyc.png'
+  },
+  subte: {
+    name: 'BA SUBTE', themeColor: '#ffcc00', icon: '🚉',
+    startPos: [-200, 4.4, -300],
+    physics: { gravity: 0.012, jump: 0.32, playerHeight: 2.4, speed: 0.45, sprintSpeed: 0.75, collisionBox: [1.6, 4, 1.6] },
+    fog: { color: 0x020202, density: 0.008 }, background: 0x020202,
+    ambient: { color: 0xffffff, intensity: 0.08 },
+    brushRange: [0.1, 5.0, 1.0], hasMovingTrains: true, hasWarning: true, dayNight: 'night',
+    loadImage: 'ARTE PARA JUEGO/metrotagger_ba.png'
+  },
+  bodega: {
+    name: 'BODEGAS DE NOCHE 1', themeColor: '#39ff14', icon: '🏭',
+    startPos: [0, 2.5, -120],
+    physics: { gravity: 0.009, jump: 0.24, playerHeight: 2.5, speed: 0.28, sprintSpeed: 0.28, collisionBox: [1.6, 4, 1.6] },
+    fog: { color: 0x0a0a0b, density: 0.004 }, background: 0x0a0a0b,
+    ambient: { color: 0x404040, intensity: 1.5 },
+    brushRange: [0.05, 0.8, 0.25], hasMovingTrains: false, hasWarning: false, dayNight: 'night',
+    loadImage: 'ARTE PARA JUEGO/metrotagger_santiago (8).png'
+  },
+  fluor: {
+    name: 'BODEGA FLUOR', themeColor: '#0f0', icon: '💡',
+    startPos: [8, 2, 8],
+    physics: { gravity: 0.008, jump: 0.18, playerHeight: 2, speed: 0.2, sprintSpeed: 0.2, collisionBox: [1.6, 4, 1.6] },
+    fog: { color: 0x020202, density: 0.03 }, background: 0x020202,
+    ambient: { color: 0x704045, intensity: 1.2 },
+    brushRange: [0.05, 0.5, 0.2], hasMovingTrains: false, hasWarning: false, dayNight: 'night',
+    loadImage: 'ARTE PARA JUEGO/metrotagger_santiago (5).png'
+  },
+  edificio: {
+    name: 'EDIFICIO ABANDONADO 1', themeColor: '#fff', icon: '🏬',
+    startPos: [8, 2, 8],
+    physics: { gravity: 0.008, jump: 0.22, playerHeight: 2, speed: 0.25, sprintSpeed: 0.25, collisionBox: [1.0, 3.6, 1.0] },
+    fog: { color: 0x87CEEB, density: 0.01 }, background: 0x87CEEB,
+    ambient: { color: 0xffffff, intensity: 0.6 },
+    brushRange: [0.05, 0.6, 0.25], hasMovingTrains: false, hasWarning: false, dayNight: 'day',
+    loadImage: 'ARTE PARA JUEGO/metrotagger_santiago (10).png'
+  },
+  laberinto: {
+    name: 'LABERINTO 1', themeColor: '#f33', icon: '🚪',
+    startPos: [8, 2, 8],
+    physics: { gravity: 0.008, jump: 0.22, playerHeight: 2, speed: 0.18, sprintSpeed: 0.18, collisionBox: [1.2, 3.8, 1.2] },
+    fog: { color: 0x87CEEB, density: 0.02 }, background: 0x87CEEB,
+    ambient: { color: 0xffffff, intensity: 0.7 },
+    brushRange: [0.05, 0.5, 0.2], hasMovingTrains: false, hasWarning: false, dayNight: 'day',
+    loadImage: 'ARTE PARA JUEGO/metrotagger_santiago (15).png'
+  }
+};
+
+// ============ GLOBALS ============
+let scene, camera, renderer, raycaster, floorRaycaster, sprayTexture;
+let walls = [], collidables = [], activeDrips = [];
+let currentMap = null, cfg = null;
+let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false, isSprinting = false;
+let isPainting = false, gameActive = false, canJump = true;
+let verticalVel = 0, timeLeft = 1200, frameCounter = 0, paintCount = 0, dripCounter = 0;
+const DRIP_THRESHOLD = 15;
+let startPos;
+let movingTrain1 = null, movingTrain2 = null, train1Timer = 15, train2Timer = 75;
+const TRAIN_SPEED = 3.0, TRAIN1_RAIL_X = -100, TRAIN2_RAIL_X = 100;
+let lastHitPoint = new THREE.Vector3();
+let username = '';
+let animRunning = false;
+
+// ============ SCENE SETUP ============
+function initThreeJS() {
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+  camera.rotation.order = 'YXZ';
+  renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gameCanvas'), antialias: true, preserveDrawingBuffer: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  raycaster = new THREE.Raycaster();
+  floorRaycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
+}
+
+function resetGlobals() {
+  walls = []; collidables = []; activeDrips = []; dripCounter = 0; paintCount = 0;
+  moveForward = moveBackward = moveLeft = moveRight = isSprinting = false;
+  isPainting = false; gameActive = false; canJump = true; verticalVel = 0;
+  timeLeft = 1200; frameCounter = 0;
+  movingTrain1 = movingTrain2 = null; train1Timer = 15; train2Timer = 75;
+  lastHitPoint.set(0, 0, 0);
+}
+
+// ============ UTILITY ============
+function spawnBox(w, h, d, x, y, z, mat, collides = true, paintable = true) {
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  mesh.position.set(x, y, z);
+  scene.add(mesh);
+  mesh.updateMatrixWorld();
+  mesh.bbox = new THREE.Box3().setFromObject(mesh);
+  if (collides) collidables.push(mesh);
+  if (paintable) walls.push(mesh);
+  return mesh;
+}
+
+function createRails(x, y, z, length) {
+  spawnBox(0.4, 0.3, length, x - 2.4, y + 0.15, z, new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.3 }), false, false);
+  spawnBox(0.4, 0.3, length, x + 2.4, y + 0.15, z, new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.3 }), false, false);
+  for (let i = 0; i < length; i += 3) {
+    spawnBox(7, 0.2, 0.8, x, y + 0.1, (z - length / 2) + i, new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.95 }), false, false);
+  }
+}
+
+function checkCollision(pos) {
+  const pBox = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(pos.x, pos.y, pos.z), new THREE.Vector3(cfg.physics.collisionBox[0], cfg.physics.collisionBox[1], cfg.physics.collisionBox[2]));
+  for (let obj of collidables) { if (pBox.intersectsBox(obj.bbox)) return true; }
+  return false;
+}
+
+function createSprayTexture() {
+  const canvas = document.createElement('canvas'); canvas.width = 128; canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+  const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.7, 'rgba(255,255,255,0.9)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 128, 128);
+  return new THREE.CanvasTexture(canvas);
+}
+
+// ============ WORLD BUILDERS ============
+
+function buildMetro() {
+  const concrete = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.85 });
+  const wall = new THREE.MeshStandardMaterial({ color: 0x121212 });
+  const steel = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.2 });
+  const hazard = new THREE.MeshStandardMaterial({ color: 0xffaa00 });
+  const trainBlue = new THREE.MeshStandardMaterial({ color: 0x00a9e0, metalness: 0.4, roughness: 0.4 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.1, transparent: true, opacity: 0.9 });
+  const crate = new THREE.MeshStandardMaterial({ color: 0x3d2b1f, roughness: 0.9 });
+
+  spawnBox(1000, 1, 1500, 0, -0.5, 0, concrete, true, false);
+
+  const tunnelPaths = [-80, 0, 80];
+  tunnelPaths.forEach(tx => {
+    spawnBox(2, 25, 500, tx - 20, 12, -450, wall, true, true);
+    spawnBox(2, 25, 500, tx + 20, 12, -450, wall, true, true);
+    spawnBox(40, 1, 500, tx, 25, -450, wall, true, false);
+    spawnBox(40, 25, 2, tx, 12, -700, wall, true, true);
+    createRails(tx, 0, -150, 1100);
+    for (let l = 0; l < 4; l++) {
+      const lp = new THREE.PointLight(0xff3300, 0.8, 60); lp.position.set(tx, 20, -650 + (l * 150)); scene.add(lp);
+    }
+  });
+
+  const hangarW = 400, hangarL = 600, hangarH = 50;
+  spawnBox(2, hangarH, hangarL, -hangarW / 2, hangarH / 2, 100, wall, true, true);
+  spawnBox(2, hangarH, hangarL, hangarW / 2, hangarH / 2, 100, wall, true, true);
+  spawnBox(hangarW, hangarH, 2, 0, hangarH / 2, 400, wall, true, true);
+  spawnBox(hangarW, 1, hangarL, 0, hangarH, 100, wall, true, false);
+  spawnBox(100, hangarH, 2, -150, hangarH / 2, -200, wall, true, true);
+  spawnBox(40, hangarH, 2, -40, hangarH / 2, -200, wall, true, true);
+  spawnBox(40, hangarH, 2, 40, hangarH / 2, -200, wall, true, true);
+  spawnBox(100, hangarH, 2, 150, hangarH / 2, -200, wall, true, true);
+
+  const andenesInfo = [{ x: -145, w: 70 }, { x: -40, w: 36 }, { x: 40, w: 36 }, { x: 145, w: 70 }];
+  andenesInfo.forEach(a => spawnBox(a.w, 2, 590, a.x, 1, 100, concrete, true, true));
+
+  for (let i = 0; i < 40; i++) {
+    let ar = andenesInfo[Math.floor(Math.random() * andenesInfo.length)];
+    let cx = ar.x + (Math.random() * (ar.w - 4)) - ((ar.w - 4) / 2);
+    let cz = (Math.random() * 500) - 150;
+    let size = 1.2 + Math.random() * 2;
+    spawnBox(size, size, size, cx, 2 + (size / 2), cz, crate, true, true);
+  }
+
+  for (let i = 0; i < 10; i++) {
+    const cz = -100 + (i * 55);
+    spawnBox(6, hangarH, 6, -180, hangarH / 2, cz, concrete);
+    spawnBox(6, hangarH, 6, 180, hangarH / 2, cz, concrete);
+    spawnBox(6.2, 4, 6.2, -180, 2, cz, hazard, false, false);
+    spawnBox(6.2, 4, 6.2, 180, 2, cz, hazard, false, false);
+    spawnBox(hangarW, 2, 2, 0, hangarH - 2, cz, steel, false, false);
+  }
+
+  function createNS74(x, y, z) {
+    const L = 75, W = 6.6, H = 6.2;
+    for (let b = 0; b < 4; b++) { const bz = (b * 22) - 33; spawnBox(W - 0.5, 1.2, 6, x, y + 0.6, z + bz, steel); }
+    spawnBox(W, H, L, x, y + 4.3, z, trainBlue, true, true);
+    spawnBox(W + 0.2, 0.7, L, x, y + 7.4, z, steel, false, true);
+    for (let i = 0; i < 11; i++) {
+      const oz = (i * 6.5) - 32;
+      spawnBox(0.2, 2.8, 3.8, x - W / 2 - 0.1, y + 5.2, z + oz, glass, false, true);
+      spawnBox(0.2, 2.8, 3.8, x + W / 2 + 0.1, y + 5.2, z + oz, glass, false, true);
+    }
+    spawnBox(W - 0.8, H - 1.2, 0.4, x, y + 4.5, z + L / 2 + 0.1, glass, true, true);
+    spawnBox(1.5, 1.5, 2, x, y + 2, z + L / 2 + 1, steel);
+    const fGeo = new THREE.BoxGeometry(1.4, 0.5, 0.2), fMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const fl = new THREE.Mesh(fGeo, fMat); fl.position.set(x - 2.2, y + 2.5, z + L / 2 + 0.2); scene.add(fl);
+    const fr = fl.clone(); fr.position.x = x + 2.2; scene.add(fr);
+  }
+
+  const trains = [
+    { x: -80, z: -550 }, { x: -80, z: -450 }, { x: -80, z: -350 }, { x: 0, z: -600 }, { x: 0, z: -500 }, { x: 0, z: -400 },
+    { x: 80, z: -580 }, { x: 80, z: -480 }, { x: 80, z: -380 }, { x: -80, z: -100 }, { x: -80, z: 20 }, { x: -80, z: 140 },
+    { x: -80, z: 260 }, { x: 0, z: -80 }, { x: 0, z: 60 }, { x: 0, z: 200 }, { x: 0, z: 320 }, { x: 80, z: -120 },
+    { x: 80, z: 0 }, { x: 80, z: 120 }, { x: 80, z: 240 }, { x: 80, z: 360 }
+  ];
+  trains.forEach(t => createNS74(t.x, 0, t.z));
+  scene.add(new THREE.DirectionalLight(0xffffff, 0.4).translateY(100).translateX(20));
+}
+
+function buildNYC() {
+  const concrete = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.95 });
+  const tunnelWall = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 });
+  const stationTiles = new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.4 });
+  const nycGreen = new THREE.MeshStandardMaterial({ color: 0x123524, metalness: 0.4, roughness: 0.6 });
+  const trainMetal = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.8, roughness: 0.3 });
+  const trainBlack = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.1, metalness: 0.9 });
+  const steel = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.3 });
+
+  spawnBox(1000, 1, 2000, 0, -0.5, 0, concrete, true, false);
+  const tunnelHeight = 18;
+
+  spawnBox(12, 2, 400, -44, 1, 0, concrete, true, true);
+  spawnBox(16, 2, 400, 0, 1, 0, concrete, true, true);
+  spawnBox(12, 2, 400, 44, 1, 0, concrete, true, true);
+  spawnBox(100, 2, 400, 0, tunnelHeight, 0, tunnelWall, true, true);
+  spawnBox(2, tunnelHeight, 400, -50, tunnelHeight / 2, 0, stationTiles, true, true);
+  spawnBox(2, tunnelHeight, 400, 50, tunnelHeight / 2, 0, stationTiles, true, true);
+
+  const tracksX = [-30, -10, 10, 30];
+  tracksX.forEach(tx => createRails(tx, 0, 0, 400));
+
+  for (let i = -180; i <= 180; i += 30) {
+    [-8, 8, -40, 40].forEach(px => spawnBox(1.5, tunnelHeight, 1.5, px, tunnelHeight / 2, i, nycGreen, true, true));
+  }
+  for (let i = -180; i <= 180; i += 60) {
+    const sl = new THREE.PointLight(0xdcf0f7, 0.8, 150); sl.position.set(0, tunnelHeight - 2, i); scene.add(sl);
+  }
+
+  const wallXPositions = [-40, -20, 0, 20, 40];
+  [-200, 200].forEach(zPos => wallXPositions.forEach(wx => spawnBox(8, tunnelHeight, 2, wx, tunnelHeight / 2, zPos, tunnelWall, true, true)));
+
+  [{ start: 240, dir: 1 }, { start: -240, dir: -1 }].forEach(seg => {
+    tracksX.forEach(tx => createRails(tx, 0, seg.dir * 500, 600));
+    spawnBox(100, 2, 600, 0, tunnelHeight, seg.dir * 500, tunnelWall, true, false);
+    for (let z = 240; z <= 760; z += 120) {
+      let actualZ = z * seg.dir;
+      [-36, -24, -16, -4, 4, 16, 24, 36].forEach(wx => spawnBox(2, tunnelHeight, 90, wx, tunnelHeight / 2, actualZ, tunnelWall, true, true));
+      tracksX.forEach(tx => { const tl = new THREE.PointLight(0xffb84d, 0.7, 60); tl.position.set(tx, tunnelHeight - 4, actualZ); scene.add(tl); });
+    }
+  });
+
+  function createNYCTrain(x, y, z) {
+    const L = 75, W = 6.8, H = 6.5;
+    for (let b = 0; b < 4; b++) { const bz = (b * 22) - 33; spawnBox(W - 0.5, 1.2, 6, x, y + 0.6, z + bz, steel); }
+    spawnBox(W, H, L, x, y + 4.5, z, trainMetal, true, true);
+    spawnBox(W + 0.05, 2.5, L, x, y + 5.5, z, trainBlack, false, true);
+    spawnBox(W - 0.5, 0.8, L, x, y + 8, z, steel, false, true);
+    for (let i = 0; i < 10; i++) {
+      const oz = (i * 7) - 31.5;
+      spawnBox(0.2, 2.3, 3, x - W / 2 - 0.1, y + 5.5, z + oz, glass, false, true);
+      spawnBox(0.2, 2.3, 3, x + W / 2 + 0.1, y + 5.5, z + oz, glass, false, true);
+    }
+    spawnBox(W - 1, H - 2, 0.4, x, y + 5.5, z + L / 2 + 0.1, glass, true, true);
+    spawnBox(W - 4, 0.6, 0.5, x, y + 7.2, z + L / 2 + 0.1, trainBlack, false, false);
+    const led = new THREE.Mesh(new THREE.BoxGeometry(W - 4.2, 0.4, 0.55), new THREE.MeshBasicMaterial({ color: 0xff3300 }));
+    led.position.set(x, y + 7.2, z + L / 2 + 0.1); scene.add(led);
+    spawnBox(1.5, 1.5, 2, x, y + 2, z + L / 2 + 1, steel);
+    const fGeo = new THREE.BoxGeometry(0.8, 0.8, 0.2), fMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const fl = new THREE.Mesh(fGeo, fMat); fl.position.set(x - 2.5, y + 3, z + L / 2 + 0.2); scene.add(fl);
+    const fr = fl.clone(); fr.position.x = x + 2.5; scene.add(fr);
+    const backMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const bl = new THREE.Mesh(fGeo, backMat); bl.position.set(x - 2.5, y + 3, z - L / 2 - 0.2); scene.add(bl);
+    const br = bl.clone(); br.position.x = x + 2.5; scene.add(br);
+  }
+
+  [
+    { x: -30, z: 0 }, { x: 10, z: -50 }, { x: 30, z: 80 }, { x: -10, z: -300 }, { x: -30, z: -450 },
+    { x: 10, z: -250 }, { x: 10, z: -600 }, { x: 30, z: -500 }, { x: -30, z: 350 }, { x: -10, z: 250 },
+    { x: -10, z: 550 }, { x: 10, z: 400 }, { x: 30, z: 300 }, { x: 30, z: 650 }
+  ].forEach(t => createNYCTrain(t.x, 0, t.z));
+
+  spawnBox(100, tunnelHeight, 2, 0, tunnelHeight / 2, 800, tunnelWall, true, true);
+  spawnBox(100, tunnelHeight, 2, 0, tunnelHeight / 2, -800, tunnelWall, true, true);
+}
+
+function buildSubte() {
+  const concrete = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.95 });
+  const tunnelWall = new THREE.MeshStandardMaterial({ color: 0x181818, roughness: 0.9 });
+  const stationTiles = new THREE.MeshStandardMaterial({ color: 0xe6dec3, roughness: 0.4 });
+  const subteIron = new THREE.MeshStandardMaterial({ color: 0x2a302d, metalness: 0.5, roughness: 0.7 });
+  const trainMetal = new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.7, roughness: 0.4 });
+  const trainYellow = new THREE.MeshStandardMaterial({ color: 0xffcc00, roughness: 0.5 });
+  const trainBlack = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.1, metalness: 0.9 });
+  const steel = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.3 });
+
+  spawnBox(1200, 1, 1200, 0, -0.5, 0, concrete, true, false);
+  const tunnelHeight = 16;
+  const gridSize = 100, wallSize = 70;
+
+  for (let x = -500; x <= 500; x += gridSize) {
+    for (let z = -500; z <= 500; z += gridSize) {
+      const blockX = x + gridSize / 2, blockZ = z + gridSize / 2;
+      if (Math.abs(x) <= 400 && x !== 0 && z >= -500 && z <= 500) createRails(x, 0, z, gridSize);
+      if (blockX >= -50 && blockX <= 50 && blockZ >= -150 && blockZ <= 150) continue;
+      spawnBox(wallSize, tunnelHeight, wallSize, blockX, tunnelHeight / 2, blockZ, tunnelWall, true, true);
+      if (Math.abs(x) <= 400 && Math.abs(z) <= 400) {
+        const tl = new THREE.PointLight(0xffb84d, 0.6, 60); tl.position.set(x, tunnelHeight - 4, z); scene.add(tl);
+      }
+    }
+  }
+
+  spawnBox(80, 2, 500, -52, 1, 0, stationTiles, true, true);
+  spawnBox(80, 2, 500, 52, 1, 0, stationTiles, true, true);
+  spawnBox(1200, 2, 1200, 0, tunnelHeight, 0, tunnelWall, true, false);
+  createRails(-8, 0, 0, 1100); createRails(8, 0, 0, 1100);
+
+  for (let i = -140; i <= 140; i += 20) {
+    [-72, -32, 32, 72].forEach(px => spawnBox(1.2, tunnelHeight, 1.2, px, tunnelHeight / 2, i, subteIron, true, true));
+  }
+  for (let i = -140; i <= 140; i += 40) {
+    const sl = new THREE.PointLight(0xffddaa, 0.9, 150); sl.position.set(0, tunnelHeight - 2, i); scene.add(sl);
+  }
+
+  spawnBox(1200, tunnelHeight, 10, 0, tunnelHeight / 2, 550, tunnelWall, true, true);
+  spawnBox(1200, tunnelHeight, 10, 0, tunnelHeight / 2, -550, tunnelWall, true, true);
+  spawnBox(10, tunnelHeight, 1200, 550, tunnelHeight / 2, 0, tunnelWall, true, true);
+  spawnBox(10, tunnelHeight, 1200, -550, tunnelHeight / 2, 0, tunnelWall, true, true);
+
+  function createSubteTrain(x, y, z) {
+    const L = 70, W = 6.8, H = 6.5, numCars = 4, spacing = 75, startZ = z - (numCars - 1) * spacing / 2;
+    for (let c = 0; c < numCars; c++) {
+      const cz = startZ + c * spacing;
+      for (let b = 0; b < 4; b++) { const bz = (b * 20) - 30; spawnBox(W - 0.5, 1.2, 6, x, y + 0.6, cz + bz, steel); }
+      spawnBox(W, H, L, x, y + 4.5, cz, trainMetal, true, true);
+      spawnBox(W + 0.1, 1.5, L + 0.1, x, y + 2.5, cz, trainYellow, false, true);
+      spawnBox(W + 0.05, 1.0, L, x, y + 7.5, cz, trainBlack, false, true);
+      for (let i = 0; i < 10; i++) {
+        const oz = (i * 7) - 31.5;
+        spawnBox(0.2, 2.3, 3, x - W / 2 - 0.1, y + 5.5, cz + oz, glass, false, true);
+        spawnBox(0.2, 2.3, 3, x + W / 2 + 0.1, y + 5.5, cz + oz, glass, false, true);
+      }
+      if (c < numCars - 1) spawnBox(1.5, 1.5, 4, x, y + 2, cz + spacing / 2, steel);
+    }
+    const frontZ = startZ + (numCars - 1) * spacing;
+    spawnBox(W - 1, H - 2, 0.4, x, y + 5.5, frontZ + L / 2 + 0.1, glass, true, true);
+    spawnBox(W - 4, 0.6, 0.5, x, y + 7.2, frontZ + L / 2 + 0.1, trainBlack, false, false);
+    const ledGeo = new THREE.BoxGeometry(W - 4.2, 0.4, 0.55), ledMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
+    const led = new THREE.Mesh(ledGeo, ledMat); led.position.set(x, y + 7.2, frontZ + L / 2 + 0.1); scene.add(led);
+    spawnBox(1.5, 1.5, 2, x, y + 2, frontZ + L / 2 + 1, steel);
+    const fGeo = new THREE.BoxGeometry(0.8, 0.8, 0.2), fMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const fl = new THREE.Mesh(fGeo, fMat); fl.position.set(x - 2.5, y + 3, frontZ + L / 2 + 0.2); scene.add(fl);
+    const fr = fl.clone(); fr.position.x = x + 2.5; scene.add(fr);
+    const backMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const bl = new THREE.Mesh(fGeo, backMat); bl.position.set(x - 2.5, y + 3, startZ - L / 2 - 0.2); scene.add(bl);
+    const br = bl.clone(); br.position.x = x + 2.5; scene.add(br);
+  }
+
+  [
+    { x: -8, z: 0 }, { x: 8, z: -80 }, { x: -300, z: -100 }, { x: 200, z: -400 },
+    { x: -200, z: 300 }, { x: 400, z: 100 }, { x: 8, z: 400 }, { x: 300, z: -200 }
+  ].forEach(t => createSubteTrain(t.x, 0, t.z));
+}
+
+function createMovingTrain(x, y, z, dir) {
+  const group = new THREE.Group(); group.position.set(x, y, z);
+  const L = 70, W = 6.8, H = 6.5, numCars = 4, spacing = 75;
+  const startZ = -(numCars - 1) * spacing / 2;
+  const steel = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.3 });
+  const trainMetal = new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.7, roughness: 0.4 });
+  const trainYellow = new THREE.MeshStandardMaterial({ color: 0xffcc00, roughness: 0.5 });
+  const trainBlack = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.1, metalness: 0.9 });
+
+  for (let c = 0; c < numCars; c++) {
+    const cz = startZ + c * spacing;
+    for (let b = 0; b < 4; b++) { const bz = (b * 20) - 30; const bogie = new THREE.Mesh(new THREE.BoxGeometry(W - 0.5, 1.2, 6), steel); bogie.position.set(0, 0.6, cz + bz); group.add(bogie); }
+    const body = new THREE.Mesh(new THREE.BoxGeometry(W, H, L), trainMetal); body.position.set(0, 4.5, cz); group.add(body);
+    const stripe = new THREE.Mesh(new THREE.BoxGeometry(W + 0.1, 1.5, L + 0.1), trainYellow); stripe.position.set(0, 2.5, cz); group.add(stripe);
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(W + 0.05, 1.0, L), trainBlack); roof.position.set(0, 7.5, cz); group.add(roof);
+    for (let i = 0; i < 10; i++) {
+      const oz = (i * 7) - 31.5;
+      const wl = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2.3, 3), glass); wl.position.set(-W / 2 - 0.1, 5.5, cz + oz); group.add(wl);
+      const wr = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2.3, 3), glass); wr.position.set(W / 2 + 0.1, 5.5, cz + oz); group.add(wr);
+    }
+    if (c < numCars - 1) { const cm = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 4), steel); cm.position.set(0, 2, cz + spacing / 2); group.add(cm); }
+  }
+  const frontZ = startZ + (numCars - 1) * spacing;
+  const front = new THREE.Mesh(new THREE.BoxGeometry(W - 1, H - 2, 0.4), glass); front.position.set(0, 5.5, frontZ + L / 2 + 0.1); group.add(front);
+  const fb = new THREE.Mesh(new THREE.BoxGeometry(W - 4, 0.6, 0.5), trainBlack); fb.position.set(0, 7.2, frontZ + L / 2 + 0.1); group.add(fb);
+  const ledGeo = new THREE.BoxGeometry(W - 4.2, 0.4, 0.55), ledMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
+  const led = new THREE.Mesh(ledGeo, ledMat); led.position.set(0, 7.2, frontZ + L / 2 + 0.1); group.add(led);
+  const coupler = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 2), steel); coupler.position.set(0, 2, frontZ + L / 2 + 1); group.add(coupler);
+  const fGeo = new THREE.BoxGeometry(0.8, 0.8, 0.2), fMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const fl = new THREE.Mesh(fGeo, fMat); fl.position.set(-2.5, 3, frontZ + L / 2 + 0.2); group.add(fl);
+  const fr = fl.clone(); fr.position.x = 2.5; group.add(fr);
+  const rearZ = startZ, backMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  const bl = new THREE.Mesh(fGeo, backMat); bl.position.set(-2.5, 3, rearZ - L / 2 - 0.2); group.add(bl);
+  const br = bl.clone(); br.position.x = 2.5; group.add(br);
+  const headlight = new THREE.PointLight(0xffeecc, 3, 400); headlight.position.set(0, 3, frontZ + L / 2 + 2); group.add(headlight);
+  if (dir === -1) group.rotation.y = Math.PI;
+  return group;
+}
+
+function checkTrainCollision(train, railX) {
+  if (!train) return false;
+  const p = camera.position;
+  return (p.x + 0.8 > railX - 3.4 && p.x - 0.8 < railX + 3.4 && p.y + 2 > 0 && p.y - 2 < 8 && p.z + 0.8 > train.position.z - 147.5 && p.z - 0.8 < train.position.z + 147.5);
+}
+
+function buildBodega() {
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a });
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
+  const colMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const mezzMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+  const roadMat = new THREE.MeshStandardMaterial({ color: 0x151515 });
+  const pipeMat = new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 0.8 });
+
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 }));
+  floor.rotation.x = -Math.PI / 2; scene.add(floor); collidables.push(floor);
+
+  const coords = [{ x: -120, z: -120 }, { x: 0, z: -120 }, { x: 120, z: -120 }, { x: -120, z: 120 }, { x: 0, z: 120 }, { x: 120, z: 120 }];
+  coords.forEach((c, idx) => {
+    const w = 50, d = 60, h = 12;
+    spawnBox(w, h, 1, c.x, h / 2, c.z - d / 2, wallMat);
+    spawnBox(1, h, d, c.x - w / 2, h / 2, c.z, wallMat);
+    spawnBox(1, h, d, c.x + w / 2, h / 2, c.z, wallMat);
+    spawnBox(w / 2 - 5, h, 1, c.x - (w / 4 + 2.5), h / 2, c.z + d / 2, wallMat);
+    spawnBox(w / 2 - 5, h, 1, c.x + (w / 4 + 2.5), h / 2, c.z + d / 2, wallMat);
+    spawnBox(10, 5, 1, c.x, 7 + 2.5, c.z + d / 2, wallMat);
+    spawnBox(w, 1, d, c.x, h, c.z, roofMat);
+    [-15, 15].forEach(dx => [-15, 15].forEach(dz => spawnBox(2, h, 2, c.x + dx, h / 2, c.z + dz, colMat)));
+    if (idx % 2 === 0) {
+      spawnBox(w - 2, 0.5, 25, c.x, 5.5, c.z - 15, mezzMat);
+      for (let i = 0; i < 10; i++) spawnBox(4, 0.5, 2, c.x - 20, 0.5 + (i * 0.55), (c.z + 10) - (i * 2), colMat);
+    }
+  });
+
+  spawnBox(400, 0.1, 20, 0, 0.05, 0, roadMat);
+  spawnBox(20, 0.1, 400, 0, 0.05, 0, roadMat);
+  for (let i = 0; i < 5; i++) spawnBox(1, 1, 300, -160 + (i * 80), 1, 0, pipeMat);
+
+  const colors = [0x880000, 0x003366, 0x444444, 0xffaa00];
+  for (let i = 0; i < 12; i++) {
+    const stack = Math.floor(Math.random() * 4) + 1;
+    for (let j = 0; j < stack; j++) {
+      spawnBox(8, 3, 15, -50 + (i * 10), 1.5 + (j * 3), 180, new THREE.MeshStandardMaterial({ color: colors[j % colors.length] }), true, true);
+    }
+  }
+
+  createPointLight(0, 15, 0, 0x39ff14, 1, 105);
+  createPointLight(-100, 15, -100, 0xff00ff, 1, 105);
+  createPointLight(100, 15, 100, 0x00ffff, 1, 105);
+  scene.add(new THREE.DirectionalLight(0x556677, 1.5).translateY(150).translateX(40).translateZ(40));
+}
+
+function createPointLight(x, y, z, color, int, dist) { const p = new THREE.PointLight(color, int, dist); p.position.set(x, y, z); scene.add(p); }
+
+function buildFluor() {
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0x1d1d1d });
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(800, 800), new THREE.MeshStandardMaterial({ color: 0x050505 }));
+  floor.rotation.x = -Math.PI / 2; scene.add(floor);
+
+  const map = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1],
+    [1,0,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,0,1],[1,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1],
+    [1,0,1,0,1,1,1,0,1,0,1,0,1,1,1,0,1,0,1,1],[1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1],
+    [1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0,1],[1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1],
+    [1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0,1],[1,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1,0,1],
+    [1,0,1,0,1,1,1,0,1,0,1,1,1,1,1,1,0,1,0,1],[1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+  ];
+  const UNIT_SIZE = 8;
+  for (let i = 0; i < map.length; i++)
+    for (let j = 0; j < map[i].length; j++)
+      if (map[i][j] === 1) spawnBox(UNIT_SIZE, 10, UNIT_SIZE, i * UNIT_SIZE, 5, j * UNIT_SIZE, wallMat);
+}
+
+function buildEdificio() {
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0x999999 });
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+  const windowMat = new THREE.MeshStandardMaterial({ color: 0xadd8e6, transparent: true, opacity: 0.3, emissive: 0x222222 });
+  const UNIT_SIZE = 8, FLOOR_HEIGHT = 7, TOTAL_FLOORS = 5;
+
+  const map = [
+    [1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,1,1,0,1],
+    [1,0,1,0,0,0,0,1,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,1,1,0,1],
+    [1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]
+  ];
+
+  const cityFloor = new THREE.Mesh(new THREE.PlaneGeometry(1000, 1000), new THREE.MeshStandardMaterial({ color: 0x111111 }));
+  cityFloor.rotation.x = -Math.PI / 2; cityFloor.position.set(0, 0, 0); scene.add(cityFloor); collidables.push(cityFloor);
+
+  for (let floor = 0; floor < TOTAL_FLOORS; floor++) {
+    const yOff = floor * FLOOR_HEIGHT, isLast = (floor === TOTAL_FLOORS - 1);
+    if (floor > 0) {
+      const fm = new THREE.Mesh(new THREE.PlaneGeometry(map.length * UNIT_SIZE, map[0].length * UNIT_SIZE), floorMat);
+      fm.rotation.x = -Math.PI / 2; fm.position.set((map.length * UNIT_SIZE) / 2 - UNIT_SIZE / 2, yOff, (map[0].length * UNIT_SIZE) / 2 - UNIT_SIZE / 2);
+      scene.add(fm); collidables.push(fm);
+    }
+    for (let i = 0; i < map.length; i++) {
+      for (let j = 0; j < map[i].length; j++) {
+        if (map[i][j] === 1) {
+          const isEdge = (i === 0 || i === map.length - 1 || j === 0 || j === map[i].length - 1);
+          const isWindow = isEdge && (i + j) % 3 === 0;
+          if (isLast && isEdge) continue;
+          if (isWindow) {
+            const isSide = (i === 0 || i === map.length - 1);
+            const wGeo = new THREE.BoxGeometry(isSide ? 0.2 : UNIT_SIZE, FLOOR_HEIGHT * 0.8, isSide ? UNIT_SIZE : 0.2);
+            const wMesh = new THREE.Mesh(wGeo, windowMat); wMesh.position.set(i * UNIT_SIZE, yOff + FLOOR_HEIGHT / 2, j * UNIT_SIZE);
+            scene.add(wMesh); walls.push(wMesh); collidables.push(wMesh);
+          } else {
+            spawnBox(UNIT_SIZE, FLOOR_HEIGHT, UNIT_SIZE, i * UNIT_SIZE, yOff + FLOOR_HEIGHT / 2, j * UNIT_SIZE, wallMat);
+          }
+        }
+      }
+    }
+    if (floor < TOTAL_FLOORS - 1) {
+      const rx = (floor % 2 === 0) ? UNIT_SIZE : (map.length - 2) * UNIT_SIZE;
+      const rz = (map[0].length / 2) * UNIT_SIZE;
+      const ramp = new THREE.Mesh(new THREE.BoxGeometry(UNIT_SIZE * 1.5, 0.5, UNIT_SIZE * 4.5), wallMat);
+      ramp.position.set(rx, yOff + FLOOR_HEIGHT / 2.8, rz); ramp.rotation.x = Math.PI / 8; ramp.isRamp = true;
+      scene.add(ramp); collidables.push(ramp); walls.push(ramp);
+    }
+  }
+
+  const cityColors = [0x111111, 0x222222, 0x1a1a1a, 0x050505];
+  for (let i = 0; i < 50; i++) {
+    const h = 40 + Math.random() * 200, px = (Math.random() - 0.5) * 600, pz = (Math.random() - 0.5) * 600;
+    if (Math.abs(px) < 80 && Math.abs(pz) < 80) continue;
+    const m = new THREE.Mesh(new THREE.BoxGeometry(20, h, 20), new THREE.MeshStandardMaterial({ color: cityColors[i % 4] }));
+    m.position.set(px, h / 2, pz); scene.add(m); collidables.push(m); walls.push(m);
+  }
+  scene.add(new THREE.DirectionalLight(0xffffff, 0.9).translateY(200).translateX(100));
+}
+
+function buildLaberinto() {
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0xcccccc });
+  const UNIT_SIZE = 8;
+  const map = [
+    [1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,1,1,0,1],
+    [1,0,1,0,0,0,0,1,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,1,1,0,1],
+    [1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]
+  ];
+
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(5000, 5000), new THREE.MeshStandardMaterial({ color: 0x444444 }));
+  floor.rotation.x = -Math.PI / 2; scene.add(floor); collidables.push(floor);
+
+  for (let i = 0; i < map.length; i++)
+    for (let j = 0; j < map[i].length; j++)
+      if (map[i][j] === 1) spawnBox(UNIT_SIZE, 6, UNIT_SIZE, i * UNIT_SIZE, 3, j * UNIT_SIZE, wallMat);
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(UNIT_SIZE * 0.7, 3.5, UNIT_SIZE * 3.5), new THREE.MeshStandardMaterial({ color: 0x111111 }));
+  body.position.set(UNIT_SIZE * 4.5, 1.75, UNIT_SIZE * 4.5); scene.add(body); walls.push(body); collidables.push(body);
+
+  const stepColors = [0x777777, 0x888888, 0x999999];
+  for (let i = 0; i < 3; i++) {
+    const step = new THREE.Mesh(new THREE.BoxGeometry(4, 1.5 + (i * 1.5), 4), new THREE.MeshStandardMaterial({ color: stepColors[i] }));
+    step.position.set(UNIT_SIZE * 4.5, (1.5 + (i * 1.5)) / 2, (UNIT_SIZE * 0) - (i * 4)); scene.add(step); walls.push(step); collidables.push(step);
+  }
+  const block = new THREE.Mesh(new THREE.BoxGeometry(2.5, 1.5, 2.5), new THREE.MeshStandardMaterial({ color: 0x888888 }));
+  block.position.set(UNIT_SIZE * 4.5, 0.75, UNIT_SIZE * 2.5); scene.add(block); walls.push(block); collidables.push(block);
+
+  const containerColors = [0x1a1a1a, 0x223322, 0x332222, 0x222233, 0x444444, 0x552211];
+  function createContainer(w, h, d, x, y, z, color) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({ color })); m.position.set(x, y, z);
+    scene.add(m); walls.push(m); collidables.push(m);
+  }
+  for (let i = 0; i < 4; i++) createContainer(12, 4, 6, UNIT_SIZE * 4, 2 + (i * 4), UNIT_SIZE * 12, containerColors[i % containerColors.length]);
+  createContainer(UNIT_SIZE * 0.8, 4, 12, UNIT_SIZE * 8.5, 2, UNIT_SIZE * 2, containerColors[0]);
+  createContainer(UNIT_SIZE * 0.8, 4, 12, -UNIT_SIZE * 1.5, 2, UNIT_SIZE * 4, containerColors[1]);
+
+  const mapW = map.length * UNIT_SIZE, mapH = map[0].length * UNIT_SIZE, margin = UNIT_SIZE * 1.5;
+  for (let side = 0; side < 4; side++) {
+    for (let i = -2; i < 12; i++) {
+      let x, z;
+      if (side === 0) { x = i * 10; z = -margin; } else if (side === 1) { x = i * 10; z = mapH + margin; }
+      else if (side === 2) { x = -margin; z = i * 10; } else { x = mapW + margin; z = i * 10; }
+      createContainer(8, 4 + Math.random() * 8, 12, x, (4 + Math.random() * 8) / 2, z, containerColors[Math.floor(Math.random() * containerColors.length)]);
+    }
+  }
+  scene.add(new THREE.DirectionalLight(0xffffff, 0.8).translateY(200).translateX(100));
+}
+
+// ============ PAINT SYSTEM ============
+function performSpray() {
+  raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+  const targets = raycaster.intersectObjects(walls);
+  if (targets.length > 0 && targets[0].distance < 15) {
+    const hit = targets[0];
+    const brushSize = parseFloat(document.getElementById('brushSize').value);
+    const color = document.getElementById('paintColor').value;
+    paintCount++;
+    const position = hit.point;
+    const dimensions = new THREE.Vector3(brushSize, brushSize, 0.5);
+    const orientation = new THREE.Euler().setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), hit.face.normal));
+    const impactZone = new THREE.Box3().setFromCenterAndSize(position, new THREE.Vector3(brushSize * 1.5, brushSize * 1.5, 0.75));
+    walls.forEach(wallMesh => {
+      if (wallMesh.bbox && impactZone.intersectsBox(wallMesh.bbox)) {
+        const markGeometry = new DecalGeometry(wallMesh, position, orientation, dimensions);
+        if (markGeometry.attributes.position.count > 0) {
+          const markMaterial = new THREE.MeshBasicMaterial({ color, map: sprayTexture, alphaTest: 0.1, transparent: true, opacity: 0.8, depthTest: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4 });
+          const mark = new THREE.Mesh(markGeometry, markMaterial);
+          mark.renderOrder = paintCount; scene.add(mark);
+        }
+      }
+    });
+    dripCounter++;
+    if (dripCounter > DRIP_THRESHOLD) { createDrip(hit.point, hit.face.normal, color, brushSize); dripCounter = 0; }
+  }
+}
+
+function createDrip(point, normal, color, brushSize) {
+  const drip = new THREE.Mesh(new THREE.PlaneGeometry(0.02 + Math.random() * 0.03, 0.1), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.8, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -5 }));
+  drip.position.copy(point).add(normal.clone().multiplyScalar(0.015)); drip.lookAt(point.clone().add(normal));
+  drip.userData = { speed: 0.005 + Math.random() * 0.01, maxLength: 0.5 + Math.random() * 1.5, currentLength: 0.1 };
+  scene.add(drip); activeDrips.push(drip);
+}
+
+// ============ INPUT HANDLING ============
+function setupInputHandlers() {
+  const container = document.getElementById('gameCanvas');
+  const inst = document.getElementById('instructions');
+  let ignoreNextMouseMove = false;
+
+  inst.addEventListener('click', () => container.requestPointerLock());
+  container.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('pointerlockchange', () => {
+    gameActive = (document.pointerLockElement === container);
+    inst.style.display = gameActive ? 'none' : 'flex';
+    document.getElementById('controls-panel').style.display = gameActive ? 'flex' : 'none';
+    document.getElementById('crosshair').style.display = gameActive ? 'block' : 'none';
+    document.getElementById('hud-top').style.display = gameActive ? 'block' : 'none';
+    if (gameActive) { ignoreNextMouseMove = true; startMusic(); } else { moveForward = moveBackward = moveLeft = moveRight = false; isPainting = false; isSprinting = false; }
+  });
+  document.addEventListener('mousemove', e => {
+    if (!gameActive) return;
+    if (ignoreNextMouseMove) { ignoreNextMouseMove = false; return; }
+    camera.rotation.y -= e.movementX * 0.0022;
+    camera.rotation.x -= e.movementY * 0.0022;
+    camera.rotation.x = Math.max(-1.45, Math.min(1.45, camera.rotation.x));
+  });
+  container.addEventListener('mousedown', e => { if (gameActive && e.button === 0) isPainting = true; });
+  window.addEventListener('mouseup', e => { if (e.button === 0) isPainting = false; });
+  window.addEventListener('mouseleave', () => { isPainting = false; });
+  window.addEventListener('blur', () => { moveForward = moveBackward = moveLeft = moveRight = false; isPainting = false; isSprinting = false; });
+  document.addEventListener('visibilitychange', () => { moveForward = moveBackward = moveLeft = moveRight = false; isPainting = false; isSprinting = false; });
+
+  window.addEventListener('keydown', e => {
+    if (!gameActive) return;
+    const code = e.code, key = e.key.toLowerCase();
+    if (code === 'KeyW' || key === 'w') moveForward = true;
+    if (code === 'KeyS' || key === 's') moveBackward = true;
+    if (code === 'KeyA' || key === 'a') moveLeft = true;
+    if (code === 'KeyD' || key === 'd') moveRight = true;
+    if (code === 'ShiftLeft' || code === 'ShiftRight' || e.shiftKey) isSprinting = true;
+    if (code === 'Space' || key === ' ') { e.preventDefault(); if (canJump) { verticalVel = cfg.physics.jump; canJump = false; } }
+    if (code === 'KeyP' || key === 'p') { saveScreenshot(); }
+    if (code === 'KeyR' || key === 'r') { camera.position.copy(startPos); verticalVel = 0; }
+    if (code === 'Escape') { if (document.pointerLockElement) { document.exitPointerLock(); } else { returnToMenu(); } }
+  });
+  window.addEventListener('keyup', e => {
+    const code = e.code, key = e.key.toLowerCase();
+    if (code === 'KeyW' || key === 'w') moveForward = false;
+    if (code === 'KeyS' || key === 's') moveBackward = false;
+    if (code === 'KeyA' || key === 'a') moveLeft = false;
+    if (code === 'KeyD' || key === 'd') moveRight = false;
+    if (code === 'ShiftLeft' || code === 'ShiftRight') isSprinting = false;
+  });
+  window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+
+  document.getElementById('brushSize').addEventListener('input', function () { document.getElementById('brushSizeLabel').textContent = this.value; });
+
+  setInterval(() => {
+    if (gameActive) {
+      timeLeft--;
+      document.getElementById('time-val').innerText = timeLeft;
+      if (timeLeft <= 0) { stopMusic(); returnToMenu(); }
+      if (cfg.hasMovingTrains) {
+        train1Timer--; if (train1Timer <= 0 && !movingTrain1) { movingTrain1 = createMovingTrain(TRAIN1_RAIL_X, 0, -550, 1); scene.add(movingTrain1); train1Timer = 120; }
+        train2Timer--; if (train2Timer <= 0 && !movingTrain2) { movingTrain2 = createMovingTrain(TRAIN2_RAIL_X, 0, 550, -1); scene.add(movingTrain2); train2Timer = 120; }
+      }
+    }
+  }, 1000);
+}
+
+// ============ GALLERY SYSTEM ============
+function saveScreenshot() {
+  const dataURL = renderer.domElement.toDataURL("image/png");
+  let gallery = [];
+  try { gallery = JSON.parse(localStorage.getItem('wdl_gallery') || '[]'); } catch (e) { gallery = []; }
+  gallery.push({ date: new Date().toISOString(), map: cfg.name, user: username, data: dataURL });
+  if (gallery.length > 50) gallery = gallery.slice(-50);
+  localStorage.setItem('wdl_gallery', JSON.stringify(gallery));
+}
+
+function openGallery() {
+  const screen = document.getElementById('gallery-screen');
+  const grid = document.getElementById('gallery-grid');
+  let gallery = [];
+  try { gallery = JSON.parse(localStorage.getItem('wdl_gallery') || '[]'); } catch (e) { gallery = []; }
+  grid.innerHTML = gallery.length === 0 ? '<p style="color:#666;text-align:center;grid-column:1/-1;padding:40px">NO HAY CAPTURAS AÚN. PRESIONA P DURANTE EL JUEGO PARA GUARDAR.</p>' : '';
+  gallery.forEach((item, idx) => {
+    const div = document.createElement('div'); div.className = 'gallery-item';
+    div.innerHTML = `<img src="${item.data}" alt="Captura ${idx + 1}"><div class="info">${item.map} | ${item.user || 'ANONIMO'} | ${new Date(item.date).toLocaleDateString()}</div>`;
+    div.onclick = () => { const a = document.createElement('a'); a.href = item.data; a.download = `WDL_TAGGER_${idx + 1}.png`; a.click(); };
+    grid.appendChild(div);
+  });
+  screen.style.display = 'flex'; document.getElementById('menu-screen').style.display = 'none';
+}
+
+function closeGallery() { document.getElementById('gallery-screen').style.display = 'none'; document.getElementById('menu-screen').style.display = 'flex'; }
+function clearGallery() { if (confirm('¿Borrar toda la galería?')) { localStorage.removeItem('wdl_gallery'); openGallery(); } }
+
+// ============ UI FUNCTIONS ============
+window.returnToMenu = function () {
+  gameActive = false;
+  animRunning = false;
+  if (document.pointerLockElement) document.exitPointerLock();
+  stopMusic();
+  document.getElementById('instructions').style.display = 'none';
+  document.getElementById('controls-panel').style.display = 'none';
+  document.getElementById('crosshair').style.display = 'none';
+  document.getElementById('hud-top').style.display = 'none';
+  document.getElementById('btn-back-menu').style.display = 'none';
+  document.getElementById('game-over').style.display = 'none';
+  document.getElementById('alert-warning').style.display = 'none';
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('menu-screen').style.display = 'flex';
+  if (scene) { scene.clear(); scene = null; }
+  if (renderer) { renderer.dispose(); renderer = null; }
+  camera = null; currentMap = null; cfg = null;
+  startMenuMusic();
+};
+
+window.saveUsername = function () {
+  username = document.getElementById('username-input').value.trim() || 'ANONIMO';
+  localStorage.setItem('wdl_username', username);
+  document.getElementById('hud-username').textContent = username;
+};
+
+window.startGame = function (mapId) {
+  username = localStorage.getItem('wdl_username') || document.getElementById('username-input').value.trim() || 'ANONIMO';
+  document.getElementById('hud-username').textContent = username;
+  currentMap = mapId; cfg = MAP_CONFIGS[mapId];
+  document.getElementById('hud-map-name').textContent = cfg.name;
+  document.getElementById('brushSize').min = cfg.brushRange[0]; document.getElementById('brushSize').max = cfg.brushRange[1]; document.getElementById('brushSize').value = cfg.brushRange[2];
+  document.getElementById('brushSizeLabel').textContent = cfg.brushRange[2];
+  document.getElementById('menu-screen').style.display = 'none';
+  document.getElementById('game-over').style.display = 'none';
+  stopMenuMusic();
+
+  const loading = document.getElementById('loading-screen');
+  const loadingBg = document.getElementById('loading-bg');
+  loadingBg.src = cfg.loadImage; loading.style.display = 'flex';
+
+  setTimeout(() => {
+    initThreeJS();
+    resetGlobals();
+    scene.background = new THREE.Color(cfg.background);
+    scene.fog = new THREE.FogExp2(cfg.fog.color, cfg.fog.density);
+    scene.add(new THREE.AmbientLight(cfg.ambient.color, cfg.ambient.intensity));
+    sprayTexture = createSprayTexture();
+    startPos = new THREE.Vector3(...cfg.startPos);
+
+    const builders = { metro: buildMetro, nyc: buildNYC, subte: buildSubte, bodega: buildBodega, fluor: buildFluor, edificio: buildEdificio, laberinto: buildLaberinto };
+    builders[mapId]();
+
+    setupInputHandlers();
+    camera.position.copy(startPos);
+    loading.style.display = 'none';
+    document.getElementById('instructions').style.display = 'flex';
+    document.getElementById('btn-back-menu').style.display = 'flex';
+    animRunning = true;
+    animateLoop();
+  }, 500);
+};
+
+// ============ GAME LOOP ============
+function animateLoop() {
+  if (!animRunning) return;
+  requestAnimationFrame(animateLoop);
+  if (!gameActive) { if (renderer && scene && camera) renderer.render(scene, camera); return; }
+
+  frameCounter++;
+  const speed = isSprinting ? cfg.physics.sprintSpeed : cfg.physics.speed;
+  const direction = new THREE.Vector3();
+  if (moveForward) direction.z -= 1; if (moveBackward) direction.z += 1;
+  if (moveLeft) direction.x -= 1; if (moveRight) direction.x += 1;
+
+  if (direction.length() > 0) {
+    direction.normalize();
+    const moveX = (direction.x * Math.cos(camera.rotation.y) - direction.z * Math.sin(camera.rotation.y)) * speed;
+    const moveZ = (direction.x * Math.sin(camera.rotation.y) + direction.z * Math.cos(camera.rotation.y)) * speed;
+    if (!checkCollision(new THREE.Vector3(camera.position.x + moveX, camera.position.y, camera.position.z))) camera.position.x += moveX;
+    if (!checkCollision(new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z + moveZ))) camera.position.z += moveZ;
+  }
+
+  verticalVel -= cfg.physics.gravity; camera.position.y += verticalVel;
+  floorRaycaster.ray.origin.copy(camera.position);
+  const ground = floorRaycaster.intersectObjects(collidables);
+  if (ground.length > 0 && ground[0].distance <= cfg.physics.playerHeight && verticalVel <= 0) {
+    camera.position.y += (cfg.physics.playerHeight - ground[0].distance); verticalVel = 0; canJump = true;
+  }
+  if (canJump && direction.length() > 0) camera.position.y = cfg.physics.playerHeight + Math.sin(frameCounter * 10) * (isSprinting ? 0.15 : 0.08);
+  if (camera.position.y < -40) { camera.position.copy(startPos); verticalVel = 0; }
+
+  if (isPainting) performSpray();
+  activeDrips.forEach(drip => {
+    const d = drip.userData;
+    if (d.currentLength < d.maxLength) { d.currentLength += d.speed; drip.scale.set(1, d.currentLength * 15, 1); drip.position.y -= d.speed * 0.7; }
+  });
+  if (activeDrips.length > 400) { const old = activeDrips.shift(); scene.remove(old); }
+
+  if (cfg.hasMovingTrains) {
+    if (movingTrain1) { movingTrain1.position.z += TRAIN_SPEED; if (movingTrain1.position.z > 650) { scene.remove(movingTrain1); movingTrain1 = null; } else if (checkTrainCollision(movingTrain1, TRAIN1_RAIL_X)) { gameOver('ATROPELLADO POR EL TREN'); } }
+    if (movingTrain2) { movingTrain2.position.z -= TRAIN_SPEED; if (movingTrain2.position.z < -650) { scene.remove(movingTrain2); movingTrain2 = null; } else if (checkTrainCollision(movingTrain2, TRAIN2_RAIL_X)) { gameOver('ATROPELLADO POR EL TREN'); } }
+  }
+
+  if (cfg.hasWarning && timeLeft <= 20 && timeLeft > 0) {
+    const pulse = Math.sin(frameCounter * 30) * 0.5 + 0.5;
+    const r = 0.02 + pulse * 0.18;
+    scene.background.setRGB(r, 0.02 + pulse * 0.04, 0.02);
+    scene.fog.color.setRGB(r, 0.02 + pulse * 0.04, 0.02);
+    document.getElementById('alert-warning').style.display = 'block';
+  } else if (cfg.hasWarning) { scene.background.setHex(cfg.background); scene.fog.color.setHex(cfg.fog.color); document.getElementById('alert-warning').style.display = 'none'; }
+
+  renderer.render(scene, camera);
+}
+
+function gameOver(reason) {
+  gameActive = false;
+  if (document.pointerLockElement) document.exitPointerLock();
+  document.getElementById('game-over-reason').textContent = reason;
+  document.getElementById('game-over').style.display = 'flex';
+  document.getElementById('btn-back-menu').style.display = 'flex';
+  document.getElementById('instructions').style.display = 'none';
+  stopMusic();
+}
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', () => {
+  username = localStorage.getItem('wdl_username') || '';
+  document.getElementById('username-input').value = username;
+  document.getElementById('hud-username').textContent = username || 'ANONIMO';
+  initAudio();
+  startMenuMusic();
+});
+</script>
 </body>
 </html>
