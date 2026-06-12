@@ -459,7 +459,7 @@ function checkCollision(pos) {
   _pBox.setFromCenterAndSize(_pCenter, _pSize);
   for (let obj of collidables) {
     if (!obj.bbox) { obj.updateMatrixWorld(); obj.bbox = new THREE.Box3().setFromObject(obj); }
-    if (obj.isRamp) continue;
+    if (obj.isRamp || obj.isPlatform) continue;
     if (_pBox.intersectsBox(obj.bbox)) return true;
   }
   return false;
@@ -510,7 +510,7 @@ function buildMetro() {
   spawnBox(100, hangarH, 2, 150, hangarH / 2, -200, wall, true, true);
 
   const andenesInfo = [{ x: -145, w: 70 }, { x: -40, w: 36 }, { x: 40, w: 36 }, { x: 145, w: 70 }];
-  andenesInfo.forEach(a => spawnBox(a.w, 2, 590, a.x, 1, 100, concrete, true, true));
+  andenesInfo.forEach(a => { const p = spawnBox(a.w, 2, 590, a.x, 1, 100, concrete, true, true); p.isPlatform = true; });
 
   for (let i = 0; i < 40; i++) {
     let ar = andenesInfo[Math.floor(Math.random() * andenesInfo.length)];
@@ -569,9 +569,9 @@ function buildNYC() {
   spawnBox(1000, 1, 2000, 0, -0.5, 0, concrete, true, false);
   const tunnelHeight = 18;
 
-  spawnBox(12, 2, 400, -44, 1, 0, concrete, true, true);
-  spawnBox(16, 2, 400, 0, 1, 0, concrete, true, true);
-  spawnBox(12, 2, 400, 44, 1, 0, concrete, true, true);
+  spawnBox(12, 2, 400, -44, 1, 0, concrete, true, true).isPlatform = true;
+  spawnBox(16, 2, 400, 0, 1, 0, concrete, true, true).isPlatform = true;
+  spawnBox(12, 2, 400, 44, 1, 0, concrete, true, true).isPlatform = true;
   spawnBox(100, 2, 400, 0, tunnelHeight, 0, tunnelWall, true, true);
   spawnBox(2, tunnelHeight, 400, -50, tunnelHeight / 2, 0, stationTiles, true, true);
   spawnBox(2, tunnelHeight, 400, 50, tunnelHeight / 2, 0, stationTiles, true, true);
@@ -660,8 +660,8 @@ function buildSubte() {
     }
   }
 
-  spawnBox(80, 2, 500, -52, 1, 0, stationTiles, true, true);
-  spawnBox(80, 2, 500, 52, 1, 0, stationTiles, true, true);
+  spawnBox(80, 2, 500, -52, 1, 0, stationTiles, true, true).isPlatform = true;
+  spawnBox(80, 2, 500, 52, 1, 0, stationTiles, true, true).isPlatform = true;
   spawnBox(1200, 2, 1200, 0, tunnelHeight, 0, tunnelWall, true, false);
   createRails(-8, 0, 0, 1100); createRails(8, 0, 0, 1100);
 
