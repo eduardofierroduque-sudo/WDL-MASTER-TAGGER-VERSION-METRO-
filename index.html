@@ -310,8 +310,6 @@ function stopMusic() {
   musicStarted = false;
 }
 
-let menuMusicReady = false;
-
 function startMenuMusic() {
   if (!menuMusic) initAudio();
   if (menuMusic && menuMusic.paused) { menuMusic.play().catch(() => {}); }
@@ -320,13 +318,6 @@ function startMenuMusic() {
 function stopMenuMusic() {
   if (menuMusic) { menuMusic.pause(); menuMusic.currentTime = 0; }
 }
-
-// Browsers bloquean autoplay: activar musica en la primera interaccion del usuario
-document.addEventListener('click', function firstClick() {
-  menuMusicReady = true;
-  startMenuMusic();
-  document.removeEventListener('click', firstClick);
-}, { once: true });
 
 // ============ MAP CONFIGURATIONS ============
 const MAP_CONFIGS = {
@@ -400,7 +391,7 @@ let scene, camera, renderer, raycaster, floorRaycaster, sprayTexture;
 let walls = [], collidables = [], activeDrips = [];
 let currentMap = null, cfg = null;
 let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false, isSprinting = false;
-let isPainting = false, gameActive = false, canJump = true;
+let isPainting = false, gameActive = false, pointerLocked = false, canJump = true;
 let verticalVel = 0, timeLeft = 1200, frameCounter = 0, paintCount = 0, dripCounter = 0;
 const DRIP_THRESHOLD = 15;
 let startPos;
@@ -985,23 +976,22 @@ function setupInputHandlers() {
   let ignoreNextMouseMove = false;
 
   inst.addEventListener('click', () => container.requestPointerLock());
+  container.addEventListener('click', () => { if (gameActive && !pointerLocked) container.requestPointerLock(); });
   container.addEventListener('contextmenu', e => e.preventDefault());
   document.addEventListener('pointerlockchange', () => {
-    gameActive = (document.pointerLockElement === container);
-    inst.style.display = gameActive ? 'none' : 'flex';
-    document.getElementById('controls-panel').style.display = gameActive ? 'flex' : 'none';
-    document.getElementById('crosshair').style.display = gameActive ? 'block' : 'none';
-    document.getElementById('hud-top').style.display = gameActive ? 'block' : 'none';
-    if (gameActive) { ignoreNextMouseMove = true; startMusic(); } else { moveForward = moveBackward = moveLeft = moveRight = false; isPainting = false; isSprinting = false; }
+    pointerLocked = (document.pointerLockElement === container);
+    inst.style.display = pointerLocked ? 'none' : 'flex';
+    document.getElementById('crosshair').style.display = pointerLocked ? 'block' : 'none';
+    if (pointerLocked) { ignoreNextMouseMove = true; startMusic(); } else { moveForward = moveBackward = moveLeft = moveRight = false; isPainting = false; isSprinting = false; }
   });
   document.addEventListener('mousemove', e => {
-    if (!gameActive) return;
+    if (!gameActive || !pointerLocked) return;
     if (ignoreNextMouseMove) { ignoreNextMouseMove = false; return; }
     camera.rotation.y -= e.movementX * 0.0022;
     camera.rotation.x -= e.movementY * 0.0022;
     camera.rotation.x = Math.max(-1.45, Math.min(1.45, camera.rotation.x));
   });
-  container.addEventListener('mousedown', e => { if (gameActive && e.button === 0) isPainting = true; });
+  container.addEventListener('mousedown', e => { if (gameActive && pointerLocked && e.button === 0) isPainting = true; });
   window.addEventListener('mouseup', e => { if (e.button === 0) isPainting = false; });
   window.addEventListener('mouseleave', () => { isPainting = false; });
   window.addEventListener('blur', () => { moveForward = moveBackward = moveLeft = moveRight = false; isPainting = false; isSprinting = false; });
@@ -1010,6 +1000,8 @@ function setupInputHandlers() {
   window.addEventListener('keydown', e => {
     if (!gameActive) return;
     const code = e.code, key = e.key.toLowerCase();
+    if (code === 'Escape') { if (pointerLocked) { document.exitPointerLock(); } else { returnToMenu(); } return; }
+    if (!pointerLocked) return;
     if (code === 'KeyW' || key === 'w') moveForward = true;
     if (code === 'KeyS' || key === 's') moveBackward = true;
     if (code === 'KeyA' || key === 'a') moveLeft = true;
@@ -1018,7 +1010,6 @@ function setupInputHandlers() {
     if (code === 'Space' || key === ' ') { e.preventDefault(); if (canJump) { verticalVel = cfg.physics.jump; canJump = false; } }
     if (code === 'KeyP' || key === 'p') { saveScreenshot(); }
     if (code === 'KeyR' || key === 'r') { camera.position.copy(startPos); verticalVel = 0; }
-    if (code === 'Escape') { if (document.pointerLockElement) { document.exitPointerLock(); } else { returnToMenu(); } }
   });
   window.addEventListener('keyup', e => {
     const code = e.code, key = e.key.toLowerCase();
@@ -1076,6 +1067,7 @@ function clearGallery() { if (confirm('¿Borrar toda la galería?')) { localStor
 // ============ UI FUNCTIONS ============
 window.returnToMenu = function () {
   gameActive = false;
+  pointerLocked = false;
   animRunning = false;
   if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
   if (document.pointerLockElement) document.exitPointerLock();
@@ -1132,6 +1124,9 @@ window.startGame = function (mapId) {
 
     setupInputHandlers();
     camera.position.copy(startPos);
+    gameActive = true;
+    document.getElementById('controls-panel').style.display = 'flex';
+    document.getElementById('hud-top').style.display = 'block';
     loading.style.display = 'none';
     document.getElementById('instructions').style.display = 'flex';
     document.getElementById('btn-back-menu').style.display = 'flex';
@@ -1201,11 +1196,13 @@ function animateLoop() {
 
 function gameOver(reason) {
   gameActive = false;
+  pointerLocked = false;
   if (document.pointerLockElement) document.exitPointerLock();
   document.getElementById('game-over-reason').textContent = reason;
   document.getElementById('game-over').style.display = 'flex';
   document.getElementById('btn-back-menu').style.display = 'flex';
   document.getElementById('instructions').style.display = 'none';
+  document.getElementById('crosshair').style.display = 'none';
   stopMusic();
 }
 
@@ -1215,6 +1212,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('username-input').value = username;
   document.getElementById('hud-username').textContent = username || 'ANONIMO';
   initAudio();
+  // Intentar autoplay inmediato; si el browser lo bloquea, reanudar al primer click
+  startMenuMusic();
+  document.addEventListener('click', () => { if (menuMusic && menuMusic.paused) menuMusic.play().catch(() => {}); }, { once: true });
   // Keyboard support for map cards
   document.querySelectorAll('.map-card').forEach(card => {
     card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); } });
