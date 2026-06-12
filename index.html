@@ -405,6 +405,14 @@ const TRAIN_SPEED = 3.0, TRAIN1_RAIL_X = -100, TRAIN2_RAIL_X = 100;
 let lastHitPoint = new THREE.Vector3();
 let username = '';
 let animRunning = false;
+let _dir = new THREE.Vector3();
+let _side = new THREE.Vector3();
+let _move = new THREE.Vector3();
+let _up = new THREE.Vector3(0, 1, 0);
+let _pBox = new THREE.Box3();
+let _pCenter = new THREE.Vector3();
+let _pSize = new THREE.Vector3();
+let _colCheck = new THREE.Vector3();
 
 // ============ SCENE SETUP ============
 function initThreeJS() {
@@ -449,8 +457,10 @@ function createRails(x, y, z, length) {
 }
 
 function checkCollision(pos) {
-  const pBox = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(pos.x, pos.y, pos.z), new THREE.Vector3(cfg.physics.collisionBox[0], cfg.physics.collisionBox[1], cfg.physics.collisionBox[2]));
-  for (let obj of collidables) { if (pBox.intersectsBox(obj.bbox)) return true; }
+  _pCenter.set(pos.x, pos.y, pos.z);
+  _pSize.set(cfg.physics.collisionBox[0], cfg.physics.collisionBox[1], cfg.physics.collisionBox[2]);
+  _pBox.setFromCenterAndSize(_pCenter, _pSize);
+  for (let obj of collidables) { if (_pBox.intersectsBox(obj.bbox)) return true; }
   return false;
 }
 
@@ -1130,24 +1140,25 @@ function animateLoop() {
   requestAnimationFrame(animateLoop);
   if (!gameActive) { if (renderer && scene && camera) renderer.render(scene, camera); return; }
 
-  frameCounter++;
+  frameCounter += 0.05;
   const speed = isSprinting ? cfg.physics.sprintSpeed : cfg.physics.speed;
 
-  const dir = new THREE.Vector3();
-  camera.getWorldDirection(dir);
-  dir.y = 0; dir.normalize();
-  const side = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 1, 0)).normalize();
+  camera.getWorldDirection(_dir);
+  _dir.y = 0; _dir.normalize();
+  _side.crossVectors(_dir, _up).normalize();
 
-  let move = new THREE.Vector3(0, 0, 0);
-  if (moveForward) move.add(dir);
-  if (moveBackward) move.sub(dir);
-  if (moveLeft) move.sub(side);
-  if (moveRight) move.add(side);
+  _move.set(0, 0, 0);
+  if (moveForward) _move.add(_dir);
+  if (moveBackward) _move.sub(_dir);
+  if (moveLeft) _move.sub(_side);
+  if (moveRight) _move.add(_side);
 
-  if (move.length() > 0) {
-    move.normalize().multiplyScalar(speed);
-    if (!checkCollision(new THREE.Vector3(camera.position.x + move.x, camera.position.y, camera.position.z))) camera.position.x += move.x;
-    if (!checkCollision(new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z + move.z))) camera.position.z += move.z;
+  if (_move.length() > 0) {
+    _move.normalize().multiplyScalar(speed);
+    _colCheck.set(camera.position.x + _move.x, camera.position.y, camera.position.z);
+    if (!checkCollision(_colCheck)) camera.position.x += _move.x;
+    _colCheck.set(camera.position.x, camera.position.y, camera.position.z + _move.z);
+    if (!checkCollision(_colCheck)) camera.position.z += _move.z;
   }
 
   verticalVel -= cfg.physics.gravity; camera.position.y += verticalVel;
